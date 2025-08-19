@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ genre.name }}</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/genre.css' )}}">
+</head>
+<body>
+    <div class="container">
+        <div class="breadcrumbs">
+            <a href="{{ url_for('admin.movies') }}">Movies</a> > <span>{{ genre.name }} Genre</span>
+        </div>
+        
+        <div class="header">
+            <h1>{{ genre.name | capitalize }}</h1>
+            <p>{{ genre.description }}</p>
+        </div>
+        
+        <h2>List of Movies</h2>
+
+        <!-- the table showing the list of movies -->
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        {% for table_column in table_columns %}
+                            <th style="width: {{ table_column.width }}">{{ table_column.label }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody id="movieTableBody">
+                    {% for movie in movies %}
+                    <tr>
+                        <td>{{ movie.id }}</td>
+                        <td>{{ movie.name }}</td>
+                        <td>{{ movie.description }}</td>
+                        <td>{{ movie.imdb_rating }}</td>
+                        <td>{{ movie.rotten_tomatoes_rating }}</td>
+                        <td>{{ movie.metacritic_rating }}</td>
+                        <td>{{ movie.release_date }}</td>
+                        <td>{{ movie.media_location }}</td>
+                        <td><a href="{{ url_for('admin.delete_movie', movie_id=movie.id) }}">Delete</a></td>
+                        <td><a href="{{ url_for('admin.edit_movie', movie_id=movie.id, action='update') }}">Update</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Empty state (shown when no movies exist) -->
+            <div class="empty-state" style="{{ style }}">
+                <p>No movies found in this genre.</p>
+                <a href="{{ url_for('admin.edit_movie', action='add') }}" style="color: #3498db;">Add a movie to this genre</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,207 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+    padding-top: 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header styling */
+.header {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.header h1 {
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.header p {
+    color: #7f8c8d;
+}
+
+/* Control styling */
+.controls {
+    margin-bottom: 20px;
+}
+
+.controls a {
+    display: inline-block;
+    background: #3498db;
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.controls a:hover {
+    background: #2980b9;
+}
+
+.genres {
+    background: white;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.genres a {
+    display: inline-block;
+    background: #ecf0f1;
+    color: #2c3e50;
+    padding: 8px 15px;
+    margin: 5px 5px 5px 0;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.genres a:hover {
+    background: #bdc3c7;
+}
+
+/* Table container */
+.table-container {
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1200px;
+}
+
+.table thead {
+    background: #34495e;
+    color: white;
+}
+
+.table th,
+.table td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+    font-weight: normal;
+}
+
+.table thead th {
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.table tbody tr:nth-child(even):hover {
+    background-color: #f0f0f0;
+}
+
+/* Action links styling */
+.table a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.table a:hover {
+    text-decoration: underline;
+}
+
+/* Delete link specific styling */
+.table a[href*="delete_movie"] {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.table a[href*="delete_movie"]:hover {
+    color: #c0392b;
+}
+
+/* Update link specific styling */
+.table a[href*="edit_movie"] {
+    color: #f39c12;
+    font-weight: bold;
+}
+
+.table a[href*="edit_movie"]:hover {
+    color: #e67e22;
+}
+
+/* Description cell specific styling */
+.table td:nth-child(3) {
+    max-width: 250px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Media location cell styling */
+.table td:nth-child(8) {
+    font-size: 12px;
+    word-break: break-all;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header {
+        padding: 15px;
+    }
+    
+    .table-container {
+        font-size: 14px;
+    }
+}
+
+/* Status/feedback messages */
+.message {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}

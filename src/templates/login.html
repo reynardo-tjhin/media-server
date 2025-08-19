@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Welcome Back</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+    <div class="bg-animation" id="bgAnimation"></div>
+    
+    <div class="login-container">
+        <div class="logo">
+            <div class="logo-icon">Tjhin's Server</div>
+        </div>
+        
+        <div class="welcome-text">
+            <h2>Welcome Back</h2>
+            <p>Sign in to your account to continue</p>
+        </div>
+
+        <form id="loginForm" method="post">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="username" id="username" name="username" placeholder="Enter your username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+
+            <!-- <div class="forgot-password">
+                <a href="#" onclick="showForgotPassword()">Forgot your password?</a>
+            </div> -->
+
+            <button type="submit" class="login-btn">Sign In</button>
+        </form>
+
+        <!-- <div class="divider">
+            <span>or continue with</span>
+        </div>
+
+        <div class="social-login">
+            <button class="social-btn" onclick="socialLogin('google')">
+                <span>Google</span>
+            </button>
+            <button class="social-btn" onclick="socialLogin('github')">
+                <span>GitHub</span>
+            </button>
+        </div> -->
+
+        <div class="signup-link">
+            Don't have an account? <a href="#" onclick="showSignup()">Sign up here</a>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles animation
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.width = particle.style.height = Math.random() * 10 + 5 + 'px';
+            particle.style.animationDuration = Math.random() * 3 + 5 + 's';
+            particle.style.animationDelay = Math.random() * 2 + 's';
+            
+            document.getElementById('bgAnimation').appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 8000);
+        }
+
+        // Create particles periodically
+        setInterval(createParticle, 300);
+
+        // Form submission handler
+        // document.getElementById('loginForm').addEventListener('submit', function(e) {
+        //     e.preventDefault();
+            
+        //     const email = document.getElementById('email').value;
+        //     const password = document.getElementById('password').value;
+            
+        //     if (email && password) {
+        //         // Add loading state
+        //         const btn = document.querySelector('.login-btn');
+        //         const originalText = btn.textContent;
+        //         btn.textContent = 'Signing In...';
+        //         btn.disabled = true;
+                
+        //         // Simulate login process
+        //         setTimeout(() => {
+        //             alert('Login successful! (This is a demo)');
+        //             btn.textContent = originalText;
+        //             btn.disabled = false;
+        //         }, 2000);
+        //     }
+        // });
+
+        // Input focus animations
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentNode.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentNode.style.transform = 'scale(1)';
+            });
+        });
+
+        function showForgotPassword() {
+            alert('Forgot password functionality would be implemented here.');
+        }
+
+        function showSignup() {
+            alert('Sign up page would be loaded here.');
+        }
+
+        function socialLogin(provider) {
+            alert(`${provider} login would be implemented here.`);
+        }
+    </script>
+</body>
+</html>

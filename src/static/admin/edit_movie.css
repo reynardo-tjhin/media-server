@@ -1,0 +1,247 @@
+ * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+/* Breadcrumbs styling */
+.breadcrumbs {
+    margin-left: 30px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+.breadcrumbs a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+    text-decoration: underline;
+}
+
+.header {
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.header h1 {
+    margin-bottom: 5px;
+    font-size: 1.8em;
+}
+
+.header p {
+    opacity: 0.9;
+    font-size: 0.95em;
+}
+
+/* Error messages styling */
+#error-message {
+    background: #f8d7da;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 30px;
+    margin: 0;
+    border-bottom: 1px solid #f5c6cb;
+}
+
+#error-message input {
+    background: none;
+    border: none;
+    font-size: 1.25em;
+    color: #721c24;
+    width: 900px;
+}
+
+/* Form styling */
+form {
+    padding: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.form-group input[type="text"]:required:invalid,
+.form-group input[type="number"]:required:invalid {
+    border-color: #e74c3c;
+}
+
+/* Genre checkboxes styling */
+.genre-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.checkbox-group:hover {
+    background-color: #f8f9fa;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.1);
+}
+
+.checkbox-group label {
+    margin: 0;
+    font-weight: normal;
+    cursor: pointer;
+    flex-grow: 1;
+}
+
+/* Date picker styling */
+#datepicker {
+    cursor: pointer;
+}
+
+/* Controls styling */
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.button,
+.btn {
+    padding: 12px 24px;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-block;
+}
+
+.button {
+    background: #95a5a6;
+    color: white;
+}
+
+.button:hover {
+    background: #7f8c8d;
+}
+
+.btn-success {
+    background: #27ae60;
+    color: white;
+    min-width: 120px;
+}
+
+.btn-success:hover {
+    background: #229954;
+}
+
+.btn-success:active {
+    transform: translateY(1px);
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        margin: 0;
+    }
+
+    form {
+        padding: 20px;
+    }
+
+    .header {
+        padding: 15px;
+    }
+
+    .genre-container {
+        grid-template-columns: 1fr;
+    }
+
+    .controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .controls .button,
+    .controls .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Field validation styling */
+.form-group input:valid {
+    border-color: #27ae60;
+}
+
+/* Loading state for submit button */
+.btn-success:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+}
+
+/* Media location field styling (file paths) */
+input[name="mediaLocation"] {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}

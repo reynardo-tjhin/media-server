@@ -1,0 +1,195 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+    padding-top: 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Breadcrumbs styling */
+.breadcrumbs {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+.breadcrumbs a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+    text-decoration: underline;
+}
+
+/* Header styling */
+.header {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.header h1 {
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.header p {
+    color: #7f8c8d;
+}
+
+h2 {
+    color: #34495e;
+    margin: 25px 0 15px 0;
+    font-size: 1.4em;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 5px;
+}
+
+/* Table container */
+.table-container {
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1000px;
+}
+
+.table thead {
+    background: #34495e;
+    color: white;
+}
+
+.table th,
+.table td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+    font-weight: normal;
+}
+
+.table thead th {
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.table tbody tr:nth-child(even):hover {
+    background-color: #f0f0f0;
+}
+
+/* Action links styling */
+.table a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.table a:hover {
+    text-decoration: underline;
+}
+
+/* Delete link specific styling */
+.table a[href*="delete_movie"] {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.table a[href*="delete_movie"]:hover {
+    color: #c0392b;
+}
+
+/* Update link specific styling */
+.table a[href*="edit_movie"] {
+    color: #f39c12;
+    font-weight: bold;
+}
+
+.table a[href*="edit_movie"]:hover {
+    color: #e67e22;
+}
+
+/* Column width adjustments */
+.table th:nth-child(1), .table td:nth-child(1) { width: 50px; } /* ID */
+.table th:nth-child(2), .table td:nth-child(2) { width: 150px; } /* Name */
+.table th:nth-child(3), .table td:nth-child(3) { width: 300px; } /* Description */
+.table th:nth-child(4), .table td:nth-child(4) { width: 80px; } /* IMDB */
+.table th:nth-child(5), .table td:nth-child(5) { width: 80px; } /* RT */
+.table th:nth-child(6), .table td:nth-child(6) { width: 80px; } /* Metacritic */
+.table th:nth-child(7), .table td:nth-child(7) { width: 100px; } /* Release Date */
+.table th:nth-child(8), .table td:nth-child(8) { width: 200px; } /* Media Location */
+.table th:nth-child(9), .table td:nth-child(9) { width: 80px; } /* Delete */
+.table th:nth-child(10), .table td:nth-child(10) { width: 80px; } /* Update */
+
+/* Description cell styling */
+.table td:nth-child(3) {
+    max-width: 300px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.4;
+}
+
+/* Media location cell styling */
+.table td:nth-child(8) {
+    font-size: 12px;
+    word-break: break-all;
+    font-family: 'Courier New', monospace;
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header {
+        padding: 15px;
+    }
+    
+    .table-container {
+        font-size: 14px;
+    }
+    
+    .table a {
+        padding: 4px 8px;
+        font-size: 11px;
+        min-width: 50px;
+    }
+}

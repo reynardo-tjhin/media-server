@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Movie Management</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/movies.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Admin's Movie Dashboard</h1>
+            <p>Manage movies</p>
+        </div>
+
+        <div class="controls">
+            <a href="{{ url_for('admin.edit_movie', action='add') }}">Add New Movie to Database</a>
+        </div>
+
+        <br>
+
+        <!-- showing all the genres -->
+        <div class="genres">
+            {% for genre in genres %}
+                <a href="{{ url_for('admin.genre', genre_id=genre.id) }}">{{ genre.name }}</a>
+            {% endfor %}
+        </div>
+
+        <!-- the table showing the list of movies -->
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        {% for table_column in table_columns %}
+                            <th style="width: {{ table_column.width }}">{{ table_column.label }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    {% for movie in movies %}
+                        <tr>
+                            <td>{{ movie.id }}</td>
+                            <td>{{ movie.name }}</td>
+                            <td>{{ movie.description }}</td>
+                            <td>{{ movie.imdb_rating }}</td>
+                            <td>{{ movie.rotten_tomatoes_rating }}</td>
+                            <td>{{ movie.metacritic_rating }}</td>
+                            <td>{{ movie.release_date }}</td>
+                            <td>{{ movie.media_location }}</td>
+                            <td>{{ movie.genres }} </td>
+                            <td><a href="{{ url_for('admin.delete_movie', movie_id=movie.id) }}">Delete</a></td>
+                            <td><a href="{{ url_for('admin.edit_movie', movie_id=movie.id, action='update') }}">Update</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
