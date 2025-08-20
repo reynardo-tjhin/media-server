@@ -91,7 +91,7 @@ def genre(genre_id: str):
                            genre=genre,
                            movies=movies,
                            table_columns=table_columns,
-                           style=style)
+                           style=style,)
 
 @bp.route('/delete-movie/<string:movie_id>', methods=["GET", "POST"])
 @admin_required
@@ -258,7 +258,7 @@ def edit_genre():
         ).fetchone()
     
     if (request.method == "POST"):
-        genre_name = request.form['genreName']
+        genre_name = genre['name'] if genre else request.form['genreName']
         genre_description = request.form['genreDescription']
         error = None
 
@@ -276,12 +276,13 @@ def edit_genre():
             ).fetchone()
             if (genre):
                 error = "Genre Name already exists."
+                genre = None
         
         # after validation, no errors
         if (error is None):
             if (request.args['action'] == 'update'):
                 db.execute(
-                    'UPDATE genre SET name = ?, description = ? WHERE id = ?;', (genre_name, genre_description, genre['id'],)
+                    'UPDATE genre SET description = ? WHERE id = ?;', (genre_description, genre['id'],)
                 )
                 db.commit()
             else:
@@ -295,7 +296,8 @@ def edit_genre():
         flash(error)
 
     return render_template("admin/edit_genre.jinja2",
-                           genre=genre,)
+                           genre=genre,
+                           action=request.args['action'],)
 
 # ================================================
 # HELPER FUNCTIONS

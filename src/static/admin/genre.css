@@ -60,6 +60,26 @@ h2 {
     padding-bottom: 5px;
 }
 
+/* Control styling */
+.controls {
+    margin-top: 20px;
+}
+
+.controls a {
+    display: inline-block;
+    background: #3498db;
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.controls a:hover {
+    background: #2980b9;
+}
+
 /* Table container */
 .table-container {
     background: white;

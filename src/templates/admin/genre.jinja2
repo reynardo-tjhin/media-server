@@ -17,8 +17,9 @@
         <div class="header">
             <h1>{{ genre.name | capitalize }}</h1>
             <p>{{ genre.description }}</p>
-            <div class="genre-actions">
-                <a href="{{ url_for('admin.delete_genre', genre_id=genre.id) }}">Delete</a>
+
+            <div class="controls">
+                <a id="deleteGenre" href="#" onclick="confirmDelete('genre', '')">Delete</a>
                 <a href="{{ url_for('admin.edit_genre', genre_id=genre.id, action='update') }}">Edit</a>
             </div>
         </div>
@@ -60,5 +61,21 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function confirmDelete(item) {
+            console.log(item);
+            let isConfirmed = window.confirm("Are you sure you want to delete this item?");
+            if (isConfirmed) {
+                if (item === 'genre') {
+                    document.getElementById('deleteGenre').href = "{{ url_for('admin.delete_genre', genre_id=genre.id) }}";
+                }
+                //if (item === 'movie') {
+                //    document.getElementById('deleteMovie').href = "{{ url_for('admin.delete_movie', movie_id=item_id) }}";
+                //}
+                console.log("Item Deleted!");
+            }
+        }
+    </script>
 </body>
 </html>

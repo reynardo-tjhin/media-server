@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Add Genre</title>
+
+    {# CSS #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/edit_genre.css') }}">
 </head>
 <body>
     <div class="container">
@@ -11,31 +14,63 @@
             <a href="{{ url_for('admin.movies') }}">Movies</a> > Add Genre</span>
         </div>
 
-        <h1>Add Genre</h1>
+        <div class="header">
+            {% if action == 'add' %}
+                <h1>Add a New Genre</h1>
+            {% else %}
+                <h1>Update an Existing Genre</h1>
+            {% endif %}
+            <p>Please fill in the details</p>
+        </div>
 
+        <!-- show error -->
         {% with error = get_flashed_messages() %}
-        <div id="error-messages">
+        <div id="error-message">
             {% if error is defined %}
-                <p>{{ error }}</p>
+                <input disabled type="text" id="error-input" value="{{ error[0] }}">
             {% endif %}
         </div>
         {% endwith %}
 
+        {# Genre form #}
         <form id="genreTable" method="post" novalidate>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
+            {# cannot update genre's name due to requirements #}
             <div class="form-group">
                 <label for="genreName">Genre</label>
-                <input name="genreName" type="text" id="genreName" value="{{ genre.name or '' }}">
+                {% if genre.id %}
+                    <input disabled name="genreName" type="text" id="genreName" value="{{ genre.name }}">
+                {% else %}
+                    <input name="genreName" type="text" id="genreName" required>
+                {% endif %}
             </div>
             
+            {# genre's description #}
             <div class="form-group">
                 <label for="genreDescription">Description</label>
-                <textarea name="genreDescription" id="genreDescription">{{ genre.description or '' }}</textarea>
+                <textarea required name="genreDescription" id="genreDescription">{{ genre.description or '' }}</textarea>
             </div>
 
-            <button type="submit" class="btn btn-success" id="submitBtn">Submit</button>
+            <div class="controls">
+                {% if action == 'add' %}
+                    <a href="{{ url_for('admin.movies') }}" class="button">Cancel</a>
+                    <button type="submit" class="btn btn-success" id="submitBtn">Add Genre</button>
+                {% else %}
+                    <a href="{{ url_for('admin.genre', genre_id=genre.id) }}" class="button">Cancel</a>
+                    <button type="submit" class="btn btn-success" id="submitBtn">Update Genre</button>
+                {% endif %}
+            </div>
         </form>
     </div>
+
+    <script>
+        let err = document.getElementById('error-input');
+        if (err.value === '') {
+            document.getElementById('error-message').style = "display: none;";
+        } else {
+            document.getElementById('error-message').style = "display: block;";
+        }
+    </script>
 </body>
 </html>
