@@ -74,7 +74,7 @@ def genre(genre_id: str):
 
     # get the movies data that have the specific genre
     db = get_db()
-    genre = db.execute('SELECT name, description from genre where id = ?', (genre_id,)).fetchone()
+    genre = db.execute('SELECT * from genre where id = ?', (genre_id,)).fetchone()
     movies = db.execute(
         'SELECT m.* '
         'FROM movie AS m '
@@ -93,7 +93,7 @@ def genre(genre_id: str):
                            table_columns=table_columns,
                            style=style)
 
-@bp.route('/<string:movie_id>/delete', methods=["GET", "POST"])
+@bp.route('/delete-movie/<string:movie_id>', methods=["GET", "POST"])
 @admin_required
 def delete_movie(movie_id: str):
     # requires admin login
@@ -103,6 +103,20 @@ def delete_movie(movie_id: str):
     # delete the movie from database
     db = get_db()
     db.execute('DELETE FROM movie WHERE id = ?', (movie_id,))
+    db.commit()
+
+    return redirect(url_for('admin.movies'))
+
+@bp.route('/delete-genre/<string:genre_id>', methods=["GET", "POST"])
+@admin_required
+def delete_genre(genre_id: str):
+    print(genre_id)
+    # returns a 404 if genre_id does not exist
+    get_genre(genre_id)
+
+    # delete the genre from database
+    db = get_db()
+    db.execute('DELETE FROM genre WHERE id = ?', (genre_id,))
     db.commit()
 
     return redirect(url_for('admin.movies'))
@@ -233,7 +247,55 @@ def edit_movie():
                            action=request.args['action'],
                            movie_genres=movie_genres,)
 
+@bp.route('/edit-genre', methods=["GET", "POST"])
+@admin_required
+def edit_genre():
+    genre = None
+    if (request.args['action'] == 'update'):
+        db = get_db()
+        genre = db.execute(
+            'SELECT * FROM genre WHERE id = ?', (request.args['genre_id'],)
+        ).fetchone()
+    
+    if (request.method == "POST"):
+        genre_name = request.form['genreName']
+        genre_description = request.form['genreDescription']
+        error = None
 
+        # validation not empty
+        if (not genre_name):
+            error = "Genre Name is required."
+        if (not genre_description):
+            error = "Genre Description is required."
+        
+        # check if genre_name already exists in database
+        db = get_db()
+        if (genre_name and request.args['action'] == 'add'):
+            genre = db.execute(
+                'SELECT * FROM genre WHERE name = ?', (genre_name.capitalize(),)
+            ).fetchone()
+            if (genre):
+                error = "Genre Name already exists."
+        
+        # after validation, no errors
+        if (error is None):
+            if (request.args['action'] == 'update'):
+                db.execute(
+                    'UPDATE genre SET name = ?, description = ? WHERE id = ?;', (genre_name, genre_description, genre['id'],)
+                )
+                db.commit()
+            else:
+                genre_id = str(uuid4())
+                db.execute(
+                    'INSERT INTO genre (id, name, description) VALUES (?, ?, ?)', (genre_id, genre_name.capitalize(), genre_description)
+                )
+                db.commit()
+            return redirect(url_for('admin.movies'))
+        
+        flash(error)
+
+    return render_template("admin/edit_genre.jinja2",
+                           genre=genre,)
 
 # ================================================
 # HELPER FUNCTIONS
@@ -250,3 +312,16 @@ def get_movie(movie_id: str) -> Any:
         abort(404, f"Movie ID {movie_id} does not exist.")
 
     return movie
+
+def get_genre(genre_id: str) -> Any:
+    """
+    Check if genre_id exists. If not exists, return with 404.
+    """
+    genre = get_db().execute(
+        'SELECT * FROM genre WHERE id = ?', (genre_id,)
+    ).fetchone()
+
+    if genre is None:
+        abort(404, f"Genre ID {genre_id} does not exist.")
+    
+    return genre

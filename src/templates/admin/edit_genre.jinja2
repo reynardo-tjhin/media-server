@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Add Genre</title>
+</head>
+<body>
+    <div class="container">
+        <div class="breadcrumbs">
+            <a href="{{ url_for('admin.movies') }}">Movies</a> > Add Genre</span>
+        </div>
+
+        <h1>Add Genre</h1>
+
+        {% with error = get_flashed_messages() %}
+        <div id="error-messages">
+            {% if error is defined %}
+                <p>{{ error }}</p>
+            {% endif %}
+        </div>
+        {% endwith %}
+
+        <form id="genreTable" method="post" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="form-group">
+                <label for="genreName">Genre</label>
+                <input name="genreName" type="text" id="genreName" value="{{ genre.name or '' }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="genreDescription">Description</label>
+                <textarea name="genreDescription" id="genreDescription">{{ genre.description or '' }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success" id="submitBtn">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
