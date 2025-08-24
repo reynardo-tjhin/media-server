@@ -18,6 +18,22 @@ body {
     padding: 20px;
 }
 
+/* Breadcrumbs styling */
+.breadcrumbs {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+.breadcrumbs a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+    text-decoration: underline;
+}
+
 /* Header styling */
 .header {
     background: white;
@@ -169,6 +185,21 @@ body {
 .table td:nth-child(8) {
     font-size: 12px;
     word-break: break-all;
+}
+
+/* Delete link specific styling */
+#deleteMovie {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+    background: none;
+    border: none;
+    font-size: 17px;
+}
+
+#deleteMovie:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 /* Responsive design */

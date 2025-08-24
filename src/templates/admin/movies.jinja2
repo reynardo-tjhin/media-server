@@ -10,6 +10,10 @@
 </head>
 <body>
     <div class="container">
+        <div class="breadcrumbs">
+            <a href="{{ url_for('admin.home') }}">Home (Admin)</a> > <span>Movies Dashboard</span>
+        </div>
+
         <div class="header">
             <h1>Admin's Movie Dashboard</h1>
             <p>Manage movies</p>
@@ -49,7 +53,12 @@
                             <td>{{ movie.release_date }}</td>
                             <td>{{ movie.media_location }}</td>
                             <td>{{ movie.genres }} </td>
-                            <td><a href="{{ url_for('admin.delete_movie', movie_id=movie.id) }}">Delete</a></td>
+                            <td>
+                                <form method="post" action="{{ url_for('admin.delete_movie', movie_id=movie.id) }}" onsubmit="return confirm('Do you want to delete this movie?')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button id="deleteMovie" type="submit">Delete</button>
+                                </form>
+                            </td>
                             <td><a href="{{ url_for('admin.edit_movie', movie_id=movie.id, action='update') }}">Update</a></td>
                         </tr>
                     {% endfor %}
