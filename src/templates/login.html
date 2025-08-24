@@ -20,6 +20,8 @@
         </div>
 
         <form id="loginForm" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="username" id="username" name="username" placeholder="Enter your username" required>
@@ -30,25 +32,8 @@
                 <input type="password" id="password" name="password" placeholder="Enter your password" required>
             </div>
 
-            <!-- <div class="forgot-password">
-                <a href="#" onclick="showForgotPassword()">Forgot your password?</a>
-            </div> -->
-
             <button type="submit" class="login-btn">Sign In</button>
         </form>
-
-        <!-- <div class="divider">
-            <span>or continue with</span>
-        </div>
-
-        <div class="social-login">
-            <button class="social-btn" onclick="socialLogin('google')">
-                <span>Google</span>
-            </button>
-            <button class="social-btn" onclick="socialLogin('github')">
-                <span>GitHub</span>
-            </button>
-        </div> -->
 
         <div class="signup-link">
             Don't have an account? <a href="#" onclick="showSignup()">Sign up here</a>
@@ -74,29 +59,6 @@
 
         // Create particles periodically
         setInterval(createParticle, 300);
-
-        // Form submission handler
-        // document.getElementById('loginForm').addEventListener('submit', function(e) {
-        //     e.preventDefault();
-            
-        //     const email = document.getElementById('email').value;
-        //     const password = document.getElementById('password').value;
-            
-        //     if (email && password) {
-        //         // Add loading state
-        //         const btn = document.querySelector('.login-btn');
-        //         const originalText = btn.textContent;
-        //         btn.textContent = 'Signing In...';
-        //         btn.disabled = true;
-                
-        //         // Simulate login process
-        //         setTimeout(() => {
-        //             alert('Login successful! (This is a demo)');
-        //             btn.textContent = originalText;
-        //             btn.disabled = false;
-        //         }, 2000);
-        //     }
-        // });
 
         // Input focus animations
         const inputs = document.querySelectorAll('input');

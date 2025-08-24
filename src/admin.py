@@ -1,7 +1,7 @@
 import re
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, redirect, render_template, request, url_for
 )
 from werkzeug.exceptions import abort
 from uuid import uuid4
@@ -93,7 +93,7 @@ def genre(genre_id: str):
                            table_columns=table_columns,
                            style=style,)
 
-@bp.route('/delete-movie/<string:movie_id>', methods=["GET", "POST"])
+@bp.route('/delete-movie/<string:movie_id>', methods=["POST"])
 @admin_required
 def delete_movie(movie_id: str):
     # requires admin login
@@ -107,10 +107,9 @@ def delete_movie(movie_id: str):
 
     return redirect(url_for('admin.movies'))
 
-@bp.route('/delete-genre/<string:genre_id>', methods=["GET", "POST"])
+@bp.route('/delete-genre/<string:genre_id>', methods=["POST"])
 @admin_required
 def delete_genre(genre_id: str):
-    print(genre_id)
     # returns a 404 if genre_id does not exist
     get_genre(genre_id)
 

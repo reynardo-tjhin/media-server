@@ -63,8 +63,11 @@ h2 {
 /* Control styling */
 .controls {
     margin-top: 20px;
+    display: flex;
+    gap: 10px;
 }
 
+/* for editing the genre details */
 .controls a {
     display: inline-block;
     background: #3498db;
@@ -74,10 +77,35 @@ h2 {
     border-radius: 5px;
     font-weight: bold;
     transition: background-color 0.3s;
+    width: 150px;
+    height: 50px;
+    text-align: center;
+    font-size: 18px;
 }
 
 .controls a:hover {
     background: #2980b9;
+}
+
+/* for deleting the genre */
+#deleteGenre {
+    background: #3498db;
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    font-size: 18px;
+    text-align: center;
+    width: 150px;
+    height: 50px;
+}
+
+#deleteGenre:hover {
+    background: #2980b9;
+    cursor: pointer;
 }
 
 /* Table container */
@@ -139,13 +167,18 @@ h2 {
 }
 
 /* Delete link specific styling */
-.table a[href*="delete_movie"] {
-    color: #e74c3c;
-    font-weight: bold;
+#deleteMovie {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+    background: none;
+    border: none;
+    font-size: 17px;
 }
 
-.table a[href*="delete_movie"]:hover {
-    color: #c0392b;
+#deleteMovie:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 /* Update link specific styling */

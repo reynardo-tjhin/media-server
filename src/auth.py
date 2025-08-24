@@ -50,7 +50,7 @@ def login():
             session.clear()
             session['user_id'] = user['id']
             session['is_admin'] = False
-            return redirect(url_for('home'))
+            return redirect(url_for('home.home'))
         
         flash(error)
 
@@ -82,7 +82,7 @@ def admin_required(view):
     """
     @functools.wraps(view)
     def wrapped_view(**kwargs):
-        if g.user is None and not session.get('is_admin'):
+        if g.user is None or not session.get('is_admin'):
             return redirect(url_for('auth.login'))
         return view(**kwargs)
     return wrapped_view
