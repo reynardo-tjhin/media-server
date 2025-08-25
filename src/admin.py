@@ -20,6 +20,14 @@ def home():
 @bp.route("/movies")
 @admin_required
 def movies():
+    search_movie_by_name = ''
+    if (request.args.get('search_movie_by_name')):
+        search_movie_by_name = request.args['search_movie_by_name']
+
+    sort_by = 'Name'
+    if (request.args.get('sort_by')):
+        sort_by = request.args['sort_by']
+
     # define columns to show and its style
     table_columns = [
         {'key': 'id', 'label': 'ID', 'width': '50px'},
@@ -34,18 +42,40 @@ def movies():
         {'key': 'delete', 'label': 'Delete', 'width': '80px'},
         {'key': 'update', 'label': 'Update', 'width': '80px'},
     ]
+
+    # a dictionary with sort-bys
+    sort_by_dict = {
+        'Name': 'm.name',
+        'IMDB': 'm.imdb_rating',
+        'RT': 'm.rotten_tomatoes_rating',
+        'Metacritic': 'metacritic_rating',
+        'Release Date': 'release_date',
+    }
     
     # get all the movies data
     db = get_db()
-    movies = db.execute(
-        'SELECT '
-        '   m.*, '
-        '   GROUP_CONCAT(g.name, ", ") AS genres '
-        'FROM movie AS m '
-        'LEFT OUTER JOIN movie_genre AS mg ON m.id = mg.movie_id '
-        'LEFT OUTER JOIN genre AS g ON g.id = mg.genre_id '
-        'GROUP BY m.id;'
-    ).fetchall()
+    if (search_movie_by_name or sort_by):
+        movies = db.execute(
+            'SELECT '
+            '   m.*, '
+            '   COALESCE(GROUP_CONCAT(g.name, ", "), "No genres") AS genres '
+            'FROM movie AS m '
+            'LEFT OUTER JOIN movie_genre AS mg ON m.id = mg.movie_id '
+            'LEFT OUTER JOIN genre AS g ON g.id = mg.genre_id '
+            'WHERE m.name LIKE ? '
+            'GROUP BY m.id '
+            f'ORDER BY {sort_by_dict[sort_by]};', ('%'+search_movie_by_name+'%',)
+        ).fetchall()
+    else:
+        movies = db.execute(
+            'SELECT '
+            '   m.*, '
+            '   GROUP_CONCAT(g.name, ", ") AS genres '
+            'FROM movie AS m '
+            'LEFT OUTER JOIN movie_genre AS mg ON m.id = mg.movie_id '
+            'LEFT OUTER JOIN genre AS g ON g.id = mg.genre_id '
+            'GROUP BY m.id;'
+        ).fetchall()
 
     # get all the genres data - not going to be included in movie_genres for readability
     genres = db.execute('SELECT id, name FROM genre').fetchall()

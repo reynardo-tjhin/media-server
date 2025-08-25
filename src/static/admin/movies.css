@@ -55,6 +55,8 @@ body {
 /* Control styling */
 .controls {
     margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
 }
 
 .controls a {
@@ -72,6 +74,26 @@ body {
     background: #2980b9;
 }
 
+#search, #searchButton {
+    height: 50px;
+    font-size: 18px;
+    border-radius: 5px;
+}
+
+#search {
+    width: 450px;
+}
+
+#searchButton {
+    width: 50px;
+}
+
+#searchButton:hover {
+    cursor: pointer;
+    background-color: gainsboro;
+}
+
+/* Genres styling */
 .genres {
     background: white;
     padding: 15px;

@@ -20,6 +20,17 @@
         </div>
 
         <div class="controls">
+            <form method="get">
+                <input id="search" name="search_movie_by_name" placeholder="Search by movie name, sort by on the right">
+                <select name="sort_by">
+                    <option selected>Name</option>
+                    <option>IMDB</option>
+                    <option>RT</option>
+                    <option>Metacritic</option>
+                    <option>Release Date</option>
+                </select>
+                <button id="searchButton" type="submit">🔎︎</button>
+            </form>
             <a href="{{ url_for('admin.edit_movie', action='add') }}">Add New Movie to Database</a>
             <a href="{{ url_for('admin.edit_genre', action='add') }}">Add New Genre to Database</a>
         </div>
