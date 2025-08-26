@@ -268,7 +268,7 @@ INSERT INTO movie VALUES(
 	7.9, -- IMDb
 	88,  -- Rotten Tomatoes
 	75,  -- metacritic
-	'17 December 1996', -- release date
+	'1996-12-17', -- release date
 	'/home/reynardo-tjhin/media/movies/Titanic.mp4'
 );
 
@@ -280,6 +280,18 @@ INSERT INTO movie VALUES(
 	7.4, -- IMDb
 	93,  -- Rotten Tomatoes
 	79,  -- metacritic
-	'25 October 2024', -- release date
+	'2024-10-25', -- release date
 	'/home/reynardo-tjhin/media/movies/Conclave.mp4'
+);
+
+-- create a movie data
+INSERT INTO movie VALUES(
+	'c9ae3de0-d0e3-440c-b66d-d17d3b524ff4',
+	'Silent Voice',
+	'After bullying Shoko, a girl with hearing impairment, Shoya is consumed with guilt. Soon, several incidents at the school make things worse and he sets out to make amends.',
+	8.1, -- IMDb
+	95,  -- Rotten Tomatoes
+	78,  -- metacritic
+	'2017-04-06', -- release date
+	'/home/reynardo-tjhin/media/movies/Silent Voice.mp4'
 );

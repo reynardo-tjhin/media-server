@@ -20,19 +20,29 @@
         </div>
 
         <div class="controls">
-            <form method="get">
-                <input id="search" name="search_movie_by_name" placeholder="Search by movie name, sort by on the right">
-                <select name="sort_by">
-                    <option selected>Name</option>
-                    <option>IMDB</option>
-                    <option>RT</option>
-                    <option>Metacritic</option>
-                    <option>Release Date</option>
-                </select>
-                <button id="searchButton" type="submit">🔎︎</button>
-            </form>
-            <a href="{{ url_for('admin.edit_movie', action='add') }}">Add New Movie to Database</a>
-            <a href="{{ url_for('admin.edit_genre', action='add') }}">Add New Genre to Database</a>
+            <div class="controls-row">
+                <form method="get" class="search-form">
+                    <div class="search-input-group">
+                        <input id="search" name="search_movie_by_name" placeholder="Search by movie name...">
+                        <button class="search-clear" type="button" onclick="document.getElementById('search').value=''; this.closest('form').submit();" title="Clear search">✕</button>
+                        <button id="searchButton" type="submit">🔎</button>
+                    </div>
+                    
+                    <select id="sort" name="sort_by">
+                        <option value="None">Sort by None</option>
+                        <option value="Name">Sort by Name</option>
+                        <option value="IMDB">Sort by IMDB</option>
+                        <option value="RT">Sort by RT</option>
+                        <option value="Metacritic">Sort by Metacritic</option>
+                        <option value="Release Date">Sort by Release Date</option>
+                    </select>
+                </form>
+
+                <div class="action-buttons">
+                    <a href="{{ url_for('admin.edit_movie', action='add') }}">+ Add Movie</a>
+                    <a href="{{ url_for('admin.edit_genre', action='add') }}">+ Add Genre</a>
+                </div>
+            </div>
         </div>
 
         <!-- showing all the genres -->
@@ -77,5 +87,12 @@
             </table>
         </div>
     </div>
+
+    <script>
+        // Auto-submit on sort change for better UX
+        document.getElementById('sort').addEventListener('change', function() {
+            this.closest('form').submit();
+        });
+    </script>
 </body>
 </html>

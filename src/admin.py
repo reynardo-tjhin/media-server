@@ -45,6 +45,7 @@ def movies():
 
     # a dictionary with sort-bys
     sort_by_dict = {
+        'None': 'm.name',
         'Name': 'm.name',
         'IMDB': 'm.imdb_rating',
         'RT': 'm.rotten_tomatoes_rating',
@@ -54,28 +55,17 @@ def movies():
     
     # get all the movies data
     db = get_db()
-    if (search_movie_by_name or sort_by):
-        movies = db.execute(
-            'SELECT '
-            '   m.*, '
-            '   COALESCE(GROUP_CONCAT(g.name, ", "), "No genres") AS genres '
-            'FROM movie AS m '
-            'LEFT OUTER JOIN movie_genre AS mg ON m.id = mg.movie_id '
-            'LEFT OUTER JOIN genre AS g ON g.id = mg.genre_id '
-            'WHERE m.name LIKE ? '
-            'GROUP BY m.id '
-            f'ORDER BY {sort_by_dict[sort_by]};', ('%'+search_movie_by_name+'%',)
-        ).fetchall()
-    else:
-        movies = db.execute(
-            'SELECT '
-            '   m.*, '
-            '   GROUP_CONCAT(g.name, ", ") AS genres '
-            'FROM movie AS m '
-            'LEFT OUTER JOIN movie_genre AS mg ON m.id = mg.movie_id '
-            'LEFT OUTER JOIN genre AS g ON g.id = mg.genre_id '
-            'GROUP BY m.id;'
-        ).fetchall()
+    movies = db.execute(
+        'SELECT '
+        '   m.*, '
+        '   COALESCE(GROUP_CONCAT(g.name, ", "), "No genres") AS genres '
+        'FROM movie AS m '
+        'LEFT OUTER JOIN movie_genre AS mg ON m.id = mg.movie_id '
+        'LEFT OUTER JOIN genre AS g ON g.id = mg.genre_id '
+        'WHERE m.name LIKE ? '
+        'GROUP BY m.id '
+        f'ORDER BY {sort_by_dict[sort_by]};', ('%'+search_movie_by_name+'%',)
+    ).fetchall()
 
     # get all the genres data - not going to be included in movie_genres for readability
     genres = db.execute('SELECT id, name FROM genre').fetchall()
