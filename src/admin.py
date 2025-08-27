@@ -15,7 +15,12 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 @bp.route("/")
 @admin_required
 def home():
-    return render_template("admin/home.jinja2")
+    db = get_db()
+    movies_count = db.execute('SELECT COUNT(DISTINCT m.id) FROM movie AS m;').fetchone()
+    users_count = db.execute('SELECT COUNT(DISTINCT u.id) FROM user AS u;').fetchone()
+    return render_template("admin/home.jinja2",
+                           movies_count=movies_count[0],
+                           users_count=users_count[0],)
 
 @bp.route("/movies")
 @admin_required
