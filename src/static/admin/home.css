@@ -1,3 +1,31 @@
+/* CSS variables for theme colors */
+:root {
+    --bg-color: #f8f9fa;
+    --text-color: #333;
+    --header-bg: #34495e;
+    --card-bg: #34495e;
+    --card-text: white;
+    --card-text-secondary: rgba(255, 255, 255, 0.8);
+    --card-border: rgba(255, 255, 255, 0.3);
+    --card-stats-border: #ecf0f1;
+    --welcome-text: #333;
+    --welcome-text-secondary: #666;
+}
+
+/* Dark theme variables */
+[data-theme="dark"] {
+    --bg-color: #0d1117;
+    --text-color: #e6edf3;
+    --header-bg: #161b22;
+    --card-bg: #21262d;
+    --card-text: #e6edf3;
+    --card-text-secondary: #9198a1;
+    --card-border: rgba(240, 246, 252, 0.1);
+    --card-stats-border: #30363d;
+    --welcome-text: #e6edf3;
+    --welcome-text-secondary: #9198a1;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -6,17 +34,16 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
-    /* background: #34495e; */
+    background: var(--bg-color);
     min-height: 100vh;
-    color: #333;
+    color: var(--text-color);
 }
 
 /* Header */
 .header {
-    background: #34495e;
+    background: var(--header-bg);
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid var(--card-border);
     padding: 20px 0;
     margin-bottom: 40px;
 }
@@ -31,7 +58,7 @@ body {
 }
 
 .header h1 {
-    color: white;
+    color: var(--card-text);
     font-size: 2rem;
     font-weight: 300;
 }
@@ -40,21 +67,38 @@ body {
     display: flex;
     align-items: center;
     gap: 15px;
-    color: white;
+    color: var(--card-text);
 }
 
 .logout-btn {
     background: rgba(255, 255, 255, 0.2);
-    color: white;
+    color: var(--card-text);
     padding: 8px 16px;
     text-decoration: none;
     border-radius: 20px;
     font-size: 14px;
     transition: all 0.3s;
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid var(--card-border);
 }
 
 .logout-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--card-text);
+    border: 1px solid var(--card-border);
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover {
     background: rgba(255, 255, 255, 0.3);
     transform: translateY(-1px);
 }
@@ -72,14 +116,14 @@ body {
 }
 
 .welcome-section h2 {
-    /* color: white; */
+    color: var(--welcome-text);
     font-size: 2.5rem;
     margin-bottom: 10px;
     font-weight: 300;
 }
 
 .welcome-section p {
-    /* color: rgba(255, 255, 255, 0.8); */
+    color: var(--welcome-text-secondary);
     font-size: 1.1rem;
     max-width: 600px;
     margin: 0 auto;
@@ -95,15 +139,15 @@ body {
 
 /* Dashboard card styling */
 .dashboard-card {
-    background: #34495e;
+    background: var(--card-bg);
     border-radius: 15px;
     padding: 30px;
     text-decoration: none;
-    color: white;
+    color: var(--card-text);
     transition: all 0.3s ease;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--card-border);
     position: relative;
     overflow: hidden;
 }
@@ -132,14 +176,15 @@ body {
 .card-content h3 {
     font-size: 1.4rem;
     margin-bottom: 10px;
-    color: rgba(255, 255, 255, 1);
+    color: var(--card-text);
 }
 
 .card-content p {
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--card-text-secondary);
     line-height: 1.5;
     padding-top: 15px;
     margin-bottom: 15px;
+    transition: color 0.3s ease;
 }
 
 .card-stats {
@@ -148,7 +193,8 @@ body {
     padding-top: 15px;
     border-top: 1px solid #ecf0f1;
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--card-text-secondary);
+    transition: border-color 0.3s ease, color 0.3s ease;
 }
 
 /* Loading animation */
@@ -163,4 +209,17 @@ body {
 @keyframes pulse {
     0%, 100% { opacity: 0.4; }
     50% { opacity: 0.8; }
+}
+
+/* Dark theme specific adjustments */
+[data-theme="dark"] .dashboard-card {
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .dashboard-card:hover {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .loading-skeleton {
+    background: rgba(255, 255, 255, 0.05);
 }

@@ -13,6 +13,7 @@
         <div class="header-content">
             <h1>Admin Dashboard</h1>
             <div class="user-info">
+                <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
                 <span>Admin User</span>
                 <a class="logout-btn" href="{{ url_for('auth.logout') }}">Logout</a>
             </div>
@@ -74,5 +75,38 @@
             </a>
         </section>
     </div>
+
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const button = document.querySelector('.theme-toggle');
+            const currentTheme = html.getAttribute('data-theme');
+
+            console.log(currentTheme);
+
+            if (currentTheme === 'dark') {
+                html.removeAttribute('data-theme'); // remove to use the normal one, i.e. "light"
+                button.textContent = '🌙 Dark';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark'); // set the attribute to "dark"
+                button.textContent = '☀️ Light';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const button = document.querySelector('.theme-toggle');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                button.textContent = '☀️ Light';
+            } else {
+                button.textContent = '🌙 Dark';
+            }
+        });
+    </script>
 </body>
 </html>
