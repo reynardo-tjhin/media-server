@@ -1,3 +1,90 @@
+/* CSS variables for theme colors */
+[data-theme='light'] {
+    --bg-color: #f5f5f5;
+    --text-color: #333;
+    --breadcrumbs-text-color: #7f8c8d;
+    --breadcrumbs-link-text-color: #3498db;
+    --theme-toggle-background: white;
+    --theme-toggle-text-color: black;
+    --theme-toggle-border: none;
+    --header-background: white;
+    --header-box-shadow: rgba(0,0,0,0.1);
+    --header-h1-text-color: #2c3e50;
+    --header-p-text-color: #7f8c8d;
+    --controls-background: white;
+    --search-input-group-background: #f8f9fa;
+    --search-input-group-border: #ddd;
+    --search-input-group-focus-border-color: #3498db;
+    --search-placeholder-text-color: #7f8c8d;
+    --search-button-background: #a0cfee;
+    --search-button-text-color: white;
+    --search-button-hover-background: #2980b9;
+    --sort-background: white;
+    --sort-focus-border-color: #3498db;
+    --action-button-add-movie-background: #27ae60;
+    --action-button-add-movie-text-color: #white;
+    --action-button-add-movie-hover-background: #229954;
+    --action-button-add-genre-background: #8e44ad;
+    --action-button-add-genre-background-hover: #7d3c98;
+    --search-clear-button-text-color: #7f8c8d;
+    --search-clear-button-background-hover: #ecf0f1;
+    --genres-background: white;
+    --genres-a-background: #ecf0f1;
+    --genres-a-text-color: #2c3e50;
+    --genres-a-hover-background: #bdc3c7;
+    --table-background: white;
+    --table-header-background: #34495e;
+    --table-header-text-color: white;
+    --table-body-background-hover: #f8f9fa;
+    --table-body-even-row-background: #fafafa;
+    --table-body-even-row-background-hover: #f0f0f0;
+    --table-a-text-color: #3498db;
+    --table-delete-movie-text-color: #3498db;
+}
+
+[data-theme="dark"] {
+    --bg-color: #0d1117;
+    --text-color: white;
+    --breadcrumbs-text-color: #7f8c8d;
+    --breadcrumbs-link-text-color: #3498db;
+    --theme-toggle-background: rgba(255, 255, 255, 0.2);
+    --theme-toggle-text-color: rgba(255, 255, 255, 0.8);
+    --theme-toggle-border: none;
+    --header-background: #21262d;
+    --header-box-shadow: rgba(255, 255, 255, 0.1);
+    --header-h1-text-color: #e6edf3;
+    --header-p-text-color: #9198a1;
+    --controls-background: #21262d;
+    --search-input-group-background: rgba(255, 255, 255, 0.75);
+    --search-input-group-border: none;
+    --search-input-group-focus-border-color: rgb(129, 224, 255);
+    --search-placeholder-text-color: #9198a1;
+    --search-button-background: rgba(0, 0, 255, 0.3);
+    --search-button-text-color: black;
+    --search-button-hover-background: rgba(0, 0, 255, 0.2);
+    --sort-background: rgba(255, 255, 255, 0.75);
+    --sort-focus-border-color: rgb(129, 224, 255);
+    --action-button-add-movie-background: #27ae60;
+    --action-button-add-movie-text-color: #white;
+    --action-button-add-movie-hover-background: #229954;
+    --action-button-add-genre-background: #8e44ad;
+    --action-button-add-genre-background-hover: #7d3c98;
+    --search-clear-button-text-color: #7f8c8d;
+    --search-clear-button-background-hover: #ecf0f1;
+    --genres-background: #21262d;
+    --genres-a-background: rgba(255, 255, 255, 0.4);
+    --genres-a-text-color: rgba(255, 255, 255, 0.8);
+    --genres-a-hover-background: #bdc3c7;
+    --table-background: #21262d;
+    --table-header-background: rgba(255, 255, 255, 0.4);
+    --table-header-text-color: rgba(255, 255, 255, 0.8);
+    --table-body-background-hover: #1a4160;
+    --table-body-even-row-background: #333333;
+    --table-body-even-row-background-hover: #6f2222;
+    --table-a-text-color: #3498db;
+    --table-delete-movie-text-color: #3498db;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -7,8 +94,8 @@
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f5f5f5;
+    color: var(--text-color);
+    background-color: var(--bg-color);
     padding-top: 20px;
 }
 
@@ -20,13 +107,15 @@ body {
 
 /* Breadcrumbs styling */
 .breadcrumbs {
+    display: flex;
+    justify-content: space-between;
     margin-bottom: 15px;
     font-size: 14px;
-    color: #7f8c8d;
+    color: var(--breadcrumbs-text-color);
 }
 
 .breadcrumbs a {
-    color: #3498db;
+    color: var(--breadcrumbs-link-text-color);
     text-decoration: none;
 }
 
@@ -34,27 +123,45 @@ body {
     text-decoration: underline;
 }
 
+/* Toggle theme */
+.theme-toggle {
+    background: var(--theme-toggle-background);
+    color: var(--theme-toggle-text-color);
+    border: 1px solid var(--theme-toggle-border);
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+    box-shadow: 0 2px 5px var(--header-box-shadow);
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
 /* Header styling */
 .header {
-    background: white;
+    background: var(--header-background);
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px var(--header-box-shadow);
 }
 
 .header h1 {
-    color: #2c3e50;
+    color: var(--header-h1-text-color);
     margin-bottom: 5px;
 }
 
 .header p {
-    color: #7f8c8d;
+    color: var(--header-p-text-color);
 }
 
 /* Improved Control styling */
 .controls {
-    background: white;
+    background: var(--controls-background);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -81,8 +188,8 @@ body {
 .search-input-group {
     display: flex;
     align-items: center;
-    background: #f8f9fa;
-    border: 2px solid #ddd;
+    background: var(--search-input-group-background);
+    border: 2px solid var(--search-input-group-border);
     border-radius: 6px;
     overflow: hidden;
     transition: border-color 0.3s;
@@ -90,7 +197,7 @@ body {
 }
 
 .search-input-group:focus-within {
-    border-color: #3498db;
+    border-color: var(--search-input-group-focus-border-color);
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
@@ -105,15 +212,15 @@ body {
 }
 
 #search::placeholder {
-    color: #7f8c8d;
+    color: var(--search-placeholder-text-color);
 }
 
 #searchButton {
     height: 48px;
     width: 48px;
     border: none;
-    background: #a0cfee;
-    color: white;
+    background: var(--search-button-background);
+    color: var(--search-button-text-color);
     font-size: 18px;
     cursor: pointer;
     transition: background-color 0.3s;
@@ -123,7 +230,7 @@ body {
 }
 
 #searchButton:hover {
-    background: #2980b9;
+    background: var(--search-button-hover-background);
 }
 
 #sort {
@@ -132,7 +239,7 @@ body {
     font-size: 16px;
     border: 2px solid #ddd;
     border-radius: 6px;
-    background: white;
+    background: var(--sort-background);
     padding: 0 12px;
     cursor: pointer;
     transition: border-color 0.3s;
@@ -140,7 +247,7 @@ body {
 
 #sort:hover,
 #sort:focus {
-    border-color: #3498db;
+    border-color: var(--sort-focus-border-color);
     outline: none;
 }
 
@@ -153,8 +260,8 @@ body {
 
 .action-buttons a {
     display: inline-block;
-    background: #27ae60;
-    color: white;
+    background: var(--action-button-add-movie-background);
+    color: var(--action-button-add-movie-text-color);
     padding: 12px 18px;
     text-decoration: none;
     border-radius: 6px;
@@ -165,7 +272,7 @@ body {
 }
 
 .action-buttons a:hover {
-    background: #229954;
+    background: var(--action-button-add-movie-hover-background);
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
@@ -182,7 +289,7 @@ body {
 .search-clear {
     background: none;
     border: none;
-    color: #7f8c8d;
+    color: var(--search-clear-button-text-color);
     cursor: pointer;
     padding: 5px;
     margin-left: 5px;
@@ -191,12 +298,12 @@ body {
 }
 
 .search-clear:hover {
-    background: #ecf0f1;
+    background: var(--search-clear-button-background-hover);
 }
 
 /* Genres styling */
 .genres {
-    background: white;
+    background: var(--genres-background);
     padding: 15px;
     margin-bottom: 20px;
     border-radius: 5px;
@@ -205,8 +312,8 @@ body {
 
 .genres a {
     display: inline-block;
-    background: #ecf0f1;
-    color: #2c3e50;
+    background: var(--genres-a-background);
+    color: var(--genres-a-text-color);
     padding: 8px 15px;
     margin: 5px 5px 5px 0;
     text-decoration: none;
@@ -216,12 +323,12 @@ body {
 }
 
 .genres a:hover {
-    background: #bdc3c7;
+    background: var(--genres-a-hover-background);
 }
 
 /* Table container */
 .table-container {
-    background: white;
+    background: var(--table-background);
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     overflow-x: auto;
@@ -235,8 +342,8 @@ body {
 }
 
 .table thead {
-    background: #34495e;
-    color: white;
+    background: var(--table-header-background);
+    color: var(--table-header-text-color);
 }
 
 .table th,
@@ -255,20 +362,20 @@ body {
 }
 
 .table tbody tr:hover {
-    background-color: #f8f9fa;
+    background-color: var(--table-body-background-hover);
 }
 
 .table tbody tr:nth-child(even) {
-    background-color: #fafafa;
+    background-color: var(--table-body-even-row-background);
 }
 
 .table tbody tr:nth-child(even):hover {
-    background-color: #f0f0f0;
+    background-color: var(--table-body-even-row-background-hover);
 }
 
 /* Action links styling */
 .table a {
-    color: #3498db;
+    color: var(--table-a-text-color);
     text-decoration: none;
     font-weight: 500;
 }
@@ -312,7 +419,7 @@ body {
 
 /* Delete link specific styling */
 #deleteMovie {
-    color: #3498db;
+    color: var(--table-delete-movie-text-color);
     text-decoration: none;
     font-weight: 500;
     background: none;

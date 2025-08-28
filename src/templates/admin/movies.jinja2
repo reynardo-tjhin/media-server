@@ -11,7 +11,10 @@
 <body>
     <div class="container">
         <div class="breadcrumbs">
-            <a href="{{ url_for('admin.home') }}">Home (Admin)</a> > <span>Movies Dashboard</span>
+            <div class="navigation">
+                <a href="{{ url_for('admin.home') }}">Home (Admin)</a> > <span>Movies Dashboard</span>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
         </div>
 
         <div class="header">
@@ -92,6 +95,43 @@
         // Auto-submit on sort change for better UX
         document.getElementById('sort').addEventListener('change', function() {
             this.closest('form').submit();
+        });
+
+        // Change theme
+        function toggleTheme() {
+            const html = document.documentElement;
+            const dataTheme = html.getAttribute('data-theme'); // to change the CSS attributes
+            const button = document.querySelector('.theme-toggle'); // get the element with the class 'theme-toggle'
+
+            console.log('current data-theme: ' + dataTheme);
+            console.log('current theme from local storage: ' + localStorage.getItem('theme'));
+
+            if (dataTheme === 'dark') {
+                // current theme is 'dark'
+                // the button will show 'light'
+                // change the button back to 'dark'
+                button.textContent = '🌙 Dark';
+                html.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                // current theme is 'light'
+                // the button will show 'dark'
+                // change the button back to 'light'
+                button.textContent = '☀️ Light';
+                html.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.theme-toggle').textContent = '☀️ Light';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                document.querySelector('.theme-toggle').textContent = '🌙 Dark';
+            }
         });
     </script>
 </body>
