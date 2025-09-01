@@ -1,4 +1,30 @@
- * {
+[data-theme='light'] {
+    --background: #f5f5f5;
+    --text-color: #333;
+    --container-background: white;
+    --toggle-theme-background: rgba(0, 0, 0, 0.1);
+    --toggle-theme-text-color: black;
+    --toggle-theme-border: rgba(255, 255, 255, 0.3);
+    --toggle-theme-hover-background: rgba(0, 0, 0, 0.3);
+    --header-background: #2c3e50;
+    --form-group-label-text-color: #2c3e50;
+    --controls-border-top-color: #333;
+}
+
+[data-theme='dark'] {
+    --background: #0d1117;
+    --text-color: white;
+    --container-background: #21262d;
+    --toggle-theme-background: rgba(255, 255, 255, 0.3);
+    --toggle-theme-text-color: white;
+    --toggle-theme-border: rgba(255, 255, 255, 0.3);
+    --toggle-theme-hover-background: grey;
+    --header-background: rgba(255, 255, 255, 0.4);
+    --form-group-label-text-color: white;
+    --controls-border-top-color: #eee;
+}
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -7,15 +33,15 @@
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f5f5f5;
+    color: var(--text-color);
+    background-color: var(--background);
     padding: 20px;
 }
 
 .container {
     max-width: 1000px;
     margin: 0 auto;
-    background: white;
+    background: var(--container-background);
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     overflow: hidden;
@@ -23,6 +49,8 @@ body {
 
 /* Breadcrumbs styling */
 .breadcrumbs {
+    display: flex;
+    justify-content: space-between;
     margin-left: 30px;
     margin-bottom: 15px;
     margin-top: 15px;
@@ -39,8 +67,26 @@ body {
     text-decoration: underline;
 }
 
+/* Theme toggle button */
+.toggle-theme {
+    background: var(--toggle-theme-background);
+    color: var(--toggle-theme-text-color);
+    border: 1px solid var(--theme-toggle-border);
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.toggle-theme:hover {
+    background: var(--toggle-theme-hover-background);
+    transform: translateY(-1px);
+}
+
+/* Header */
 .header {
-    background: #2c3e50;
+    background: var(--header-background);
     color: white;
     padding: 20px;
     text-align: center;
@@ -87,7 +133,7 @@ form {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
-    color: #2c3e50;
+    color: var(--form-group-label-text-color);
 }
 
 .form-group input[type="text"],
@@ -124,44 +170,6 @@ form {
     border-color: #e74c3c;
 }
 
-/* Genre checkboxes styling */
-.genre-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
-    margin-top: 5px;
-}
-
-.checkbox-group {
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-}
-
-.checkbox-group:hover {
-    background-color: #f8f9fa;
-}
-
-.checkbox-group input[type="checkbox"] {
-    margin-right: 8px;
-    transform: scale(1.1);
-}
-
-.checkbox-group label {
-    margin: 0;
-    font-weight: normal;
-    cursor: pointer;
-    flex-grow: 1;
-}
-
-/* Date picker styling */
-#datepicker {
-    cursor: pointer;
-}
-
 /* Controls styling */
 .controls {
     display: flex;
@@ -169,7 +177,7 @@ form {
     align-items: center;
     margin-top: 30px;
     padding-top: 20px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--controls-border-top-color);
 }
 
 .button,

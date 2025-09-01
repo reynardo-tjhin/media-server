@@ -11,7 +11,10 @@
 <body>
     <div class="container">
         <div class="breadcrumbs">
-            <a href="{{ url_for('admin.home') }}">Home (Admin)</a> > <a href="{{ url_for('admin.movies') }}">Movies Dashboard</a> > Add Genre</span>
+            <div class="navigation">
+                <a href="{{ url_for('admin.home') }}">Home (Admin)</a> > <a href="{{ url_for('admin.movies') }}">Movies Dashboard</a> > Add Genre</span>
+            </div>
+            <button class="toggle-theme" onclick="toggleTheme()">🌙 Dark</button>
         </div>
 
         <div class="header">
@@ -71,6 +74,33 @@
         } else {
             document.getElementById('error-message').style = "display: block;";
         }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const button = document.querySelector(".toggle-theme");
+            const theme = html.getAttribute('data-theme');
+
+            if (theme === 'dark') {
+                button.textContent = '🌙 Dark';
+                html.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                button.textContent = '☀️ Light';
+                html.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector(".toggle-theme").textContent = '☀️ Light';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                document.querySelector(".toggle-theme").textContent = '🌙 Dark';
+            }
+        });
     </script>
 </body>
 </html>

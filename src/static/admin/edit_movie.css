@@ -17,7 +17,7 @@
     --form-group-input-invalid-border-color: #e74c3c;
     --checkbox-group-background: white;
     --checkbox-group-hover-background: #f8f9fa;
-    --controls-border-top-color: #eee;
+    --controls-border-top-color: #333;
     --checkbox-group-text-color: black;
     --button-background: #95a5a6;
     --button-text-color: white;
@@ -46,6 +46,7 @@
     --form-group-input-invalid-border-color: #ffa197;
     --checkbox-group-background: rgba(255, 255, 255, 0.4);
     --checkbox-group-hover-background: #bdc3c7;
+    --controls-border-top-color: #eee;
     --checkbox-group-text-color: white;
     --button-background: #95a5a6;
     --button-text-color: white;
