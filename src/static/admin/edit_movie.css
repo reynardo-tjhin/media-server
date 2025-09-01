@@ -1,4 +1,61 @@
- * {
+[data-theme="light"] {
+    --background: #f5f5f5;
+    --text-color: #333;
+    --container-background: white;
+    --breadcrumbs-text-color: #7f8c8d;
+    --breadcrumbs-a-text-color: #3498db;
+    --theme-toggle-background: rgba(0, 0, 0, 0.1);
+    --theme-toggle-font-color: black;
+    --theme-toggle-border: rgba(255, 255, 255, 0.3);
+    --theme-toggle-hover-background: rgba(0, 0, 0, 0.3);
+    --header-background: #2c3e50;
+    --error-message-background: #f8d7da;
+    --error-message-input-text-color: #721c24;
+    --form-group-input-background: white;
+    --form-group-label-text-color: #2c3e50;
+    --form-group-input-focus-border-color: #3498db;
+    --form-group-input-invalid-border-color: #e74c3c;
+    --checkbox-group-background: white;
+    --checkbox-group-hover-background: #f8f9fa;
+    --controls-border-top-color: #eee;
+    --checkbox-group-text-color: black;
+    --button-background: #95a5a6;
+    --button-text-color: white;
+    --button-hover-background: #7f8c8d;
+    --button-success-background: #27ae60;
+    --button-success-text-color: white;
+    --button-success-background-hover: #229954;
+}
+
+[data-theme="dark"] {
+    --background: #0d1117;
+    --text-color: white;
+    --container-background: #21262d;
+    --breadcrumbs-text-color: #7f8c8d;
+    --breadcrumbs-a-text-color: #3498db;
+    --theme-toggle-background: rgba(255, 255, 255, 0.3);
+    --theme-toggle-font-color: white;
+    --theme-toggle-border: rgba(255, 255, 255, 0.3);
+    --theme-toggle-hover-background: grey;
+    --header-background: rgba(255, 255, 255, 0.4);
+    --error-message-background: #f8d7da;
+    --error-message-input-text-color: #721c24;
+    --form-group-input-background: rgba(255, 255, 255, 0.75);
+    --form-group-label-text-color: white;
+    --form-group-input-focus-border-color: #44b1fa;
+    --form-group-input-invalid-border-color: #ffa197;
+    --checkbox-group-background: rgba(255, 255, 255, 0.4);
+    --checkbox-group-hover-background: #bdc3c7;
+    --checkbox-group-text-color: white;
+    --button-background: #95a5a6;
+    --button-text-color: white;
+    --button-hover-background: #7f8c8d;
+    --button-success-background: #27ae60;
+    --button-success-text-color: white;
+    --button-success-background-hover: #229954;
+}
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -7,15 +64,15 @@
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f5f5f5;
+    color: var(--text-color);
+    background-color: var(--background);
     padding: 20px;
 }
 
 .container {
     max-width: 1000px;
     margin: 0 auto;
-    background: white;
+    background: var(--container-background);
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     overflow: hidden;
@@ -23,15 +80,17 @@ body {
 
 /* Breadcrumbs styling */
 .breadcrumbs {
+    display: flex;
+    justify-content: space-between;
     margin-left: 30px;
     margin-bottom: 15px;
     margin-top: 15px;
     font-size: 14px;
-    color: #7f8c8d;
+    color: var(--breadcrumbs-text-color);
 }
 
 .breadcrumbs a {
-    color: #3498db;
+    color: var(--breadcrumbs-a-text-color);
     text-decoration: none;
 }
 
@@ -39,8 +98,26 @@ body {
     text-decoration: underline;
 }
 
+/* Toggle theme button */
+.theme-toggle {
+    background: var(--theme-toggle-background);
+    color: var(--theme-toggle-font-color);
+    border: 1px solid var(--theme-toggle-border);
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover {
+    background: var(--theme-toggle-hover-background);
+    transform: translateY(-1px);
+}
+
+/* Header */
 .header {
-    background: #2c3e50;
+    background: var(--header-background);
     color: white;
     padding: 20px;
     text-align: center;
@@ -58,7 +135,7 @@ body {
 
 /* Error messages styling */
 #error-message {
-    background: #f8d7da;
+    background: var(--error-message-background);
     padding-top: 15px;
     padding-bottom: 15px;
     padding-left: 30px;
@@ -70,7 +147,7 @@ body {
     background: none;
     border: none;
     font-size: 1.25em;
-    color: #721c24;
+    color: var(--error-message-input-text-color);
     width: 900px;
 }
 
@@ -87,11 +164,12 @@ form {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
-    color: #2c3e50;
+    color: var(--form-group-label-text-color);
 }
 
 .form-group input[type="text"],
 .form-group input[type="number"] {
+    background: var(--form-group-input-background);
     width: 100%;
     padding: 12px;
     border: 2px solid #ddd;
@@ -103,12 +181,12 @@ form {
 .form-group input[type="text"]:focus,
 .form-group input[type="number"]:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: var(--form-group-input-focus-border-color);
 }
 
 .form-group input[type="text"]:required:invalid,
 .form-group input[type="number"]:required:invalid {
-    border-color: #e74c3c;
+    border-color: var(--form-group-input-invalid-border-color);
 }
 
 /* Genre checkboxes styling */
@@ -126,10 +204,12 @@ form {
     border: 1px solid #ddd;
     border-radius: 4px;
     transition: background-color 0.3s;
+    background-color: var(--checkbox-group-background);
+    color: var(--checkbox-group-text-color);
 }
 
 .checkbox-group:hover {
-    background-color: #f8f9fa;
+    background-color: var(--checkbox-group-hover-background);
 }
 
 .checkbox-group input[type="checkbox"] {
@@ -156,7 +236,7 @@ form {
     align-items: center;
     margin-top: 30px;
     padding-top: 20px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--controls-border-top-color);
 }
 
 .button,
@@ -173,22 +253,22 @@ form {
 }
 
 .button {
-    background: #95a5a6;
-    color: white;
+    background: var(--button-background);
+    color: var(--button-text-color);
 }
 
 .button:hover {
-    background: #7f8c8d;
+    background: var(--button-hover-background);
 }
 
 .btn-success {
-    background: #27ae60;
-    color: white;
+    background: var(--button-success-background);
+    color: var(--button-success-text-color);
     min-width: 120px;
 }
 
 .btn-success:hover {
-    background: #229954;
+    background: var(--button-success-background-hover);
 }
 
 .btn-success:active {

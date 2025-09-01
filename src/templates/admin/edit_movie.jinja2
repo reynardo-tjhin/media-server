@@ -12,7 +12,10 @@
 <body>
     <div class="container">
         <div class="breadcrumbs">
-            <a href="{{ url_for('admin.home') }}">Home (Admin)</a> > <a href="{{ url_for('admin.movies') }}">Movies Dashboard</a> > <span>{{ action | capitalize }} Movie</span>
+            <div class="navigation">
+                <a href="{{ url_for('admin.home') }}">Home (Admin)</a> > <a href="{{ url_for('admin.movies') }}">Movies Dashboard</a> > <span>{{ action | capitalize }} Movie</span>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
         </div>
 
         <div class="header">
@@ -111,6 +114,35 @@
             document.getElementById('error-message').style = "display: block;";
         }
 
+        // dark-light theme
+        function toggleTheme() {
+            let html = document.documentElement;
+            let currentTheme = html.getAttribute('data-theme');
+            let button = document.querySelector(".theme-toggle");
+
+            if (currentTheme === 'dark') {
+                button.textContent = "🌙 Dark";
+                html.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                button.textContent = "☀️ Light";
+                html.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector(".theme-toggle").textContent = "☀️ Light";
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                document.querySelector(".theme-toggle").textContent = "🌙 Dark";
+            }
+        });
+
+        // validation check
         let form = document.getElementById('movieForm');
         form.addEventListener('submit', (event) => {
 
