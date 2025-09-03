@@ -2,7 +2,7 @@ import os
 
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
-from . import home, db, admin, auth
+from . import home, db, admin, auth, movies
 
 csrf = CSRFProtect()
 
@@ -37,6 +37,7 @@ def create_app(test_config=None):
     # app.register_blueprint(movies.bp)
     app.register_blueprint(admin.bp, url_prefix="/admin")
     app.register_blueprint(auth.bp, url_prefix="/auth")
+    app.register_blueprint(movies.bp, url_prefix="/movies")
 
     # register database
     db.init_app(app=app)

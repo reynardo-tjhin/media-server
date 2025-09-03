@@ -13,6 +13,7 @@ CREATE TABLE "movie" (
 	"metacritic_rating"	INTEGER,
 	"release_date"	TEXT NOT NULL,
 	"media_location"	TEXT NOT NULL UNIQUE,
+	"poster_location"	TEXT NOT NULL UNIQUE,
 	PRIMARY KEY("id")
 );
 
