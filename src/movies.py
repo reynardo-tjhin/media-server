@@ -10,7 +10,7 @@ def home():
 
     db = get_db()
     movies = db.execute(
-        'SELECT name, description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date '
+        'SELECT poster_location, name, description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date '
         'FROM movie;'
     ).fetchall()
 

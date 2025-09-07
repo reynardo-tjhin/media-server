@@ -4,29 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movies</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='movies/home.css') }}">
 </head>
 <body>
-    <div class="container">
+    <div class="gallery-container">
         <div class="breadcrumbs">
             <a href="{{ url_for('admin.home') }}">Home (Admin)</a> > <span>Movies</span>
         </div>
 
-        <h1>Movies!</h1>
+        <h1 class="gallery-title">Downloaded Movies!</h1>
 
-        <div class="movies-list">
+        <div class="movie-list">
             {% for movie in movies %}
             <div class="movie-card">
                 <a href="#">
-                    {{ movie.name }}
+                    <img class="movie-poster" 
+                         src="{{ url_for('static', filename='posters/' + movie.name + '.webp') }}"
+                         alt="{{ movie.name }}"
+                         loading="lazy">
+                    <div class="movie-title-overlay">
+                        <h3 class="movie-name">{{ movie.name }}</h3>
+                    </div>
                     {{ movie.description}}
                     {{ movie.imdb_rating }}/10 {{ movie.rotten_tomatoes_rating }}/100 {{ movie.metacritic_rating }}/100
                     {{ movie.release_date }}
                 </a>
             </div>
-
-            
-            
-            <br>
+            <div class="movie-card">
+                <a href="#">
+                    <img class="movie-poster" 
+                         src="{{ url_for('static', filename='posters/' + movie.name + '.webp') }}"
+                         alt="{{ movie.name }}"
+                         loading="lazy">
+                    <div class="movie-title-overlay">
+                        <h3 class="movie-name">{{ movie.name }}</h3>
+                    </div>
+                    {{ movie.description}}
+                    {{ movie.imdb_rating }}/10 {{ movie.rotten_tomatoes_rating }}/100 {{ movie.metacritic_rating }}/100
+                    {{ movie.release_date }}
+                </a>
+            </div>
             {% endfor %}
         </div>
     </div>

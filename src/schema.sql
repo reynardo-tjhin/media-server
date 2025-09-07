@@ -264,13 +264,14 @@ INSERT INTO genre VALUES(
 -- create a movie data
 INSERT INTO movie VALUES(
 	'016f78ba-38fa-41f7-bc22-adc47389ae4a',
-	'Titanic',
-	'Rose, who is being forced to marry a wealthy man, falls in love with Jack, a talented artist, aboard the unsinkable Titanic. Unfortunately, the ship hits an iceberg, endangering their lives.',
-	7.9, -- IMDb
-	88,  -- Rotten Tomatoes
-	75,  -- metacritic
-	'1996-12-17', -- release date
-	'/home/reynardo-tjhin/media/movies/Titanic.mp4'
+	'Big Hero 6',
+	'A special bond develops between plus-sized inflatable robot Baymax and prodigy Hiro Hamada, who together team up with a group of friends to form a band of high-tech heroes.',
+	7.8, -- IMDb
+	91,  -- Rotten Tomatoes
+	74,  -- metacritic
+	'2014-11-07', -- release date
+	'.\vids\Big Hero 6.mp4', -- movie location
+	'posters/Big Hero 6.webp' -- poster location
 );
 
 -- create a movie data
@@ -282,17 +283,135 @@ INSERT INTO movie VALUES(
 	93,  -- Rotten Tomatoes
 	79,  -- metacritic
 	'2024-10-25', -- release date
-	'/home/reynardo-tjhin/media/movies/Conclave.mp4'
+	'.\vids\Conclave.mp4', -- movie location
+	'posters/Conclave.webp' -- poster location
 );
 
 -- create a movie data
 INSERT INTO movie VALUES(
 	'c9ae3de0-d0e3-440c-b66d-d17d3b524ff4',
-	'Silent Voice',
-	'After bullying Shoko, a girl with hearing impairment, Shoya is consumed with guilt. Soon, several incidents at the school make things worse and he sets out to make amends.',
-	8.1, -- IMDb
-	95,  -- Rotten Tomatoes
-	78,  -- metacritic
-	'2017-04-06', -- release date
-	'/home/reynardo-tjhin/media/movies/Silent Voice.mp4'
+	'Kung Fu Panda 4',
+	'After Po is tapped to become the Spiritual Leader of the Valley of Peace, he needs to find and train a new Dragon Warrior, while a wicked sorceress plans to re-summon all the master villains whom Po has vanquished to the spirit realm.',
+	6.3, -- IMDb
+	84,  -- Rotten Tomatoes
+	54,  -- metacritic
+	'2024-03-08', -- release date
+	'.\vids\Kung Fu Panda 4.mp4', -- movie location
+	'posters/Kung Fu Panda 4.webp' -- poster location
+);
+
+-- create a movie data
+INSERT INTO movie VALUES(
+	'62ba8d65-540e-4176-964b-c10f095e3f0e',
+	'The Wild Robot',
+	'After a shipwreck, an intelligent robot called Roz is stranded on an uninhabited island. To survive the harsh environment, Roz bonds with the island''s animals and cares for an orphaned baby goose.',
+	8.2, -- IMDb
+	98,  -- Rotten Tomatoes
+	85,  -- metacritic
+	'2024-09-27', -- release date
+	'.\vids\The Wild Robot.mp4', -- movie location
+	'posters/The Wild Robot.webp' -- poster location
+);
+
+-- create a relationship table
+-- Big Hero 6 and Action
+INSERT INTO movie_genre VALUES(
+	'016f78ba-38fa-41f7-bc22-adc47389ae4a', -- movie_id
+	'1c0547c5-59c3-4e40-bd46-15db44f115ff' -- genre_id
+);
+
+-- Big Hero 6 and Adventure
+INSERT INTO movie_genre VALUES(
+	'016f78ba-38fa-41f7-bc22-adc47389ae4a', -- movie_id
+	'a65e45ff-c74e-495e-a614-e532fcd1a7d1' -- genre_id
+);
+
+-- Big Hero 6 and Animation
+INSERT INTO movie_genre VALUES(
+	'016f78ba-38fa-41f7-bc22-adc47389ae4a', -- movie_id
+	'd42577b4-8303-4aab-b328-b261f2a2128d' -- genre_id
+);
+
+-- Big Hero 6 and Comedy
+INSERT INTO movie_genre VALUES(
+	'016f78ba-38fa-41f7-bc22-adc47389ae4a', -- movie_id
+	'0cad58ec-7f8a-4dcd-a606-f142a2c85748' -- genre_id
+);
+
+-- Big Hero 6 and Crime
+INSERT INTO movie_genre VALUES(
+	'016f78ba-38fa-41f7-bc22-adc47389ae4a', -- movie_id
+	'afbedc0f-6d3f-4107-9047-2697b794865e' -- genre_id
+);
+
+-- Big Hero 6 and Family
+INSERT INTO movie_genre VALUES(
+	'016f78ba-38fa-41f7-bc22-adc47389ae4a', -- movie_id
+	'006013fd-3542-447e-85ec-77a583af7fab' -- genre_id
+);
+
+-- Big Hero 6 and Sci-Fi
+INSERT INTO movie_genre VALUES(
+	'016f78ba-38fa-41f7-bc22-adc47389ae4a', -- movie_id
+	'2de89c73-664c-497a-831c-38939e3e5d2f' -- genre_id
+);
+
+-- Conclave and Drama
+INSERT INTO movie_genre VALUES(
+	'ac4c9da6-b943-47fa-ac07-4a63dd43728d', -- movie_id
+	'2382a019-ee31-484f-a758-06e3aa1acdbf' -- genre_id
+);
+
+-- Conclave and Thriller
+INSERT INTO movie_genre VALUES(
+	'ac4c9da6-b943-47fa-ac07-4a63dd43728d', -- movie_id
+	'a7febfe1-10c2-416f-9161-0d3a6f2c4200' -- genre_id
+);
+
+-- Kung Fu Panda 4 and Action
+INSERT INTO movie_genre VALUES(
+	'c9ae3de0-d0e3-440c-b66d-d17d3b524ff4', -- movie_id
+	'c9ae3de0-d0e3-440c-b66d-d17d3b524ff4' -- genre_id
+);
+
+-- Kung Fu Panda 4 and Adventure
+INSERT INTO movie_genre VALUES(
+	'c9ae3de0-d0e3-440c-b66d-d17d3b524ff4', -- movie_id
+	'a65e45ff-c74e-495e-a614-e532fcd1a7d1' -- genre_id
+);
+
+-- Kung Fu Panda 4 and Animation
+INSERT INTO movie_genre VALUES(
+	'c9ae3de0-d0e3-440c-b66d-d17d3b524ff4', -- movie_id
+	'd42577b4-8303-4aab-b328-b261f2a2128d' -- genre_id
+);
+
+-- Kung Fu Panda 4 and Comedy
+INSERT INTO movie_genre VALUES(
+	'c9ae3de0-d0e3-440c-b66d-d17d3b524ff4', -- movie_id
+	'0cad58ec-7f8a-4dcd-a606-f142a2c85748' -- genre_id
+);
+
+-- The Wild Robot and Adventure
+INSERT INTO movie_genre VALUES(
+	'62ba8d65-540e-4176-964b-c10f095e3f0e', -- movie_id
+	'a65e45ff-c74e-495e-a614-e532fcd1a7d1' -- genre_id
+);
+
+-- The Wild Robot and Animation
+INSERT INTO movie_genre VALUES(
+	'62ba8d65-540e-4176-964b-c10f095e3f0e', -- movie_id
+	'd42577b4-8303-4aab-b328-b261f2a2128d' -- genre_id
+);
+
+-- The Wild Robot and Family
+INSERT INTO movie_genre VALUES(
+	'62ba8d65-540e-4176-964b-c10f095e3f0e', -- movie_id
+	'006013fd-3542-447e-85ec-77a583af7fab' -- genre_id
+);
+
+-- The Wild Robot and Sci-Fi
+INSERT INTO movie_genre VALUES(
+	'62ba8d65-540e-4176-964b-c10f095e3f0e', -- movie_id
+	'2de89c73-664c-497a-831c-38939e3e5d2f' -- genre_id
 );
