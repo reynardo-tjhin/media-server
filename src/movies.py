@@ -8,11 +8,36 @@ bp = Blueprint('movies', __name__, url_prefix='/movies')
 @bp.route("/")
 def home():
 
+    # get the movies
     db = get_db()
     movies = db.execute(
-        'SELECT poster_location, name, description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date '
-        'FROM movie;'
+        'SELECT m.poster_location, m.name, m.description, '
+        '       m.imdb_rating, m.rotten_tomatoes_rating, m.metacritic_rating, '
+        '       strftime("%e", m.release_date) || " " || '
+        '       CASE strftime("%m", m.release_date) '
+        '         WHEN "01" THEN "January" '
+        '         WHEN "02" THEN "February" '
+        '         WHEN "03" THEN "March" '
+        '         WHEN "04" THEN "April" '
+        '         WHEN "05" THEN "May" '
+        '         WHEN "06" THEN "June" '
+        '         WHEN "07" THEN "July" '
+        '         WHEN "08" THEN "August" '
+        '         WHEN "09" THEN "September" '
+        '         WHEN "10" THEN "October" '
+        '         WHEN "11" THEN "November" '
+        '         WHEN "12" THEN "December" '
+        '       END || " " || '
+        '       strftime("%Y", m.release_date) AS release_date, '
+        '       GROUP_CONCAT(g.name, ", ") AS genres '
+        'FROM movie AS m '
+        '  LEFT JOIN movie_genre AS mg ON m.id = mg.movie_id '
+        '  LEFT JOIN genre AS g ON mg.genre_id = g.id '
+        'GROUP BY m.name;'
     ).fetchall()
+
+    for item in movies:
+        print(item['release_date'])
 
     return render_template("movies/home.jinja2",
                            movies=movies,)

@@ -9,15 +9,20 @@
 </head>
 <body>
     <div class="gallery-container">
+        {# navigation header will be here #}
         <div class="breadcrumbs">
             <a href="{{ url_for('admin.home') }}">Home (Admin)</a> > <span>Movies</span>
         </div>
 
+        {# title of the page #}
         <h1 class="gallery-title">Downloaded Movies!</h1>
 
+        {# shows the gallery of movies #}
         <div class="movie-list">
+
             {% for movie in movies %}
-            <div class="movie-card">
+            {# the individual movie #}
+            <div class="movie-card" id="{{ movie.name }}">
                 <a href="#">
                     <img class="movie-poster" 
                          src="{{ url_for('static', filename='posters/' + movie.name + '.webp') }}"
@@ -26,27 +31,42 @@
                     <div class="movie-title-overlay">
                         <h3 class="movie-name">{{ movie.name }}</h3>
                     </div>
-                    {{ movie.description}}
-                    {{ movie.imdb_rating }}/10 {{ movie.rotten_tomatoes_rating }}/100 {{ movie.metacritic_rating }}/100
-                    {{ movie.release_date }}
-                </a>
-            </div>
-            <div class="movie-card">
-                <a href="#">
-                    <img class="movie-poster" 
-                         src="{{ url_for('static', filename='posters/' + movie.name + '.webp') }}"
-                         alt="{{ movie.name }}"
-                         loading="lazy">
-                    <div class="movie-title-overlay">
-                        <h3 class="movie-name">{{ movie.name }}</h3>
-                    </div>
-                    {{ movie.description}}
-                    {{ movie.imdb_rating }}/10 {{ movie.rotten_tomatoes_rating }}/100 {{ movie.metacritic_rating }}/100
-                    {{ movie.release_date }}
                 </a>
             </div>
             {% endfor %}
         </div>
     </div>
+
+    {# info for each movie #}
+    {% for movie in movies %}
+    <div class="tooltip" id="{{ movie.name }}-tooltip">
+        <h1>{{ movie.name }}</h1>
+        <h2>{{ movie.release_date }}</h2>
+        <p>{{ movie.description }}</p>
+        <p>
+            IMDb: {{ movie.imdb_rating }}/10; 
+            Rotten Tomatoes: {{ movie.rotten_tomatoes_rating }}/100; 
+            Metacritic: {{ movie.metacritic_rating }}/100
+        </p>
+        <p>Genre(s): {{ movie.genres }}</p>
+    </div>
+    {% endfor %}
+
+    {# for tool tip #}
+    <script>
+        document.querySelectorAll(".movie-card").forEach(movieCard => {
+            movieCard.addEventListener('mouseenter', (e) => {
+                const tooltip = document.getElementById(movieCard.id + '-tooltip');
+                tooltip.classList.add('show');
+            });
+        });
+
+        document.querySelectorAll(".movie-card").forEach(movieCard => {
+            movieCard.addEventListener('mouseleave', () => {
+                const tooltip = document.getElementById(movieCard.id + '-tooltip');
+                tooltip.classList.remove('show');
+            });
+        });
+    </script>
 </body>
 </html>
