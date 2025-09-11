@@ -112,11 +112,108 @@ body {
 /* tooltip */
 .tooltip {
     position: fixed;
-    z-index: 1000;
+    background: linear-gradient(135deg, rgba(20, 20, 20, 0.95), rgba(40, 40, 40, 0.95));
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    z-index: 1000; /* higher z-index means more towards the observer */
     pointer-events: none;
-    opacity: 0;
+    opacity: 0; /* to hide the tooltip */
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+    width: 350px;
 }
 
 .tooltip.show {
     opacity: 1;
+    transform: translateY(0);
+}
+
+.tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    border: 8px solid transparent;
+    border-top-color: rgba(20, 20, 20, 0.95);
+}
+
+/* tooltip header: title and release date */
+.tooltip-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+/* tooltip title */
+.tooltip-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #fff;
+    line-height: 1.2;
+}
+
+/* tooltip release date */
+.tooltip-year {
+    font-size: 14px;
+    color: #ffd700;
+    font-weight: 600;
+}
+
+/* tooltip info: ratings and genre */
+.tooltip-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* tooltip rating and genre labels */
+.tooltip-info-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #aaa;
+    margin-bottom: 3px;
+    font-weight: 600;
+}
+
+/* tooltip rating and genre values */
+.tooltip-info-value {
+    font-size: 13px;
+    color: #fff;
+    font-weight: 500;
+}
+
+.tooltip-rating {
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    color: #000;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.tooltip-genre {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    margin-right: 5px;
+    margin-bottom: 3px;
+    display: inline-block;
+}
+
+/* tooltip description */
+.tooltip-description {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #e0e0e0;
+    margin-top: 10px;
 }

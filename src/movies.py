@@ -36,8 +36,5 @@ def home():
         'GROUP BY m.name;'
     ).fetchall()
 
-    for item in movies:
-        print(item['release_date'])
-
     return render_template("movies/home.jinja2",
                            movies=movies,)

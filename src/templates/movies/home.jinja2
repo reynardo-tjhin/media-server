@@ -40,31 +40,88 @@
     {# info for each movie #}
     {% for movie in movies %}
     <div class="tooltip" id="{{ movie.name }}-tooltip">
-        <h1>{{ movie.name }}</h1>
-        <h2>{{ movie.release_date }}</h2>
-        <p>{{ movie.description }}</p>
-        <p>
-            IMDb: {{ movie.imdb_rating }}/10; 
-            Rotten Tomatoes: {{ movie.rotten_tomatoes_rating }}/100; 
-            Metacritic: {{ movie.metacritic_rating }}/100
-        </p>
-        <p>Genre(s): {{ movie.genres }}</p>
+        {# name and release date #}
+        <div class="tooltip-header">
+            <div class="tooltip-title">{{ movie.name }}</div>
+            <div class="tooltip-year">{{ movie.release_date }}</div>
+        </div>
+
+        {# ratings #}
+        <div class="tooltip-info">
+            <div class="tooltip-info-item">
+                <div class="tooltip-info-label">IMDb Rating</div>
+                <div class="tooltip-info-value">
+                    <span class="tooltip-rating">{{ movie.imdb_rating }}</span>
+                </div>
+            </div>
+            <div class="tooltip-info-item">
+                <div class="tooltip-info-label">Rotten Tomatoes Rating</div>
+                <div class="tooltip-info-value">
+                    <span class="tooltip-rating">{{ movie.rotten_tomatoes_rating }}</span>
+                </div>
+            </div>
+            <div class="tooltip-info-item">
+                <div class="tooltip-info-label">Metacritic Rating</div>
+                <div class="tooltip-info-value">
+                    <span class="tooltip-rating">{{ movie.metacritic_rating }}</span>
+                </div>
+            </div>
+        </div>
+
+        {# genres #}
+        <div class="tooltip-info-item">
+            <div class="tooltip-info-label">Genre</div>
+            <div class="tooltip-info-value">
+                {% for genre in movie.genres.split(', ') %}
+                    <span class="tooltip-genre">{{ genre }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        
+        {# description #}
+        <div class="tooltip-description">{{ movie.description }}</div>
     </div>
     {% endfor %}
 
     {# for tool tip #}
     <script>
+        // tooltip
         document.querySelectorAll(".movie-card").forEach(movieCard => {
+            // mouse enters the area, show the tooltip
             movieCard.addEventListener('mouseenter', (e) => {
                 const tooltip = document.getElementById(movieCard.id + '-tooltip');
                 tooltip.classList.add('show');
             });
-        });
 
-        document.querySelectorAll(".movie-card").forEach(movieCard => {
+            // mouse leaves the area, hide the tooltip
             movieCard.addEventListener('mouseleave', () => {
                 const tooltip = document.getElementById(movieCard.id + '-tooltip');
                 tooltip.classList.remove('show');
+            });
+
+            // mouse is moving around the poster
+            movieCard.addEventListener('mousemove', (e) => {
+                const tooltip = document.getElementById(movieCard.id + '-tooltip');
+
+                // calculate the position of the tooltip to keep tooltip in viewport
+                let left = e.clientX + 15;
+                let top = e.clientY - 20;
+
+                // prevent tooltip from going off-screen
+                const tooltipRect = tooltip.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                
+                if (left + 350 > viewportWidth) {
+                    left = e.clientX - 365; // Show on left side
+                }
+                
+                if (top + tooltipRect.height > viewportHeight) {
+                    top = viewportHeight - tooltipRect.height - 10;
+                }
+                
+                tooltip.style.left = left + 'px';
+                tooltip.style.top = top + 'px';
             });
         });
     </script>
