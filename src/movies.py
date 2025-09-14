@@ -5,8 +5,13 @@ from src.db import get_db
 
 bp = Blueprint('movies', __name__, url_prefix='/movies')
 
-@bp.route("/")
+@bp.route("/", methods=["GET", "POST"])
 def home():
+
+    # search is not empty
+    movie_name = ""
+    if (request.args.get("movie-name")):
+        movie_name = request.args.get("movie-name")
 
     # get the movies
     db = get_db()
@@ -33,7 +38,8 @@ def home():
         'FROM movie AS m '
         '  LEFT JOIN movie_genre AS mg ON m.id = mg.movie_id '
         '  LEFT JOIN genre AS g ON mg.genre_id = g.id '
-        'GROUP BY m.name;'
+        'WHERE m.name LIKE ? '
+        'GROUP BY m.name;', ('%'+movie_name+'%',)
     ).fetchall()
 
     return render_template("movies/home.jinja2",

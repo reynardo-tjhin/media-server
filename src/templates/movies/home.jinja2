@@ -8,14 +8,65 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='movies/home.css') }}">
 </head>
 <body>
-    <div class="gallery-container">
-        {# navigation header will be here #}
-        <div class="breadcrumbs">
-            <a href="{{ url_for('admin.home') }}">Home (Admin)</a> > <span>Movies</span>
-        </div>
+    {# navigation bar #}
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            {# Logo #}
+            <a href="{{ url_for('admin.home') }}">
+                <svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Background circle for the icon -->
+                    <circle cx="30" cy="30" r="25" fill="url(#gradient1)" stroke-width="2"/>
+                    
+                    <!-- Server/Media icon - stylized play button with server lines -->
+                    <polygon points="22,20 22,40 38,30" fill="black" opacity="0.9"/>
+                    <rect x="40" y="24" width="8" height="2" rx="1" fill="black" opacity="0.7"/>
+                    <rect x="40" y="28" width="12" height="2" rx="1" fill="black" opacity="0.7"/>
+                    <rect x="40" y="32" width="8" height="2" rx="1" fill="black" opacity="0.7"/>
+                    <rect x="40" y="36" width="6" height="2" rx="1" fill="black" opacity="0.7"/>
+                
+                    <!-- Company name text -->
+                    <text x="65" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="url(#textGradient)">Tjhin Media</text>
+                    <text x="65" y="42" font-family="Arial, sans-serif" font-size="12" font-weight="normal" fill="url(#textGradient)" opacity="0.8">Server</text>
+                
+                    <!-- Gradients -->
+                    <defs>
+                        <!-- the background of the play button -->
+                        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:white;stop-opacity:0.9" />
+                        </linearGradient>
+                        
+                        <!-- the font colors -->
+                        <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:white;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </a>
 
+            <!-- Navigation Menu -->
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('movies.home') }}" class="nav-link active">Movies</a></li>
+                <li><a href="#" class="nav-link">TV Shows</a></li>
+            </ul>
+
+            {# Search section #}
+            <form method="get" class="nav-search">
+                <div class="search-container">
+                    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input name="movie-name" type="text" class="search-input" placeholder="Search movies..." id="searchInput">
+                </div>
+                <button class="search-button" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+
+    {# gallery of movies #}
+    <div class="gallery-container">
         {# title of the page #}
-        <h1 class="gallery-title">Downloaded Movies!</h1>
+        <h1 class="gallery-title">Downloaded Movies</h1>
 
         {# shows the gallery of movies #}
         <div class="movie-list">
