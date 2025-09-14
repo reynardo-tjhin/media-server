@@ -123,9 +123,11 @@
         <div class="tooltip-info-item">
             <div class="tooltip-info-label">Genre</div>
             <div class="tooltip-info-value">
-                {% for genre in movie.genres.split(', ') %}
-                    <span class="tooltip-genre">{{ genre }}</span>
-                {% endfor %}
+                {% if movie.genres %}
+                    {% for genre in movie.genres.split(', ') %}
+                        <span class="tooltip-genre">{{ genre }}</span>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
         

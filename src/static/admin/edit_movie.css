@@ -321,8 +321,14 @@ form {
     cursor: not-allowed;
 }
 
-/* Media location field styling (file paths) */
+/* Location field styling (file paths) */
 input[name="mediaLocation"] {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}
+
+/* Location field styling (file paths) */
+input[name="posterLocation"] {
     font-family: 'Courier New', monospace;
     font-size: 13px;
 }

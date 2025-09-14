@@ -174,6 +174,7 @@ def edit_movie():
         metacritic_rating = request.form["metacriticRating"]
         release_date = request.form["releaseDate"]
         media_location = request.form["mediaLocation"]
+        poster_location = request.form["posterLocation"]
         error = None
 
         # ensuring that required ones are not empty
@@ -185,6 +186,8 @@ def edit_movie():
             error = "Release Date is required."
         elif not media_location:
             error = "Media Location is required."
+        elif not poster_location:
+            error = "Poster Location is required."
 
         # check if movie name exists
         if (request.args['action'] != 'update'):
@@ -222,7 +225,7 @@ def edit_movie():
                 db.execute(
                     'UPDATE movie SET name = ?, description = ?, imdb_rating = ?,'
                     ' rotten_tomatoes_rating = ?, metacritic_rating = ?, release_date = ?,'
-                    ' media_location = ? WHERE id = ?', (movie_name, movie_description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, movie_id,)
+                    ' media_location = ?, poster_location = ? WHERE id = ?', (movie_name, movie_description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location, movie_id,)
                 )
                 db.commit()
                 # update the genres
@@ -247,9 +250,9 @@ def edit_movie():
                 # add a new movie
                 movie_id = str(uuid4())
                 db.execute(
-                    'INSERT INTO movie (id, name, description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location)'
-                    ' VALUES(?, ?, ?, ?, ?, ?, ?, ?)',
-                    (movie_id, movie_name, movie_description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location,)
+                    'INSERT INTO movie (id, name, description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location)'
+                    ' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (movie_id, movie_name, movie_description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location,)
                 )
                 db.commit()
                 # add the movies' genres

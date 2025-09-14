@@ -58,6 +58,10 @@
                 <label for="mediaLocation">Media Location</label>
                 <input name="mediaLocation" type="text" id="mediaLocation" required value="{{ movie.media_location or '' }}">
             </div>
+            <div class="form-group">
+                <label for="posterLocation">Poster Location</label>
+                <input name="posterLocation" type="text" id="posterLocation" required value="{{ movie.poster_location or '' }}">
+            </div>
 
             {# Different ratings of the movie: IMDb, Rotten Tomatoes and Metacritic#}
             <div class="form-group">
