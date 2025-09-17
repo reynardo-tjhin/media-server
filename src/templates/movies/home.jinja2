@@ -90,6 +90,41 @@
                          src="{{ url_for('static', filename='posters/' + movie.name + '.webp') }}"
                          alt="{{ movie.name }}"
                          loading="lazy">
+                    <div class="year">
+                        <span>{{ movie.release_year }}</span>
+                    </div>
+                    <div class="ratings">
+                        <!-- IMDb rating -->
+                        <div class="rating">
+                            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" aria-label="IMDb" role="img" viewBox="0 0 512 512">
+                                <rect width="512" height="512" rx="15%" fill="#f5c518"/>
+                                <path d="M104 328V184H64v144zM189 184l-9 67-5-36-5-31h-50v144h34v-95l14 95h25l13-97v97h34V184zM256 328V184h62c15 0 26 11 26 25v94c0 14-11 25-26 25zm47-118l-9-1v94c5 0 9-1 10-3 2-2 2-8 2-18v-56-12l-3-4zM419 220h3c14 0 26 11 26 25v58c0 14-12 25-26 25h-3c-8 0-16-4-21-11l-2 9h-36V184h38v46c5-6 13-10 21-10zm-8 70v-34l-1-11c-1-2-4-3-6-3s-5 1-6 3v57c1 2 4 3 6 3s6-1 6-3l1-12z"/>
+                            </svg>
+                            <span>{{ movie.imdb_rating }}</span>
+                        </div>
+
+                        <!-- Rotten Tomatoes Rating -->
+                        <div class="rating">
+                            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                                <circle cx="50" cy="45" r="35" fill="#fa320a"/>
+                                <ellipse cx="50" cy="42" rx="25" ry="28" fill="#ff6b47"/>
+                                <ellipse cx="50" cy="45" rx="15" ry="20" fill="#ffffff" opacity="0.3"/>
+                                <rect x="45" y="15" width="10" height="8" rx="2" fill="#228b22"/>
+                                <ellipse cx="52" cy="12" rx="6" ry="3" fill="#228b22"/>
+                            </svg>
+                            <span>{{ movie.rotten_tomatoes_rating }}%</span>
+                        </div>
+                        
+                        <!-- Metacritic Rating -->
+                        <div class="rating">
+                            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                                <rect width="100" height="100" rx="8" fill="#66cc33"/>
+                                <text x="50" y="65" font-family="Arial, sans-serif" font-size="45" font-weight="bold" 
+                                      text-anchor="middle" fill="#ffffff">73</text>
+                            </svg>
+                            <span>{{ movie.metacritic_rating }}%</span>
+                        </div>
+                    </div>
                     <div class="movie-title-overlay">
                         <h3 class="movie-name">{{ movie.name }}</h3>
                     </div>
@@ -99,98 +134,7 @@
         </div>
     </div>
 
-    {# info for each movie #}
-    {% for movie in movies %}
-    <div class="tooltip" id="{{ movie.name }}-tooltip">
-        {# name and release date #}
-        <div class="tooltip-header">
-            <div class="tooltip-title">{{ movie.name }}</div>
-            <div class="tooltip-year">{{ movie.release_date }}</div>
-        </div>
-
-        {# ratings #}
-        <div class="tooltip-info">
-            <div class="tooltip-info-item">
-                <div class="tooltip-info-label">IMDb Rating</div>
-                <div class="tooltip-info-value">
-                    <span class="tooltip-rating">{{ movie.imdb_rating }}</span>
-                </div>
-            </div>
-            <div class="tooltip-info-item">
-                <div class="tooltip-info-label">Rotten Tomatoes Rating</div>
-                <div class="tooltip-info-value">
-                    <span class="tooltip-rating">{{ movie.rotten_tomatoes_rating }}</span>
-                </div>
-            </div>
-            <div class="tooltip-info-item">
-                <div class="tooltip-info-label">Metacritic Rating</div>
-                <div class="tooltip-info-value">
-                    <span class="tooltip-rating">{{ movie.metacritic_rating }}</span>
-                </div>
-            </div>
-        </div>
-
-        {# genres #}
-        <div class="tooltip-info-item">
-            <div class="tooltip-info-label">Genre</div>
-            <div class="tooltip-info-value">
-                {% if movie.genres %}
-                    {% for genre in movie.genres.split(', ') %}
-                        <span class="tooltip-genre">{{ genre }}</span>
-                    {% endfor %}
-                {% endif %}
-            </div>
-        </div>
-        
-        {# description #}
-        <div class="tooltip-description">{{ movie.description }}</div>
-    </div>
-    {% endfor %}
-
     <!-- Bootstrap JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-
-    {# for tool tip #}
-    <script>
-        // tooltip
-        document.querySelectorAll(".movie-card").forEach(movieCard => {
-            // mouse enters the area, show the tooltip
-            movieCard.addEventListener('mouseenter', (e) => {
-                const tooltip = document.getElementById(movieCard.id + '-tooltip');
-                tooltip.classList.add('show');
-            });
-
-            // mouse leaves the area, hide the tooltip
-            movieCard.addEventListener('mouseleave', () => {
-                const tooltip = document.getElementById(movieCard.id + '-tooltip');
-                tooltip.classList.remove('show');
-            });
-
-            // mouse is moving around the poster
-            movieCard.addEventListener('mousemove', (e) => {
-                const tooltip = document.getElementById(movieCard.id + '-tooltip');
-
-                // calculate the position of the tooltip to keep tooltip in viewport
-                let left = e.clientX + 15;
-                let top = e.clientY - 20;
-
-                // prevent tooltip from going off-screen
-                const tooltipRect = tooltip.getBoundingClientRect();
-                const viewportWidth = window.innerWidth;
-                const viewportHeight = window.innerHeight;
-                
-                if (left + 350 > viewportWidth) {
-                    left = e.clientX - 365; // Show on left side
-                }
-                
-                if (top + tooltipRect.height > viewportHeight) {
-                    top = viewportHeight - tooltipRect.height - 10;
-                }
-                
-                tooltip.style.left = left + 'px';
-                tooltip.style.top = top + 'px';
-            });
-        });
-    </script>
 </body>
 </html>
