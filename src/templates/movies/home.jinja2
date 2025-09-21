@@ -77,9 +77,36 @@
     </nav>
 
     <!-- movie gallery -->
-    <div class="container text-center text-white">
+    <div class="movie-gallery container text-center text-white">
         <!-- title -->
         <h1 class="gallery-title">Downloaded Movies</h1>
+
+        <!-- controls -->
+        <div class="border my-4 mx-0 rounded-4 bg-info bg-opacity-25">
+            <!-- genres -->
+            <div class="dropdown my-3">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">All Genres</button>
+                <div class="dropdown-menu dropdown-menu-dark max-h-64" style="width: 500px;">
+                    <form method="get" class="row row-cols-2 mx-2">
+                        {% for genre in genres %}
+                        <div class="col form-check">
+                            <input name="genre" value="{{ genre.name }}" class="form-check-input" type="checkbox" id="check{{ genre.name | capitalize }}" onchange="this.form.submit()" {{ genre.checked }}>
+                            <label class="form-check-label" for="check{{ genre.name | capitalize }}">{{ genre.name }}</label>
+                        </div>
+                        {% endfor %}
+                    </form>
+                </div>
+            </div>
+
+            <!-- if any genre is clicked -->
+            {% if genres_selected %}
+            <div class="d-flex mb-3 mx-4 align-items-start">
+                {% for genre_selected in genres_selected %}
+                    <button type="button" class="btn btn-primary me-3">{{ genre_selected }}</button>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
 
         <!-- movie gallery -->
         <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 ">
@@ -133,6 +160,20 @@
             {% endfor %}
         </div>
     </div>
+
+    <footer class="container border-top mt-5 text-white">
+        <div class="mt-3">
+            <h5>Tjhin Media Server</h5>
+            <p class="text-white-50">All movies are downloaded locally.</p>
+        </div>
+        <div>
+            <p class="text-white-50">
+                © 2025 
+                <span class="text-white">Tjhin Media Server</span>.
+                 All rights reserved.    
+            </p>
+        </div>
+    </footer>
 
     <!-- Bootstrap JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
