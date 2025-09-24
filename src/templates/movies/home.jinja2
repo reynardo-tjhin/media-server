@@ -83,26 +83,62 @@
 
         <!-- controls -->
         <div class="border my-4 mx-0 rounded-4 bg-info bg-opacity-25">
-            <!-- genres -->
-            <div class="dropdown my-3">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">All Genres</button>
-                <div class="dropdown-menu dropdown-menu-dark max-h-64" style="width: 500px;">
-                    <form method="get" class="row row-cols-2 mx-2">
-                        {% for genre in genres %}
-                        <div class="col form-check">
-                            <input name="genre" value="{{ genre.name }}" class="form-check-input" type="checkbox" id="check{{ genre.name | capitalize }}" onchange="this.form.submit()" {{ genre.checked }}>
-                            <label class="form-check-label" for="check{{ genre.name | capitalize }}">{{ genre.name }}</label>
+            <!-- filter buttons -->
+            <form method="get" class="form">
+                <div class="d-flex flex-row justify-content-evenly">
+                    <!-- genres -->
+                    <div class="dropdown my-3">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">All Genres</button>
+                        <div class="dropdown-menu dropdown-menu-dark max-h-64" style="width: 500px;">
+                            <div class="row row-cols-2 mx-2">
+                                {% for genre in genres %}
+                                <div class="col form-check">
+                                    <input name="genre" value="{{ genre.name }}" class="form-check-input" type="checkbox" id="check{{ genre.name }}" onchange="this.form.submit()" {{ genre.checked }}>
+                                    <label class="form-check-label" for="check{{ genre.name }}">{{ genre.name }}</label>
+                                </div>
+                                {% endfor %}
+                            </div>
                         </div>
-                        {% endfor %}
-                    </form>
+                    </div>
+
+                    <!-- release year -->
+                    <div class="dropdown my-3">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">All Years</button>
+                    </div>
+
+                    <!-- rating -->
+                    <div class="dropdown my-3">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ imdb_rating_text }}
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-dark max-h-64" style="width: 300px;">
+                            <input class="dropdown-item form-control" name="imdb_rating" value="Show All" type="submit" id="imdb_rating_show_all">
+
+                            <input class="dropdown-item form-control" name="imdb_rating" value="8+ (Excellent)" type="submit" id="imdb_rating_excellent">
+
+                            <input class="dropdown-item form-control" name="imdb_rating" value="7+ (Good)" type="submit" id="imdb_rating_good">
+
+                            <input class="dropdown-item form-control" name="imdb_rating" value="6+ (Fair)" type="submit" id="imdb_rating_fair">
+
+                            <input class="dropdown-item form-control" name="imdb_rating" value="5+ (Average)" type="submit" id="imdb_rating_average">
+                        </div>
+                    </div>
+
+                    <!-- sort by -->
+                    <div class="dropdown my-3">
+                        <button class="btn btn-secondary" type="button">Sort By</button>
+                    </div>
                 </div>
-            </div>
+            </form>
 
             <!-- if any genre is clicked -->
             {% if genres_selected %}
             <div class="d-flex mb-3 mx-4 align-items-start">
                 {% for genre_selected in genres_selected %}
-                    <button type="button" class="btn btn-primary me-3">{{ genre_selected }}</button>
+                    <button type="button" class="btn btn-primary me-3"">
+                        {{ genre_selected }}
+                        <span class="text-white fs-5" onclick="removeGenre('{{ genre_selected }}');">&times;</span>
+                    </button>
                 {% endfor %}
             </div>
             {% endif %}
@@ -164,7 +200,7 @@
     <footer class="container border-top mt-5 text-white">
         <div class="mt-3">
             <h5>Tjhin Media Server</h5>
-            <p class="text-white-50">All movies are downloaded locally.</p>
+            <p class="text-white-50">All movies are downloaded locally. Design is inspired by boredflix.com</p>
         </div>
         <div>
             <p class="text-white-50">
@@ -177,5 +213,15 @@
 
     <!-- Bootstrap JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function removeGenre(element) {
+            // change the value of the genre to false
+            const elementID = '#check' + element;
+            document.querySelector(elementID).checked = false;
+            // submit the form with the changed value
+            document.querySelector(".form").submit();
+        }
+    </script>
 </body>
 </html>
