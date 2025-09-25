@@ -103,7 +103,16 @@
 
                     <!-- release year -->
                     <div class="dropdown my-3">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">All Years</button>
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ year_selected }}
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-dark max-h-64" style="width: 300px;">
+                            <input class="dropdown-item form-control" name="release_year" value="All Years" type="submit" id="release_year_all_years">
+
+                            {% for year in range(max_year|int, min_year|int - 1, -1) %}
+                            <input class="dropdown-item form-control" name="release_year" value="{{ year }}" type="submit" id="release_year_{{ year }}">
+                            {% endfor %}
+                        </div>
                     </div>
 
                     <!-- rating -->

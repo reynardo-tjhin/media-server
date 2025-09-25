@@ -8,8 +8,6 @@ bp = Blueprint('movies', __name__, url_prefix='/movies')
 @bp.route("/", methods=["GET"])
 def home():
 
-    print(request.args)
-
     # search is not empty
     movie_name = ""
     if (request.args.get("movie-name")):
@@ -51,6 +49,19 @@ def home():
                 'name': genre[1],
                 'checked': '',
             })
+    
+    # filter by release year
+    min_year = db.execute(
+        'SELECT MIN(strftime("%Y", m.release_date)) AS release_year '
+        'FROM movie AS m;'
+    ).fetchone()[0]
+    max_year = db.execute(
+        'SELECT MAX(strftime("%Y", m.release_date)) AS release_year '
+        'FROM movie AS m;'
+    ).fetchone()[0]
+    year_selected = '%'
+    if (request.args.get('release_year') and request.args.get('release_year').isnumeric()):
+        year_selected = request.args.get('release_year')
 
     # get the movies filtered by genre
     genre_id_query = ", ".join("?" for _ in range(len(valid_genre_ids)))
@@ -69,12 +80,13 @@ def home():
             f'    LEFT JOIN genre AS g ON mg.genre_id = g.id '
             f'  WHERE g.id IN ({genre_id_query})'
             f'        AND m.imdb_rating > ? '
+            f'        AND release_year LIKE ? '
             f'  GROUP BY m.id '
             f'  HAVING COUNT(DISTINCT g.id) = ?'
             f') AS c '
             f'  LEFT JOIN movie_genre AS mg ON c.id = mg.movie_id '
             f'  LEFT JOIN genre AS g ON g.id = mg.genre_id '
-            f'GROUP BY c.id ', (*valid_genre_ids, imdb_rating, len(valid_genre_ids),)
+            f'GROUP BY c.id ', (*valid_genre_ids, imdb_rating, year_selected, len(valid_genre_ids),)
         ).fetchall()
 
     # get the movies normally
@@ -89,12 +101,20 @@ def home():
             '  LEFT JOIN genre AS g ON mg.genre_id = g.id '
             'WHERE m.name LIKE ? '
             '      AND m.imdb_rating > ? '
-            'GROUP BY m.id;', ('%'+movie_name+'%', imdb_rating,)
+            '      AND release_year LIKE ? '
+            'GROUP BY m.id;', ('%'+movie_name+'%', imdb_rating, year_selected,)
         ).fetchall()
 
+    # to be parsed in the HTML page
+    if (year_selected == '%'):
+        year_selected = 'All Years'
+
     return render_template("movies/home.jinja2",
-                           movie_name=movie_name,
                            movies=movies,
+                           movie_name=movie_name,
                            genres=genres_final,
                            genres_selected=genres_selected,
-                           imdb_rating_text=imdb_rating_text)
+                           imdb_rating_text=imdb_rating_text,
+                           min_year=min_year,
+                           max_year=max_year,
+                           year_selected=year_selected,)
