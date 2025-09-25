@@ -103,16 +103,33 @@
 
                     <!-- release year -->
                     <div class="dropdown my-3">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <!-- <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {{ year_selected }}
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-dark max-h-64" style="width: 300px;">
+                        </button> -->
+                        <select class="btn btn-secondary dropdown-toggle form-select" name="release_year" onchange="submitForm();" data-bs-toggle="dropdown" aria-expanded="false" style="width:160px;">
+                            <!-- default -->
+                            {% if year_selected == 'All Years' %}
+                                <option selected name="release_year" value="All Years" id="release_year_all_years">All Years</option>
+                            {% else %}
+                                <option name="release_year" value="All Years" id="release_year_all_years">All Years</option>
+                            {% endif %}
+
+                            <!-- a range of years -->
+                            {% for year in range(max_year|int, min_year|int - 1, -1) %}
+                                {% if year_selected == year|string %}
+                                    <option selected name="release_year" value="{{ year }}" id="release_year_{{ year }}">{{ year }}</option>
+                                {% else %}
+                                    <option name="release_year" value="{{ year }}" id="release_year_{{ year }}">{{ year }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <!-- <div class="dropdown-menu dropdown-menu-dark max-h-64" style="width: 300px;">
                             <input class="dropdown-item form-control" name="release_year" value="All Years" type="submit" id="release_year_all_years">
 
                             {% for year in range(max_year|int, min_year|int - 1, -1) %}
                             <input class="dropdown-item form-control" name="release_year" value="{{ year }}" type="submit" id="release_year_{{ year }}">
                             {% endfor %}
-                        </div>
+                        </div> -->
                     </div>
 
                     <!-- rating -->
@@ -229,6 +246,11 @@
             const elementID = '#check' + element;
             document.querySelector(elementID).checked = false;
             // submit the form with the changed value
+            document.querySelector(".form").submit();
+        }
+
+        function submitForm() {
+            console.log("got here!");
             document.querySelector(".form").submit();
         }
     </script>

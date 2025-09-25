@@ -8,12 +8,14 @@ bp = Blueprint('movies', __name__, url_prefix='/movies')
 @bp.route("/", methods=["GET"])
 def home():
 
+    print(request.args)
+
     # search is not empty
     movie_name = ""
     if (request.args.get("movie-name")):
         movie_name = request.args.get("movie-name")
 
-    # dictionary of imdb_ratings
+    # filter by imdb_ratings
     imdb_ratings = {
         "Show All": -1,
         "8+ (Excellent)": 8,
