@@ -24,7 +24,7 @@ def home():
         "5+ (Average)": 5,
     }
     imdb_rating = -1
-    imdb_rating_text = "Any IMDb Rating"
+    imdb_rating_text = "Show All"
     if (request.args.get("imdb_rating")):
         imdb_rating = imdb_ratings.get(request.args.get("imdb_rating"))
         imdb_rating_text = request.args.get("imdb_rating")
