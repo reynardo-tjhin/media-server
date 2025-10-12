@@ -29,6 +29,18 @@ def home():
         imdb_rating = imdb_ratings.get(request.args.get("imdb_rating"))
         imdb_rating_text = request.args.get("imdb_rating")
 
+    # sort by
+    sort_by_dict = {
+        "Sort By": "NULL",
+        "Rating (High to Low)": "c.imdb_rating DESC",
+        "Rating (Low to High)": "c.imdb_rating ASC",
+    }
+    sort_by = "NULL"
+    sort_by_text = "Sort By"
+    if (request.args.get("sort_by")):
+        sort_by = sort_by_dict.get(request.args.get("sort_by"))
+        sort_by_text = request.args.get("sort_by")
+
     # get the db
     db = get_db()
 
@@ -88,23 +100,25 @@ def home():
             f') AS c '
             f'  LEFT JOIN movie_genre AS mg ON c.id = mg.movie_id '
             f'  LEFT JOIN genre AS g ON g.id = mg.genre_id '
-            f'GROUP BY c.id ', (*valid_genre_ids, imdb_rating, year_selected, len(valid_genre_ids),)
+            f'GROUP BY c.id '
+            f'ORDER BY {sort_by};', (*valid_genre_ids, imdb_rating, year_selected, len(valid_genre_ids),)
         ).fetchall()
 
     # get the movies normally
     else:
         movies = db.execute(
-            'SELECT m.id, m.poster_location, m.name, '
-            '       m.imdb_rating, m.rotten_tomatoes_rating, m.metacritic_rating, '
-            '       strftime("%Y", m.release_date) AS release_year, '
-            '       GROUP_CONCAT(g.name, ", ") AS genres '
-            'FROM movie AS m '
-            '  LEFT JOIN movie_genre AS mg ON m.id = mg.movie_id '
-            '  LEFT JOIN genre AS g ON mg.genre_id = g.id '
-            'WHERE m.name LIKE ? '
-            '      AND m.imdb_rating > ? '
-            '      AND release_year LIKE ? '
-            'GROUP BY m.id;', ('%'+movie_name+'%', imdb_rating, year_selected,)
+            f'SELECT c.id, c.poster_location, c.name, '
+            f'       c.imdb_rating, c.rotten_tomatoes_rating, c.metacritic_rating, '
+            f'       strftime("%Y", c.release_date) AS release_year, '
+            f'       GROUP_CONCAT(g.name, ", ") AS genres '
+            f'FROM movie AS c '
+            f'  LEFT JOIN movie_genre AS mg ON c.id = mg.movie_id '
+            f'  LEFT JOIN genre AS g ON mg.genre_id = g.id '
+            f'WHERE c.name LIKE ? '
+            f'      AND c.imdb_rating > ? '
+            f'      AND release_year LIKE ? '
+            f'GROUP BY c.id '
+            f'ORDER BY {sort_by};', ('%'+movie_name+'%', imdb_rating, year_selected,)
         ).fetchall()
 
     # to be parsed in the HTML page
@@ -117,6 +131,7 @@ def home():
                            genres=genres_final,
                            genres_selected=genres_selected,
                            imdb_rating_text=imdb_rating_text,
+                           sort_by_text=sort_by_text,
                            min_year=min_year,
                            max_year=max_year,
                            year_selected=year_selected,)

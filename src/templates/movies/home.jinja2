@@ -127,18 +127,23 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-dark max-h-64" style="width: 300px;">
 
+                            <!-- default -->
                             <input type="radio" class="visually-hidden" name="imdb_rating" value="Show All" id="imdb_rating_show_all" onchange="this.form.submit();" {% if imdb_rating_text == "Show All" %}checked{% endif %} aria-describedby="imdb-rating-dropdown-label">
                             <label class="dropdown-item" for="imdb_rating_show_all" {% if imdb_rating_text == "Show All" %}active{% endif %}>Show All</label>
 
+                            <!-- 8+ (excellent) -->
                             <input type="radio" class="visually-hidden" name="imdb_rating" value="8+ (Excellent)" id="imdb_rating_excellent" onchange="this.form.submit();" {% if imdb_rating_text == "8+ (Excellent)" %}checked{% endif %} aria-describedby="imdb-rating-dropdown-label">
                             <label class="dropdown-item" for="imdb_rating_excellent" {% if imdb_rating_text == "8+ (Excellent)" %}active{% endif %}>8+ (Excellent)</label>
 
+                            <!-- 7+ (good) -->
                             <input type="radio" class="visually-hidden" name="imdb_rating" value="7+ (Good)" id="imdb_rating_good" onchange="this.form.submit();" {% if imdb_rating_text == "7+ (Good)" %}checked{% endif %} aria-describedby="imdb-rating-dropdown-label">
                             <label class="dropdown-item" for="imdb_rating_good" {% if imdb_rating_text == "7+ (Good)" %}active{% endif %}>7+ (Good)</label>
 
+                            <!-- 6+ (fair) -->
                             <input type="radio" class="visually-hidden" name="imdb_rating" value="6+ (Fair)" id="imdb_rating_fair" onchange="this.form.submit();" {% if imdb_rating_text == "6+ (Fair)" %}checked{% endif %} aria-describedby="imdb-rating-dropdown-label">
                             <label class="dropdown-item" for="imdb_rating_fair" {% if imdb_rating_text == "6+ (Fair)" %}active{% endif %}>6+ (Fair)</label>
 
+                            <!-- 5+ (average) -->
                             <input type="radio" class="visually-hidden" name="imdb_rating" value="5+ (Average)" id="imdb_rating_average" onchange="this.form.submit();" {% if imdb_rating_text == "5+ (Average)" %}checked{% endif %} aria-describedby="imdb-rating-dropdown-label">
                             <label class="dropdown-item" for="imdb_rating_average" {% if imdb_rating_text == "5+ (Average)" %}active{% endif %}>5+ (Average)</label>
                         </div>
@@ -146,8 +151,30 @@
 
                     <!-- sort by -->
                     <div class="dropdown my-3">
-                        <button class="btn btn-secondary" type="button">Sort By</button>
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ sort_by_text }}
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-dark max-h-64" style="width: 300px;">
+
+                            <!-- default -->
+                            <input type="radio" class="visually-hidden" name="sort_by" value="Sort By" id="sort_by_default" onchange="this.form.submit();" {% if sort_by_text == "Sort By" %}checked{% endif %} aria-describedby="sort-by-dropdown-label">
+                            <label class="dropdown-item" for="sort_by_default" {% if sort_by_text == "Sprt By" %}active{% endif %}>Sort By</label>
+
+                            <!-- rating (high to low) -->
+                            <input type="radio" class="visually-hidden" name="sort_by" value="Rating (High to Low)" id="sort_by_rating_high_to_low" onchange="this.form.submit();" {% if sort_by_text == "Rating (High to Low)" %}checked{% endif %} aria-describedby="sort-by-dropdown-label">
+                            <label class="dropdown-item" for="sort_by_rating_high_to_low" {% if sort_by_text == "5+ (Average)" %}active{% endif %}>Sort By IMDb Rating (High to Low)</label>
+                            
+                            <!-- rating (low to high) -->
+                            <input type="radio" class="visually-hidden" name="sort_by" value="Rating (Low to High)" id="sort_by_rating_low_to_high" onchange="this.form.submit();" {% if sort_by_text == "Rating (Low to High)" %}checked{% endif %} aria-describedby="sort-by-dropdown-label">
+                            <label class="dropdown-item" for="sort_by_rating_low_to_high" {% if sort_by_text == "Rating (Low to High)" %}active{% endif %}>Sort By IMDb Rating (Low to High)</label>
+
+                            <!-- release date (newest) -->
+                            <!-- release date (oldest) -->
+                        </div>
                     </div>
+
+                    <!-- clear button -->
+
                 </div>
             </form>
 
@@ -155,7 +182,7 @@
             {% if genres_selected %}
             <div class="d-flex mb-3 mx-4 align-items-start">
                 {% for genre_selected in genres_selected %}
-                    <button type="button" class="btn btn-primary me-3"">
+                    <button type="button" class="btn btn-primary me-3">
                         {{ genre_selected }}
                         <span class="text-white fs-5" onclick="removeGenre('{{ genre_selected }}');">&times;</span>
                     </button>
