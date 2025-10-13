@@ -25,7 +25,7 @@ def home():
     }
     imdb_rating = -1
     imdb_rating_text = "Show All"
-    if (request.args.get("imdb_rating")):
+    if (imdb_ratings.get(request.args.get("imdb_rating"))):
         imdb_rating = imdb_ratings.get(request.args.get("imdb_rating"))
         imdb_rating_text = request.args.get("imdb_rating")
 
@@ -34,10 +34,12 @@ def home():
         "Sort By": "NULL",
         "Rating (High to Low)": "c.imdb_rating DESC",
         "Rating (Low to High)": "c.imdb_rating ASC",
+        "Release Year (Newest)": "release_year DESC",
+        "Release Year (Oldest)": "release_year ASC",
     }
     sort_by = "NULL"
     sort_by_text = "Sort By"
-    if (request.args.get("sort_by")):
+    if (sort_by_dict.get(request.args.get("sort_by"))):
         sort_by = sort_by_dict.get(request.args.get("sort_by"))
         sort_by_text = request.args.get("sort_by")
 
