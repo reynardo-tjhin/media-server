@@ -1,0 +1,48 @@
+/* allow for the sticky navigation bar on top */
+.content {
+    padding-top: 90px;
+}
+
+.movie-poster {
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+.rating-badge {
+    background-color: rgba(0,0,0,0.7);
+    border-radius: 20px;
+    padding: 3px 10px;
+}
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    height: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+.video-container video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.movie-info {
+    background: rgba(0,0,0,0.7);
+    border-radius: 8px;
+    padding: 20px;
+}
+.rating-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+.rating-item {
+    background: rgba(255,255,255,0.1);
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}

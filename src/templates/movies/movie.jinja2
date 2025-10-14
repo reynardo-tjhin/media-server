@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ movie.name }} - Watch Movie</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='movies/movie.css') }}">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+</head>
+<body class="bg-dark text-white">
+
+    {# navigation bar #}
+    <nav class="navbar navbar-expand-lg fixed-top bg-dark" data-bs-theme="dark">
+        <div class="container-fluid">
+            {# Logo #}
+            <a class="navbar-brand" href="{{ url_for('admin.home') }}">
+                <svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Background circle for the icon -->
+                    <circle cx="30" cy="30" r="25" fill="url(#gradient1)" stroke-width="2"/>
+                    
+                    <!-- Server/Media icon - stylized play button with server lines -->
+                    <polygon points="22,20 22,40 38,30" fill="black" opacity="0.9"/>
+                    <rect x="40" y="24" width="8" height="2" rx="1" fill="black" opacity="0.7"/>
+                    <rect x="40" y="28" width="12" height="2" rx="1" fill="black" opacity="0.7"/>
+                    <rect x="40" y="32" width="8" height="2" rx="1" fill="black" opacity="0.7"/>
+                    <rect x="40" y="36" width="6" height="2" rx="1" fill="black" opacity="0.7"/>
+                
+                    <!-- Company name text -->
+                    <text x="65" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="url(#textGradient)">Tjhin Media</text>
+                    <text x="65" y="42" font-family="Arial, sans-serif" font-size="12" font-weight="normal" fill="url(#textGradient)" opacity="0.8">Server</text>
+                
+                    <!-- Gradients -->
+                    <defs>
+                        <!-- the background of the play button -->
+                        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:white;stop-opacity:0.9" />
+                        </linearGradient>
+                        
+                        <!-- the font colors -->
+                        <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:white;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </a>
+
+            <!-- when screen is too small, nav bar will collapse to a single button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navigation Menu -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a href="{{ url_for('movies.home') }}" class="nav-link active">Movies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">TV Shows</a>
+                    </li>
+                </ul>
+
+                {# Search section #}
+                <form method="get" class="d-flex search-form" role="search">
+                    <input name="movie-name" class="form-control me-2" type="search" placeholder="Search movies..." aria-label="Search"/>
+                    <button class="btn btn-outline-success" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- content -->
+    <div class="content container pb-4 px-4">
+        <div class="row mb-4">
+            <!-- the poster of the movie -->
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <img src="{{ url_for('static', filename='posters/' + movie.name + '.webp') }}" 
+                     alt="{{ movie.name }} Poster" 
+                     class="movie-poster img-fluid">
+            </div>
+
+            <!-- information about the movie -->
+            <div class="col-lg-8">
+
+                <!-- Title of the movie -->
+                <h1 class="text-left mb-4">{{ movie.name | capitalize }}</h1>
+            
+                <div class="movie-info">
+                    <!-- show the description of the movie -->
+                    <p>{{ movie.description }}</p>
+                    
+                    <!-- Show the 3 ratings -->
+                    <div class="rating-container">
+                        {% if movie.imdb_rating %}
+                        <div class="rating-item d-flex align-items-center">
+                            <i class="bi bi-star-fill text-warning me-1"></i>
+                            <span>IMDb: {{ movie.imdb_rating }}</span>
+                        </div>
+                        {% endif %}
+
+                        {% if movie.rotten_tomatoes_rating %}
+                        <div class="rating-item d-flex align-items-center">
+                            <i class="bi bi-apple text-danger me-1"></i>
+                            <span>RT: {{ movie.rotten_tomatoes_rating }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if movie.metacritic_rating %}
+                        <div class="rating-item d-flex align-items-center">
+                            <i class="bi bi-award text-info me-1"></i>
+                            <span>Metacritic: {{ movie.metacritic_rating }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- show the release date -->
+                    {% if movie.release_date %}
+                    <div class="mt-3">
+                        <i class="bi bi-calendar3 me-2"></i>
+                        <span>Release Date: {{ movie.release_date }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- the movie player -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="video-container">
+                    <video id="moviePlayer" controls>
+                        <source src="{{ movie.media_location }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="container border-top mt-5 text-white">
+        <div class="mt-3">
+            <h5>Tjhin Media Server</h5>
+            <p class="text-white-50">All movies are downloaded locally. Design is inspired by boredflix.com.</p>
+        </div>
+        <div>
+            <p class="text-white-50">
+                © 2025 
+                <span class="text-white">Tjhin Media Server</span>.
+                 All rights reserved.    
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

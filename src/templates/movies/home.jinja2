@@ -87,14 +87,14 @@
             <form method="get" class="form">
 
                 <!-- Mobile toggle buttons -->
-                <div class="d-xl-none mb-3">
-                    <button class="btn btn-primary w-100 rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#filterControls">
+                <div class="d-xl-none">
+                    <button class="btn btn-primary w-100 rounded-4" data-bs-toggle="collapse" type="button" data-bs-target="#filterControls" aria-expanded="false" aria-controls="filterControls">
                         <i class="fas fa-filter"></i> Filter Controls <i class="fas fa-chevron-down ms-2"></i>
                     </button>
                 </div>
 
                 <!-- Filter controls container - collapsible on mobile -->
-                <div id="filterControls" class="collapse show d-xl-block">
+                <div id="filterControls" class="collapse d-xl-block">
                     <div class="d-flex flex-wrap flex-xl-nowrap justify-content-evenly gap-2 p-2">
                         <!-- genres -->
                         <div class="dropdown my-3">
@@ -215,7 +215,7 @@
         <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 ">
             {% for movie in movies %}
             <div class="col pb-2 movie-card">
-                <a href="#">
+                <a href="{{ url_for('movies.movie', movie_id=movie.id) }}">
                     <img class="movie-poster" 
                          src="{{ url_for('static', filename='posters/' + movie.name + '.webp') }}"
                          alt="{{ movie.name }}"

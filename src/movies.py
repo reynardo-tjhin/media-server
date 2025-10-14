@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, render_template, url_for, request, g, session
+    Blueprint, render_template, request, abort
 )
 from src.db import get_db
 
@@ -7,8 +7,6 @@ bp = Blueprint('movies', __name__, url_prefix='/movies')
 
 @bp.route("/", methods=["GET"])
 def home():
-
-    print(request.args)
 
     # search is not empty
     movie_name = ""
@@ -137,3 +135,20 @@ def home():
                            min_year=min_year,
                            max_year=max_year,
                            year_selected=year_selected,)
+
+@bp.route('/<string:movie_id>')
+def movie(movie_id: str):
+    
+    db = get_db()
+    movie = db.execute(
+        'SELECT * '
+        'FROM movie '
+        'WHERE id = ?', (movie_id,)
+    ).fetchone()
+
+    if (not movie):
+        abort(404, f"Movie ID {movie_id} does not exist.")
+    
+    return render_template("movies/movie.jinja2",
+                           movie=movie,
+                           text="movie found!")
