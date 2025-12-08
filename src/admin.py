@@ -18,7 +18,7 @@ def home():
     db = get_db()
     movies_count = db.execute('SELECT COUNT(DISTINCT m.id) FROM movie AS m;').fetchone()
     users_count = db.execute('SELECT COUNT(DISTINCT u.id) FROM user AS u;').fetchone()
-    return render_template("admin/home.jinja2",
+    return render_template("admin/home.html",
                            movies_count=movies_count[0],
                            users_count=users_count[0],)
 
@@ -74,7 +74,7 @@ def movies():
 
     # get all the genres data - not going to be included in movie_genres for readability
     genres = db.execute('SELECT id, name FROM genre').fetchall()
-    return render_template("admin/movies.jinja2", 
+    return render_template("admin/movies.jinja", 
                            movies=movies,
                            genres=genres,
                            table_columns=table_columns,)
