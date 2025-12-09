@@ -18,7 +18,7 @@ def home():
     db = get_db()
     movies_count = db.execute('SELECT COUNT(DISTINCT m.id) FROM movie AS m;').fetchone()
     users_count = db.execute('SELECT COUNT(DISTINCT u.id) FROM user AS u;').fetchone()
-    return render_template("admin/home.html",
+    return render_template("admin/admin_dashboard.html",
                            movies_count=movies_count[0],
                            users_count=users_count[0],)
 

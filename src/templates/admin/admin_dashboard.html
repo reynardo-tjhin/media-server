@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tjhin Media Server Dashboard</title>
+
+    <!-- the `rel="canonical"` tag tells search engine that this is the preferred (or original) version of the page. Even if someone sees this content on another URL, treat the one I'm linking to as the main one -->
+    <!-- <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/dashboard/"> -->
+
+    <!-- Import Bootstrap -->
+    <script src="https://getbootstrap.com/docs/5.3/assets/js/color-modes.js"></script>
+    <link href="https://getbootstrap.com/docs/5.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Sets the color of the browser's address bar or status bar on mobile devices (and some desktop browsers) -->
+    <meta name="theme-color" content="#712cf9">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem
+            }
+        }
+
+        .b-example-divider {
+            width: 100%;
+            height: 3rem;
+            background-color: #0000001a;
+            border: solid rgba(0, 0, 0, .15);
+            border-width: 1px 0;
+            box-shadow: inset 0 .5em 1.5em #0000001a, inset 0 .125em .5em #00000026
+        }
+
+        .b-example-vr {
+            flex-shrink: 0;
+            width: 1.5rem;
+            height: 100vh
+        }
+
+        .bi {
+            vertical-align: -.125em;
+            fill: currentColor
+        }
+
+        .nav-scroller {
+            position: relative;
+            z-index: 2;
+            height: 2.75rem;
+            overflow-y: hidden
+        }
+
+        .nav-scroller .nav {
+            display: flex;
+            flex-wrap: nowrap;
+            padding-bottom: 1rem;
+            margin-top: -1px;
+            overflow-x: auto;
+            text-align: center;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch
+        }
+
+        .btn-bd-primary {
+            --bd-violet-bg: #712cf9;
+            --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+            --bs-btn-font-weight: 600;
+            --bs-btn-color: var(--bs-white);
+            --bs-btn-bg: var(--bd-violet-bg);
+            --bs-btn-border-color: var(--bd-violet-bg);
+            --bs-btn-hover-color: var(--bs-white);
+            --bs-btn-hover-bg: #6528e0;
+            --bs-btn-hover-border-color: #6528e0;
+            --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+            --bs-btn-active-color: var(--bs-btn-hover-color);
+            --bs-btn-active-bg: #5a23c8;
+            --bs-btn-active-border-color: #5a23c8
+        }
+
+        .bd-mode-toggle {
+            z-index: 1500
+        }
+
+        .bd-mode-toggle .bi {
+            width: 1em;
+            height: 1em
+        }
+
+        .bd-mode-toggle .dropdown-menu .active .bi {
+            display: block !important
+        }
+
+        /* 
+            - Forces the offcanvas to be fully visible by resetting its position.
+            - By default, Bootstrap animates the offcanvas using transform: translateX(-100%) (hidden) → transform: translateX(0) (visible).
+            - But sometimes, due to JS conflicts or transitions, it might not fully reset — this line ensures it’s pulled all the way in.
+        */
+        .offcanvas.show {
+            transform: translateX(0);
+        }
+
+        .main-content {
+            padding-top: 56px;
+            transition: margin-left 0.1s ease;
+        }
+
+        .offcanvas.show+.main-content {
+            margin-left: 400px;
+            /* Width of offcanvas (adjust as needed) */
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            z-index: 3000;
+            width: 100%;
+        }
+
+        .offcanvas {
+            padding-top: 56px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- svgs -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+        <symbol id="check2" viewBox="0 0 16 16">
+            <path
+                d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z">
+            </path>
+        </symbol>
+        <symbol id="circle-half" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z">
+            </path>
+        </symbol>
+        <symbol id="moon-stars-fill" viewBox="0 0 16 16">
+            <path
+                d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z">
+            </path>
+            <path
+                d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z">
+            </path>
+        </symbol>
+        <symbol id="sun-fill" viewBox="0 0 16 16">
+            <path
+                d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z">
+            </path>
+        </symbol>
+    </svg>
+
+    <!-- the light/dark mode -->
+    <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
+        <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button"
+            aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (dark)">
+            <svg class="bi my-1 theme-icon-active" aria-hidden="true">
+                <use href="#moon-stars-fill"></use>
+            </svg>
+            <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text" style>
+            <li>
+                <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="light"
+                    aria-pressed="true">
+                    <svg class="bi me-2 opacity-50" aria-hidden="true">
+                        <use href="#sun-fill"></use>
+                    </svg>
+                    Light
+                    <svg class="bi ms-auto d-none" aria-hidden="true">
+                        <use href="#check2"></use>
+                    </svg>
+                </button>
+            </li>
+            <li>
+                <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
+                    aria-pressed="false">
+                    <svg class="bi me-2 opacity-50" aria-hidden="true">
+                        <use href="#moon-stars-fill"></use>
+                    </svg>
+                    Dark
+                    <svg class="bi ms-auto d-none" aria-hidden="true">
+                        <use href="#check2"></use>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- svgs for the main content -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+        <symbol id="calendar3" viewBox="0 0 16 16">
+            <path
+                d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z">
+            </path>
+            <path
+                d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z">
+            </path>
+        </symbol>
+        <symbol id="cart" viewBox="0 0 16 16">
+            <path
+                d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z">
+            </path>
+        </symbol>
+        <symbol id="chevron-right" viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+                d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z">
+            </path>
+        </symbol>
+        <symbol id="door-closed" viewBox="0 0 16 16">
+            <path d="M3 2a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v13h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V2zm1 13h8V2H4v13z">
+            </path>
+            <path d="M9 9a1 1 0 1 0 2 0 1 1 0 0 0-2 0z"></path>
+        </symbol>
+        <symbol id="file-earmark" viewBox="0 0 16 16">
+            <path
+                d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z">
+            </path>
+        </symbol>
+        <symbol id="file-earmark-text" viewBox="0 0 16 16">
+            <path
+                d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z">
+            </path>
+            <path
+                d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z">
+            </path>
+        </symbol>
+        <symbol id="gear-wide-connected" viewBox="0 0 16 16">
+            <path
+                d="M7.068.727c.243-.97 1.62-.97 1.864 0l.071.286a.96.96 0 0 0 1.622.434l.205-.211c.695-.719 1.888-.03 1.613.931l-.08.284a.96.96 0 0 0 1.187 1.187l.283-.081c.96-.275 1.65.918.931 1.613l-.211.205a.96.96 0 0 0 .434 1.622l.286.071c.97.243.97 1.62 0 1.864l-.286.071a.96.96 0 0 0-.434 1.622l.211.205c.719.695.03 1.888-.931 1.613l-.284-.08a.96.96 0 0 0-1.187 1.187l.081.283c.275.96-.918 1.65-1.613.931l-.205-.211a.96.96 0 0 0-1.622.434l-.071.286c-.243.97-1.62.97-1.864 0l-.071-.286a.96.96 0 0 0-1.622-.434l-.205.211c-.695.719-1.888.03-1.613-.931l.08-.284a.96.96 0 0 0-1.186-1.187l-.284.081c-.96.275-1.65-.918-.931-1.613l.211-.205a.96.96 0 0 0-.434-1.622l-.286-.071c-.97-.243-.97-1.62 0-1.864l.286-.071a.96.96 0 0 0 .434-1.622l-.211-.205c-.719-.695-.03-1.888.931-1.613l.284.08a.96.96 0 0 0 1.187-1.186l-.081-.284c-.275-.96.918-1.65 1.613-.931l.205.211a.96.96 0 0 0 1.622-.434l.071-.286zM12.973 8.5H8.25l-2.834 3.779A4.998 4.998 0 0 0 12.973 8.5zm0-1a4.998 4.998 0 0 0-7.557-3.779l2.834 3.78h4.723zM5.048 3.967c-.03.021-.058.043-.087.065l.087-.065zm-.431.355A4.984 4.984 0 0 0 3.002 8c0 1.455.622 2.765 1.615 3.678L7.375 8 4.617 4.322zm.344 7.646.087.065-.087-.065z">
+            </path>
+        </symbol>
+        <symbol id="graph-up" viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+                d="M0 0h1v15h15v1H0V0Zm14.817 3.113a.5.5 0 0 1 .07.704l-4.5 5.5a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61 4.15-5.073a.5.5 0 0 1 .704-.07Z">
+            </path>
+        </symbol>
+        <symbol id="house-fill" viewBox="0 0 16 16">
+            <path
+                d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z">
+            </path>
+            <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z"></path>
+        </symbol>
+        <symbol id="list" viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+                d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z">
+            </path>
+        </symbol>
+        <symbol id="people" viewBox="0 0 16 16">
+            <path
+                d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8Zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022ZM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816ZM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z">
+            </path>
+        </symbol>
+        <symbol id="plus-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path>
+            <path
+                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z">
+            </path>
+        </symbol>
+        <symbol id="puzzle" viewBox="0 0 16 16">
+            <path
+                d="M3.112 3.645A1.5 1.5 0 0 1 4.605 2H7a.5.5 0 0 1 .5.5v.382c0 .696-.497 1.182-.872 1.469a.459.459 0 0 0-.115.118.113.113 0 0 0-.012.025L6.5 4.5v.003l.003.01c.004.01.014.028.036.053a.86.86 0 0 0 .27.194C7.09 4.9 7.51 5 8 5c.492 0 .912-.1 1.19-.24a.86.86 0 0 0 .271-.194.213.213 0 0 0 .039-.063v-.009a.112.112 0 0 0-.012-.025.459.459 0 0 0-.115-.118c-.375-.287-.872-.773-.872-1.469V2.5A.5.5 0 0 1 9 2h2.395a1.5 1.5 0 0 1 1.493 1.645L12.645 6.5h.237c.195 0 .42-.147.675-.48.21-.274.528-.52.943-.52.568 0 .947.447 1.154.862C15.877 6.807 16 7.387 16 8s-.123 1.193-.346 1.638c-.207.415-.586.862-1.154.862-.415 0-.733-.246-.943-.52-.255-.333-.48-.48-.675-.48h-.237l.243 2.855A1.5 1.5 0 0 1 11.395 14H9a.5.5 0 0 1-.5-.5v-.382c0-.696.497-1.182.872-1.469a.459.459 0 0 0 .115-.118.113.113 0 0 0 .012-.025L9.5 11.5v-.003a.214.214 0 0 0-.039-.064.859.859 0 0 0-.27-.193C8.91 11.1 8.49 11 8 11c-.491 0-.912.1-1.19.24a.859.859 0 0 0-.271.194.214.214 0 0 0-.039.063v.003l.001.006a.113.113 0 0 0 .012.025c.016.027.05.068.115.118.375.287.872.773.872 1.469v.382a.5.5 0 0 1-.5.5H4.605a1.5 1.5 0 0 1-1.493-1.645L3.356 9.5h-.238c-.195 0-.42.147-.675.48-.21.274-.528.52-.943.52-.568 0-.947-.447-1.154-.862C.123 9.193 0 8.613 0 8s.123-1.193.346-1.638C.553 5.947.932 5.5 1.5 5.5c.415 0 .733.246.943.52.255.333.48.48.675.48h.238l-.244-2.855zM4.605 3a.5.5 0 0 0-.498.55l.001.007.29 3.4A.5.5 0 0 1 3.9 7.5h-.782c-.696 0-1.182-.497-1.469-.872a.459.459 0 0 0-.118-.115.112.112 0 0 0-.025-.012L1.5 6.5h-.003a.213.213 0 0 0-.064.039.86.86 0 0 0-.193.27C1.1 7.09 1 7.51 1 8c0 .491.1.912.24 1.19.07.14.14.225.194.271a.213.213 0 0 0 .063.039H1.5l.006-.001a.112.112 0 0 0 .025-.012.459.459 0 0 0 .118-.115c.287-.375.773-.872 1.469-.872H3.9a.5.5 0 0 1 .498.542l-.29 3.408a.5.5 0 0 0 .497.55h1.878c-.048-.166-.195-.352-.463-.557-.274-.21-.52-.528-.52-.943 0-.568.447-.947.862-1.154C6.807 10.123 7.387 10 8 10s1.193.123 1.638.346c.415.207.862.586.862 1.154 0 .415-.246.733-.52.943-.268.205-.415.39-.463.557h1.878a.5.5 0 0 0 .498-.55l-.001-.007-.29-3.4A.5.5 0 0 1 12.1 8.5h.782c.696 0 1.182.497 1.469.872.05.065.091.099.118.115.013.008.021.01.025.012a.02.02 0 0 0 .006.001h.003a.214.214 0 0 0 .064-.039.86.86 0 0 0 .193-.27c.14-.28.24-.7.24-1.191 0-.492-.1-.912-.24-1.19a.86.86 0 0 0-.194-.271.215.215 0 0 0-.063-.039H14.5l-.006.001a.113.113 0 0 0-.025.012.459.459 0 0 0-.118.115c-.287.375-.773.872-1.469.872H12.1a.5.5 0 0 1-.498-.543l.29-3.407a.5.5 0 0 0-.497-.55H9.517c.048.166.195.352.463.557.274.21.52.528.52.943 0 .568-.447.947-.862 1.154C9.193 5.877 8.613 6 8 6s-1.193-.123-1.638-.346C5.947 5.447 5.5 5.068 5.5 4.5c0-.415.246-.733.52-.943.268-.205.415-.39.463-.557H4.605z">
+            </path>
+        </symbol>
+        <symbol id="search" viewBox="0 0 16 16">
+            <path
+                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+            </path>
+        </symbol>
+    </svg>
+
+    <!-- header -->
+    <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow justify-content-start" data-bs-theme="dark">
+
+        <!-- side bar -->
+        <button class="btn me-0 px-3 fs-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+            <svg class="bi" width="24" height="24">
+                <use href="#list"></use>
+            </svg>
+        </button>
+
+        <!-- nav bar -->
+        <a class="navbar-brand me-0 px-3 fs-4 text-white" href="#">Admin Dashboard</a>
+    </header>
+
+    <!-- Offcanvas Sidebar -->
+    <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Admin Dashboard</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column p-0 overflow-y-auto">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-2" href="#">Admin Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-2" href="#">Movies</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-2" href="#">Genres</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- <div class="offcanvas offcanvas-start" id="sidebar" data-bs-scroll="true" data-bs-backdrop="false">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Sidebar</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <p>Menu Item 1</p>
+            <p>Menu Item 2</p>
+        </div>
+    </div> -->
+
+    <!-- Main Content (this will shift) -->
+    <main class="main-content">
+        <div class="p-4">
+            <h1 class="mx-5 px-5">Main Content</h1>
+            <div class="m-5 px-5">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque viverra elit sem, eu accumsan ipsum
+                    consectetur at. Aliquam pretium purus a nisl aliquam lacinia. Phasellus sollicitudin eros arcu, nec
+                    ullamcorper est ullamcorper vitae. Pellentesque vulputate vehicula convallis. Nam vitae odio vel
+                    quam
+                    posuere consectetur tristique a felis. Sed vitae tincidunt lacus. Sed eu condimentum urna, nec
+                    elementum
+                    velit. Fusce finibus justo sem. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
+                    posuere
+                    cubilia curae; Ut vel lorem a ex facilisis aliquam. Cras eu nulla ipsum. Cras non lacus eget sapien
+                    molestie
+                    finibus eget sit amet nisi. In lorem magna, elementum a dui non, aliquet mattis lacus. Nulla commodo
+                    magna
+                    feugiat, mollis erat eu, lacinia felis. Donec et venenatis leo. Integer feugiat, odio nec mollis
+                    faucibus,
+                    elit eros efficitur diam, eget consectetur dolor eros eu velit.</p>
+
+                <p>Nunc sed sem nunc. Cras eget justo mattis turpis tincidunt condimentum a at diam. Cras et ex
+                    venenatis,
+                    gravida velit aliquet, sodales nibh. Integer ut finibus sem, sit amet pulvinar tortor. Suspendisse
+                    vitae
+                    mi
+                    eu nulla tincidunt vehicula. Praesent sit amet neque nec orci commodo vulputate sed ut nulla. Ut ut
+                    fringilla risus. Mauris arcu neque, porta in sem sit amet, scelerisque rhoncus ante. Vivamus mauris
+                    dui,
+                    dignissim nec justo non, pretium pellentesque purus. Vestibulum at magna ut neque egestas
+                    scelerisque.
+                    Aenean scelerisque dolor id enim interdum fringilla. Vestibulum congue cursus nisi, ut tempus eros
+                    tempus a.
+                    Sed pellentesque lacus vitae enim eleifend, ac aliquam massa ornare. Orci varius natoque penatibus
+                    et
+                    magnis
+                    dis parturient montes, nascetur ridiculus mus. Nullam egestas quis metus lobortis sodales.</p>
+
+                <p>Sed consectetur pretium augue nec faucibus. In hac habitasse platea dictumst. Etiam ornare imperdiet
+                    sapien
+                    eget bibendum. Mauris placerat volutpat ex ac egestas. Nullam tincidunt eros enim, in condimentum
+                    justo
+                    imperdiet et. Cras pretium ex nisl, sit amet suscipit nibh aliquet vitae. Duis eget risus
+                    pellentesque,
+                    pretium massa eu, lobortis magna. Integer ac augue nibh. Mauris mattis nunc vel molestie faucibus.
+                    Nulla
+                    et
+                    lectus lectus. Curabitur lobortis semper massa eget egestas. Donec vulputate imperdiet euismod.</p>
+
+                <p>Suspendisse quis ligula et orci aliquet feugiat. Curabitur consectetur dignissim ultrices. Vestibulum
+                    at
+                    tempus est. Mauris ac metus eget purus ullamcorper pulvinar. In tristique, mauris at accumsan
+                    posuere,
+                    dui
+                    libero auctor felis, ut tristique odio erat ac lorem. Donec sapien metus, malesuada quis neque sit
+                    amet,
+                    feugiat eleifend odio. Nullam sagittis interdum metus a ornare. Vivamus eleifend elit sed porttitor
+                    mattis.
+                    Nullam sodales nunc ac pellentesque posuere. Morbi ac sagittis mauris. Aliquam gravida pulvinar
+                    risus.
+                    Aliquam a orci tincidunt, tempor lorem ac, mollis felis. Praesent eget lacus sem. Nulla metus
+                    libero,
+                    egestas ac sodales nec, varius quis arcu. Aliquam tristique molestie eros ac viverra.</p>
+
+                <p>Mauris interdum lacinia imperdiet. Fusce sit amet euismod turpis, vitae gravida felis. Aliquam a
+                    ornare
+                    odio, sit amet scelerisque diam. Aliquam malesuada consequat sapien, eu dignissim massa fringilla
+                    sed.
+                    Praesent vel ligula nisi. Phasellus porta leo a lorem sodales, ac porttitor nunc congue. Aliquam
+                    aliquam
+                    massa id nisl dapibus molestie. Quisque non faucibus ipsum. Donec consectetur sit amet augue nec
+                    sagittis.
+                    Pellentesque convallis egestas imperdiet.</p>
+
+                <p>Praesent sollicitudin dignissim congue. Mauris id nunc lorem. Cras sollicitudin purus sit amet lacus
+                    dignissim ornare. Nullam egestas lobortis nisl id bibendum. In lacinia condimentum libero ac
+                    sagittis.
+                    Suspendisse pellentesque lacus id lectus mattis elementum. Cras sagittis, dui ut efficitur
+                    fringilla,
+                    elit
+                    nunc fermentum arcu, dignissim aliquet urna dui sed metus. Suspendisse hendrerit congue felis in
+                    porta.
+                    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
+
+                <p>Pellentesque venenatis lobortis leo vitae suscipit. Nam arcu eros, tincidunt dictum augue sit amet,
+                    iaculis
+                    sollicitudin leo. Pellentesque et tincidunt magna. Fusce nec dui nisi. Suspendisse suscipit purus
+                    sit
+                    amet
+                    risus iaculis tristique. Aenean mattis mauris tempor dapibus maximus. Donec dapibus metus nec urna
+                    venenatis
+                    gravida. Sed ornare lacus et iaculis semper. Integer aliquet massa sit amet magna ullamcorper, et
+                    blandit
+                    nunc eleifend. Interdum et malesuada fames ac ante ipsum primis in faucibus. Donec vehicula, elit id
+                    tincidunt dictum, diam massa condimentum orci, nec egestas orci risus a metus. Etiam ut fringilla
+                    lacus.
+                </p>
+
+                <p>Praesent in ultricies risus, eu pellentesque lacus. Integer laoreet odio sed magna sodales, a
+                    porttitor
+                    odio
+                    venenatis. Aenean vel elit cursus, ornare enim ac, elementum purus. Sed magna sem, euismod eget
+                    aliquam
+                    a,
+                    viverra id nibh. Phasellus sem tellus, tempus in massa sit amet, mattis elementum dolor. Donec et
+                    elementum
+                    enim. Integer quis ipsum tempor, aliquam nisi in, elementum justo. Nunc faucibus vehicula lorem a
+                    laoreet.
+                    Aenean pulvinar facilisis convallis. Vestibulum lobortis viverra neque, in feugiat augue pharetra
+                    non.
+                    Sed
+                    in magna fringilla, cursus massa non, facilisis risus. Quisque purus quam, lacinia nec pretium
+                    vehicula,
+                    fermentum a purus. Curabitur fermentum massa vitae nisi suscipit, sed condimentum purus consectetur.
+                </p>
+
+                <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nullam
+                    aliquet
+                    euismod quam eget vestibulum. Nunc vel placerat dui. Nunc nec cursus ex. Integer at maximus nibh.
+                    Donec
+                    cursus ligula sem, nec congue risus maximus et. Maecenas dictum, mauris malesuada accumsan volutpat,
+                    elit ex
+                    blandit purus, id tempus tellus enim eget diam. Sed nec commodo nibh. Donec quis enim a est ornare
+                    faucibus.
+                    Sed mollis ornare diam a bibendum. Quisque vel neque finibus lorem fringilla egestas. Mauris cursus,
+                    lectus
+                    eu posuere euismod, felis orci consequat mi, sit amet eleifend augue sapien a lectus.</p>
+
+                <p>Morbi non eleifend purus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere
+                    cubilia
+                    curae; Donec eget lectus quam. In hac habitasse platea dictumst. Nunc vulputate felis mi, nec mattis
+                    massa
+                    luctus ac. Sed eget dictum est, a sollicitudin justo. Ut metus ligula, elementum nec nisl a, tempus
+                    vehicula
+                    mi.</p>
+
+                <p>Donec vel ullamcorper lorem. Integer ultricies metus feugiat magna aliquet, non tempor metus
+                    bibendum.
+                    Mauris semper tincidunt nibh, at auctor sem consequat a. Curabitur ipsum est, rutrum a ipsum in,
+                    tincidunt
+                    tincidunt dui. Donec ornare consequat posuere. Nulla finibus, risus vitae feugiat varius, ipsum
+                    turpis
+                    pulvinar dolor, ac molestie nisi sem in neque. Maecenas aliquam ornare condimentum. Vestibulum in
+                    ligula
+                    et
+                    ligula placerat dictum at non elit. Sed eu iaculis dui, et commodo mi.</p>
+
+                <p>Donec ut finibus velit. Nulla posuere viverra erat, sit amet accumsan quam gravida quis. In nec
+                    sapien
+                    tristique, lacinia lacus eget, scelerisque urna. Pellentesque nec nulla quam. Suspendisse consequat
+                    condimentum elit maximus pretium. Suspendisse potenti. In hac habitasse platea dictumst. Sed sed
+                    diam
+                    vitae
+                    erat posuere interdum a eu purus. Phasellus nisi nisi, viverra ut ultrices eu, elementum quis erat.
+                    Sed
+                    sit
+                    amet molestie lacus.</p>
+
+                <p>Aliquam tristique, arcu eu viverra semper, dolor augue hendrerit enim, ac rhoncus purus augue sit
+                    amet
+                    neque. Pellentesque eu nulla at neque mattis vestibulum eget a risus. Phasellus eros tortor,
+                    pellentesque
+                    eget felis nec, facilisis maximus lacus. Quisque quis sapien felis. Vestibulum sagittis malesuada
+                    sem,
+                    eu
+                    hendrerit justo. Aliquam erat volutpat. Cras nec metus sollicitudin, porta odio ac, elementum nisi.
+                    Donec
+                    pretium massa augue, in blandit nulla pretium pretium. Nullam gravida risus tortor, rutrum mollis
+                    risus
+                    ultrices eget. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla venenatis a mi
+                    eget
+                    mollis. Suspendisse dolor urna, egestas eu convallis vel, malesuada non tortor. Sed vitae mauris
+                    nulla.
+                    Sed
+                    rutrum varius nibh ut dapibus.</p>
+
+                <p>Curabitur sagittis elit at lacinia rhoncus. Sed elementum pellentesque tellus, vitae elementum sem
+                    venenatis
+                    ac. Curabitur maximus vel felis eu finibus. Interdum et malesuada fames ac ante ipsum primis in
+                    faucibus.
+                    Sed efficitur consectetur sem, id tincidunt erat dictum ac. Morbi lacinia tortor vel urna mollis
+                    mollis.
+                    In
+                    lectus nulla, vestibulum id elementum vel, malesuada sit amet lectus. Nunc efficitur blandit tellus
+                    id
+                    tristique. Maecenas varius molestie molestie. Vivamus quis eros velit. Phasellus sollicitudin vitae
+                    diam
+                    quis pretium. Fusce fringilla gravida ornare. Mauris vitae convallis leo, ac tempus felis. Proin
+                    venenatis
+                    dui risus, et porttitor elit feugiat non.</p>
+
+                <p>Sed convallis molestie egestas. Vestibulum aliquam porttitor aliquet. Vivamus placerat elit ante,
+                    eget
+                    sollicitudin massa fringilla a. Proin tincidunt lorem ut velit maximus aliquet. Fusce scelerisque
+                    scelerisque dolor ac pharetra. Maecenas volutpat urna sed malesuada malesuada. Donec sem lacus,
+                    rhoncus
+                    id
+                    efficitur ac, mattis nec neque. Nulla a nibh mi. Duis a ultricies lectus.</p>
+
+                <p>Mauris non urna a erat dapibus scelerisque. Sed ultricies pretium tempor. Fusce id semper urna.
+                    Nullam eu
+                    porttitor urna. Fusce a ligula rhoncus, sollicitudin sapien at, malesuada libero. Aliquam tempus
+                    semper
+                    justo ut volutpat. Pellentesque luctus, dolor interdum fermentum rutrum, ex justo eleifend ex, ac
+                    vestibulum
+                    ipsum neque sit amet purus. Integer ac viverra felis.</p>
+
+                <p>Etiam vulputate hendrerit sapien. Donec elementum erat vitae odio finibus, et dignissim augue
+                    viverra.
+                    Class
+                    aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce id
+                    efficitur
+                    sem. Mauris nec leo ut ante viverra rhoncus at at quam. Proin volutpat aliquam egestas. Vestibulum
+                    in
+                    ante a
+                    ipsum eleifend consequat. Integer varius, lorem quis semper euismod, lacus ex posuere nibh, vitae
+                    vulputate
+                    ante leo in turpis. Nullam pulvinar malesuada velit nec efficitur. Nam vel mauris posuere mi tempor
+                    placerat. Vestibulum ut iaculis lorem, id hendrerit ipsum. Donec sit amet tristique urna. Cras porta
+                    felis
+                    et placerat tempor. Integer auctor risus in orci consequat rhoncus. Praesent vitae purus velit.</p>
+
+                <p>Morbi suscipit nibh justo, eget venenatis erat aliquet eget. Cras convallis eros a elit vulputate
+                    sagittis.
+                    Nunc elit quam, mollis a ipsum ac, egestas dictum justo. Suspendisse ac scelerisque sapien. Quisque
+                    justo
+                    dui, feugiat at cursus at, congue quis felis. Curabitur id leo eu velit blandit consectetur. Integer
+                    aliquet
+                    eget ligula quis ultrices. Nunc risus lectus, tristique nec lobortis a, blandit ut dui. Nam
+                    imperdiet
+                    odio
+                    nec augue molestie, nec consequat urna sollicitudin.</p>
+
+                <p>Sed lobortis mi ac eros maximus, ut eleifend arcu vulputate. Ut eu turpis non mauris bibendum
+                    volutpat.
+                    Suspendisse aliquet lorem lacus, nec convallis felis scelerisque vitae. Fusce eget fringilla dolor.
+                    Etiam
+                    vel mauris eget odio luctus sodales eget id nibh. Etiam ultricies tortor ut massa malesuada
+                    scelerisque
+                    in
+                    ac est. Maecenas lobortis felis semper, accumsan nisl vitae, maximus justo.</p>
+
+                <p>Curabitur maximus velit sapien, ut eleifend ligula luctus sit amet. Donec a quam aliquet, bibendum
+                    neque
+                    eu,
+                    mollis augue. Quisque in lorem arcu. Pellentesque ac dolor consequat, laoreet justo in, pulvinar
+                    diam.
+                    Suspendisse vehicula, nulla vel hendrerit feugiat, erat velit bibendum libero, ac laoreet dui justo
+                    in
+                    diam.
+                    Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nunc at
+                    maximus
+                    felis. Sed pellentesque vitae ipsum a finibus. Nullam ut neque non turpis consectetur vulputate.</p>
+
+                <p>Sed porttitor augue a tortor semper, at viverra ex cursus. Vestibulum dapibus urna quis mi porta
+                    pulvinar.
+                    Quisque finibus metus convallis auctor vestibulum. Nulla facilisi. In aliquam nibh odio, tempor
+                    tempor
+                    enim
+                    euismod et. Nunc malesuada nisl sit amet ultricies congue. Proin sit amet pretium turpis. Lorem
+                    ipsum
+                    dolor
+                    sit amet, consectetur adipiscing elit. Aenean finibus sapien sed dapibus cursus. Etiam non tincidunt
+                    massa.
+                    Nam egestas magna ex, vitae luctus justo pharetra non. Curabitur felis augue, vehicula ultrices odio
+                    et,
+                    mattis maximus mi.</p>
+
+                <p>Ut ultrices urna et felis blandit, nec auctor dui maximus. Suspendisse potenti. Pellentesque habitant
+                    morbi
+                    tristique senectus et netus et malesuada fames ac turpis egestas. Praesent faucibus ex ac hendrerit
+                    varius.
+                    Fusce ullamcorper ligula at ligula bibendum luctus. Fusce dignissim finibus gravida. Cras sapien
+                    velit,
+                    rutrum at fringilla in, porttitor non ex. Quisque nec nulla elementum, egestas nibh non, pretium
+                    nibh.
+                    Etiam
+                    sit amet ipsum gravida, sollicitudin orci in, tincidunt felis. Suspendisse ut vehicula neque. In
+                    sodales
+                    euismod leo, sit amet auctor enim aliquet vel. Quisque scelerisque, eros eu rhoncus posuere, orci
+                    sapien
+                    lacinia justo, et pretium elit ante at nunc.</p>
+
+                <p>Aliquam at justo et arcu commodo congue. Duis scelerisque ipsum sit amet sapien facilisis fermentum
+                    in
+                    quis
+                    metus. Aliquam placerat viverra rutrum. Nunc tempus augue odio, et viverra justo aliquam vitae.
+                    Aliquam
+                    pulvinar, mauris at tristique aliquam, ex augue tristique odio, ut accumsan tellus urna nec nibh. In
+                    id
+                    ante
+                    mollis, lobortis ipsum eget, pretium nisl. Ut nunc ligula, laoreet quis finibus efficitur, aliquet
+                    id
+                    orci.
+                    Donec dapibus iaculis enim quis pretium. Quisque pharetra semper tellus a gravida. Phasellus sed
+                    quam
+                    lorem.
+                    Maecenas neque lorem, aliquet vel turpis id, hendrerit placerat ex. Donec eget tellus nisi. Sed
+                    interdum,
+                    tellus facilisis bibendum rutrum, neque augue sodales nibh, vitae sodales augue lacus ut sapien.
+                    Praesent
+                    porttitor urna nec sodales sagittis. Sed ultricies, orci in elementum fermentum, nulla diam aliquam
+                    neque,
+                    ac faucibus sem orci sit amet tellus.</p>
+
+                <p>Vivamus interdum tellus sapien, nec ultricies arcu pretium sit amet. Praesent mollis nibh quis sapien
+                    dignissim finibus. Nulla suscipit metus metus, id maximus massa dictum at. Nunc vitae quam efficitur
+                    nulla
+                    sodales semper vel molestie libero. Cras justo nisl, pharetra at tempor id, cursus at tortor. Mauris
+                    faucibus augue vitae tincidunt porttitor. Donec eu leo arcu.</p>
+
+                <p>Nulla facilisi. Integer tellus leo, tristique a dui sit amet, semper congue sapien. Aliquam iaculis
+                    eros
+                    id
+                    commodo dapibus. Vestibulum sed cursus dolor. Etiam ultrices viverra quam, eget maximus augue. In
+                    euismod
+                    nibh lorem, in ullamcorper purus blandit ultricies. Curabitur et enim quis eros pulvinar porttitor.
+                    Class
+                    aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
+                    varius
+                    felis
+                    vitae purus dictum laoreet. Nam sit amet fringilla lorem. Pellentesque varius, lacus nec fermentum
+                    maximus,
+                    metus eros faucibus eros, sed venenatis elit urna et tortor. Sed laoreet sodales dui a rhoncus.
+                    Vestibulum
+                    ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Fusce quis dolor eget
+                    tellus
+                    euismod euismod. Interdum et malesuada fames ac ante ipsum primis in faucibus.</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.2/dist/chart.umd.js"></script>
+</body>
+
+</html>
