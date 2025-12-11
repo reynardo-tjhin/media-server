@@ -16,11 +16,33 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 @admin_required
 def home():
     db = get_db()
+
+    # get basic information
     movies_count = db.execute('SELECT COUNT(DISTINCT m.id) FROM movie AS m;').fetchone()
     users_count = db.execute('SELECT COUNT(DISTINCT u.id) FROM user AS u;').fetchone()
+    genres_count = db.execute('SELECT COUNT(DISTINCT g.id) FROM genre AS g;').fetchone()
+
+    # get the first three movies
+    movies = db.execute('SELECT * FROM movie LIMIT 3;').fetchall()
+    customised_movies = [
+        {
+            **dict(movie),
+            'name': movie['name'],
+            'description': movie['description'][:60] + "...",
+            'imdb_rating': movie['imdb_rating'],
+            'release_date': movie['release_date'],
+            'media_location': movie['media_location'],
+            'duration': movie['duration'],
+        }
+        for movie in movies
+    ]
+
+    # return by rendering the template
     return render_template("admin/admin_dashboard.html",
                            movies_count=movies_count[0],
-                           users_count=users_count[0],)
+                           users_count=users_count[0],
+                           genres_count=genres_count[0],
+                           movies=customised_movies,)
 
 @bp.route("/movies")
 @admin_required
