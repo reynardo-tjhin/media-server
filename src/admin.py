@@ -37,12 +37,16 @@ def home():
         for movie in movies
     ]
 
+    # get all the genres name
+    genres = db.execute('SELECT id, name FROM genre;').fetchall()
+
     # return by rendering the template
     return render_template("admin/admin_dashboard.html",
                            movies_count=movies_count[0],
                            users_count=users_count[0],
                            genres_count=genres_count[0],
-                           movies=customised_movies,)
+                           movies=customised_movies,
+                           genres=genres,)
 
 @bp.route("/movies")
 @admin_required
@@ -96,7 +100,7 @@ def movies():
 
     # get all the genres data - not going to be included in movie_genres for readability
     genres = db.execute('SELECT id, name FROM genre').fetchall()
-    return render_template("admin/movies.jinja", 
+    return render_template("admin/movies.html", 
                            movies=movies,
                            genres=genres,
                            table_columns=table_columns,)
