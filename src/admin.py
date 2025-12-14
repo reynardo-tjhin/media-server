@@ -52,27 +52,12 @@ def home():
 @admin_required
 def movies():
     search_movie_by_name = ''
-    if (request.args.get('search_movie_by_name')):
-        search_movie_by_name = request.args['search_movie_by_name']
+    if (request.args.get('search')):
+        search_movie_by_name = request.args['search']
 
     sort_by = 'Name'
     if (request.args.get('sort_by')):
         sort_by = request.args['sort_by']
-
-    # define columns to show and its style
-    table_columns = [
-        {'key': 'id', 'label': 'ID', 'width': '50px'},
-        {'key': 'name', 'label': 'Name', 'width': '150px'},
-        {'key': 'description', 'label': 'Description', 'width': '250px'},
-        {'key': 'imdb_rating', 'label': 'IMDB', 'width': '80px'},
-        {'key': 'rotten_tomatoes_rating', 'label': 'RT', 'width': '80px'},
-        {'key': 'metacritic_rating', 'label': 'Metacritic', 'width': '80px'},
-        {'key': 'release_date', 'label': 'Release Date', 'width': '100px'},
-        {'key': 'media_location', 'label': 'Media Location', 'width': '200px'},
-        {'key': 'genres', 'label': 'Genres', 'width': '100px'},
-        {'key': 'delete', 'label': 'Delete', 'width': '80px'},
-        {'key': 'update', 'label': 'Update', 'width': '80px'},
-    ]
 
     # a dictionary with sort-bys
     sort_by_dict = {
@@ -102,9 +87,13 @@ def movies():
     genres = db.execute('SELECT id, name FROM genre').fetchall()
     return render_template("admin/movies.html", 
                            movies=movies,
-                           genres=genres,
-                           table_columns=table_columns,)
+                           genres=genres,)
 
+@bp.route('/add-movie', methods=["GET", "POST"])
+@admin_required
+def add_movie():
+    #TODO!
+    return redirect(url_for('admin.movies'))
 
 @bp.route('/<string:genre_id>')
 @admin_required

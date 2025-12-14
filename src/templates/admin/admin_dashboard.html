@@ -3,68 +3,68 @@
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block head %}
-    {{ super() }}
-    <style>
-        
-    </style>
+{{ super() }}
+<style>
+
+</style>
 {% endblock %}
 
 {% block content %}
-    <div class="p-4 mx-5">
-        <h1>General Dashboard</h1>
-    </div>
+<div class="p-4 mx-5">
+    <h1>General Dashboard</h1>
+</div>
 
-    <!-- Show some basic information -->
-    <div class="p-4 mx-5">
-        <p>Number of Movies: {{ movies_count }}</p>
-        <p>Number of User Accounts: {{ users_count }}</p>
-        <p>Number of Genres Added: {{ genres_count }}</p>
-    </div>
+<!-- Show some basic information -->
+<div class="p-4 mx-5">
+    <p>Number of Movies: {{ movies_count }}</p>
+    <p>Number of User Accounts: {{ users_count }}</p>
+    <p>Number of Genres Added: {{ genres_count }}</p>
+</div>
 
-    <!-- Show all the genres (just the name) -->
-    <div class="p-4 mx-5">
-        <h2>List of Genres</h2>
-        <div class="container text-center">
-            <div class="row row-cols-6">
-                {% for genre in genres %}
-                <div class="col">
-                    <a href="{{ url_for('admin.genre', genre_id=genre.id) }}">{{ genre.name }}</a>
-                </div>
-                {% endfor %}
+<!-- Show all the genres (just the name) -->
+<div class="p-4 mx-5">
+    <h2>List of Genres</h2>
+    <div class="container text-center">
+        <div class="row row-cols-6">
+            {% for genre in genres %}
+            <div class="col">
+                <a href="{{ url_for('admin.genre', genre_id=genre.id) }}">{{ genre.name }}</a>
             </div>
+            {% endfor %}
         </div>
     </div>
+</div>
 
-    <!-- Show some data of the first three rows of the movie -->
-    <div class="p-4 mx-5">
-        <h2>List of Movies</h2>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">id</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">IMDb Rating</th>
-                    <th scope="col">Release Date</th>
-                    <th scope="col">Location of Movie File</th>
-                    <th scope="col">Duration</th>
-                </tr>
-            </thead>
-            <tbody>
+<!-- Show some data of the first three rows of the movie -->
+<div class="p-4 mx-5">
+    <h2>List of Movies</h2>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">IMDb Rating</th>
+                <th scope="col">Release Date</th>
+                <th scope="col">Location of Movie File</th>
+                <th scope="col">Duration</th>
+            </tr>
+        </thead>
+        <tbody>
             {% for movie in movies %}
-                <tr>
-                    <th scope="row">{{ movie.id }}</th>
-                    <td>{{ movie.name }}</td>
-                    <td>{{ movie.description }}</td>
-                    <td>{{ movie.imdb_rating }}</td>
-                    <td>{{ movie.release_date }}</td>
-                    <td>{{ movie.media_location }}</td>
-                    <td>{{ movie.duration }}</td>
-                </tr>
+            <tr>
+                <th scope="row">{{ movie.id }}</th>
+                <td>{{ movie.name }}</td>
+                <td>{{ movie.description }}</td>
+                <td>{{ movie.imdb_rating }}</td>
+                <td>{{ movie.release_date }}</td>
+                <td>{{ movie.media_location }}</td>
+                <td>{{ movie.duration }}</td>
+            </tr>
             {% endfor %}
-            </tbody>
-        </table>
-        <a href="{{ url_for('admin.movies') }}">Show All</a>
-    </div>
+        </tbody>
+    </table>
+    <a href="{{ url_for('admin.movies') }}">Show All</a>
+</div>
 
 {% endblock %}

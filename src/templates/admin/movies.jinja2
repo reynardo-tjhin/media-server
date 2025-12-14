@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Movie Management</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/movies.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="breadcrumbs">
+            <div class="navigation">
+                <a href="{{ url_for('admin.home') }}">Home (Admin)</a> > <span>Movies Dashboard</span>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
+        </div>
+
+        <div class="header">
+            <h1>Admin's Movie Dashboard</h1>
+            <p>Manage movies</p>
+        </div>
+
+        <div class="controls">
+            <div class="controls-row">
+                <form method="get" class="search-form">
+                    <div class="search-input-group">
+                        <input id="search" name="search_movie_by_name" placeholder="Search by movie name...">
+                        <button class="search-clear" type="button" onclick="document.getElementById('search').value=''; this.closest('form').submit();" title="Clear search">✕</button>
+                        <button id="searchButton" type="submit">🔎</button>
+                    </div>
+                    
+                    <select id="sort" name="sort_by">
+                        <option value="None">Sort by None</option>
+                        <option value="Name">Sort by Name</option>
+                        <option value="IMDB">Sort by IMDB</option>
+                        <option value="RT">Sort by RT</option>
+                        <option value="Metacritic">Sort by Metacritic</option>
+                        <option value="Release Date">Sort by Release Date</option>
+                    </select>
+                </form>
+
+                <div class="action-buttons">
+                    <a href="{{ url_for('admin.edit_movie', action='add') }}">+ Add Movie</a>
+                    <a href="{{ url_for('admin.edit_genre', action='add') }}">+ Add Genre</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- showing all the genres -->
+        <div class="genres">
+            {% for genre in genres %}
+                <a href="{{ url_for('admin.genre', genre_id=genre.id) }}">{{ genre.name }}</a>
+            {% endfor %}
+        </div>
+
+        <!-- the table showing the list of movies -->
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        {% for table_column in table_columns %}
+                            <th style="width: {{ table_column.width }}">{{ table_column.label }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    {% for movie in movies %}
+                        <tr>
+                            <td>{{ movie.id }}</td>
+                            <td>{{ movie.name }}</td>
+                            <td>{{ movie.description }}</td>
+                            <td>{{ movie.imdb_rating }}</td>
+                            <td>{{ movie.rotten_tomatoes_rating }}</td>
+                            <td>{{ movie.metacritic_rating }}</td>
+                            <td>{{ movie.release_date }}</td>
+                            <td>{{ movie.media_location }}</td>
+                            <td>{{ movie.genres }} </td>
+                            <td>
+                                <form method="post" action="{{ url_for('admin.delete_movie', movie_id=movie.id) }}" onsubmit="return confirm('Do you want to delete this movie?')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button id="deleteMovie" type="submit">Delete</button>
+                                </form>
+                            </td>
+                            <td><a href="{{ url_for('admin.edit_movie', movie_id=movie.id, action='update') }}">Update</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Auto-submit on sort change for better UX
+        document.getElementById('sort').addEventListener('change', function() {
+            this.closest('form').submit();
+        });
+
+        // Change theme
+        function toggleTheme() {
+            const html = document.documentElement;
+            const dataTheme = html.getAttribute('data-theme'); // to change the CSS attributes
+            const button = document.querySelector('.theme-toggle'); // get the element with the class 'theme-toggle'
+
+            console.log('current data-theme: ' + dataTheme);
+            console.log('current theme from local storage: ' + localStorage.getItem('theme'));
+
+            if (dataTheme === 'dark') {
+                // current theme is 'dark'
+                // the button will show 'light'
+                // change the button back to 'dark'
+                button.textContent = '🌙 Dark';
+                html.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                // current theme is 'light'
+                // the button will show 'dark'
+                // change the button back to 'light'
+                button.textContent = '☀️ Light';
+                html.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.theme-toggle').textContent = '☀️ Light';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                document.querySelector('.theme-toggle').textContent = '🌙 Dark';
+            }
+        });
+    </script>
+</body>
+</html>
