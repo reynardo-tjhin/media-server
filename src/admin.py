@@ -8,13 +8,18 @@ from uuid import uuid4
 
 from src.auth import admin_required
 from src.db import get_db
-from typing import Any
+from typing import Any, List
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+
 
 @bp.route("/")
 @admin_required
 def home():
+    """
+    Admin dashboard: Read operation on various tables
+    """
     db = get_db()
 
     # get basic information
@@ -48,26 +53,20 @@ def home():
                            movies=customised_movies,
                            genres=genres,)
 
+
+
 @bp.route("/movies")
 @admin_required
 def movies():
+    """
+    Movies dashboard for admin: to create, read, update and delete movies
+    CREATE, UPDATE and DELETE movies use different functions
+    This function only focuses on read operations
+    """
+    # search as the query parameter
     search_movie_by_name = ''
     if (request.args.get('search')):
         search_movie_by_name = request.args['search']
-
-    sort_by = 'Name'
-    if (request.args.get('sort_by')):
-        sort_by = request.args['sort_by']
-
-    # a dictionary with sort-bys
-    sort_by_dict = {
-        'None': 'm.name',
-        'Name': 'm.name',
-        'IMDB': 'm.imdb_rating',
-        'RT': 'm.rotten_tomatoes_rating',
-        'Metacritic': 'metacritic_rating',
-        'Release Date': 'release_date',
-    }
     
     # get all the movies data
     db = get_db()
@@ -79,21 +78,138 @@ def movies():
         'LEFT OUTER JOIN movie_genre AS mg ON m.id = mg.movie_id '
         'LEFT OUTER JOIN genre AS g ON g.id = mg.genre_id '
         'WHERE m.name LIKE ? '
-        'GROUP BY m.id '
-        f'ORDER BY {sort_by_dict[sort_by]};', ('%'+search_movie_by_name+'%',)
+        'GROUP BY m.id;', ('%'+search_movie_by_name+'%',)
+        # f'ORDER BY {sort_by_dict[sort_by]};', ('%'+search_movie_by_name+'%',)
     ).fetchall()
 
     # get all the genres data - not going to be included in movie_genres for readability
-    genres = db.execute('SELECT id, name FROM genre').fetchall()
+    genres = db.execute('SELECT id, name FROM genre;').fetchall()
     return render_template("admin/movies.html", 
                            movies=movies,
                            genres=genres,)
 
+
+
+def _validate_movie_entries(movie_data: dict[str, Any]) -> str:
+    
+    # initialise the variable 'error' (to be returned)
+    error = ""
+    
+    # get the database
+    db = get_db()
+    
+    # get the movie data
+    movie_name = movie_data['movieName']
+    movie_description = movie_data['movieDescription']
+    imdb_rating = movie_data['imdbRating']
+    rotten_tomatoes_rating = movie_data['rottenTomatoesRating']
+    metacritic_rating = movie_data['metacriticRating']
+    release_date = movie_data['releaseDate']
+    media_location = movie_data['mediaLocation']
+    poster_location = movie_data['posterLocation']
+    duration = movie_data['duration']
+    
+    # validation 1: the below data are all required
+    if not movie_name:
+        error = "Movie Name is required."
+    elif not movie_description:
+        error = "Movie Description is required."
+    elif not release_date:
+        error = "Release Date is required."
+    elif not media_location:
+        error = "Media Location is required."
+    elif not poster_location:
+        error = "Poster Location is required."
+
+    # validation 2: no two movie names exists
+    name = db.execute('SELECT name FROM movie WHERE name = ?', (movie_name,)).fetchone()
+    if (name is not None):
+        error = "Movie name already exists."
+    
+    # validation 3: no two media locations is the same
+    loc = db.execute('SELECT media_location FROM movie WHERE media_location = ?', (media_location,)).fetchone()
+    if (loc is not None):
+        error = "Media location already exists. New movie cannot be from the same existing media location."
+
+    # validation 3: both metacritic rating and rotten tomatoes rating need to be from 0 to 100
+    pattern = r'^(100|[1-9]?[0-9])$'
+    if (rotten_tomatoes_rating):
+        if not bool(re.match(pattern, rotten_tomatoes_rating)):
+            error = "Rotten Tomatoes Rating should be from 0 to 100."
+    if (metacritic_rating):
+        if not bool(re.match(pattern, metacritic_rating)):
+            error = "Metacritic Rating should be from 0 to 100."
+
+    # validation 4: imdb rating needs to be from 0.0 to 10.0
+    pattern = r'^(10\.0|[0-9]\.[0-9])$'
+    if (imdb_rating):
+        if not bool(re.match(pattern, imdb_rating)):
+            error = "IMDb Rating should be from 0.0 to 10.0 (strictly only 1 decimal place)."
+
+    if (duration):
+        if (not duration.isnumeric()):
+            error = "Duration needs to be a number"
+
+    return error
+
+
+
 @bp.route('/add-movie', methods=["GET", "POST"])
 @admin_required
 def add_movie():
-    #TODO!
+    """
+    A CREATE operation to create a new movie and add to the database
+    """
+    if (request.method == "POST"):
+        
+        # get the post data
+        movie_name = request.form['movieName']
+        movie_description = request.form['movieDescription']
+        imdb_rating = request.form['imdbRating']
+        rotten_tomatoes_rating = request.form['rottenTomatoesRating']
+        metacritic_rating = request.form['metacriticRating']
+        release_date = request.form['releaseDate']
+        media_location = request.form['mediaLocation']
+        poster_location = request.form['posterLocation']
+        duration = request.form['duration']
+        
+        # validations
+        error = _validate_movie_entries(request.form)
+        if (error):
+            flash(error)
+            return redirect(url_for('admin.movies'))
+        
+        db = get_db()
+        movie_id = str(uuid4())
+        db.execute(
+            'INSERT INTO movie (id, name, description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location, duration)'
+            ' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            (movie_id, movie_name, movie_description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location, duration,)
+        )
+        db.commit()
+        
     return redirect(url_for('admin.movies'))
+
+
+
+@bp.route('/delete-movie/<string:movie_id>', methods=["POST"])
+@admin_required
+def delete_movie(movie_id: str):
+    """
+    A DELETE operation to delete the movie based on the id
+    """
+    # requires admin login
+    # returns a 404 if movie_id does not exist
+    get_movie(movie_id)
+
+    # delete the movie from database
+    db = get_db()
+    db.execute('DELETE FROM movie WHERE id = ?', (movie_id,))
+    db.commit()
+
+    return redirect(url_for('admin.movies'))
+
+
 
 @bp.route('/<string:genre_id>')
 @admin_required
@@ -133,19 +249,7 @@ def genre(genre_id: str):
                            table_columns=table_columns,
                            style=style,)
 
-@bp.route('/delete-movie/<string:movie_id>', methods=["POST"])
-@admin_required
-def delete_movie(movie_id: str):
-    # requires admin login
-    # returns a 404 if movie_id does not exist
-    get_movie(movie_id)
 
-    # delete the movie from database
-    db = get_db()
-    db.execute('DELETE FROM movie WHERE id = ?', (movie_id,))
-    db.commit()
-
-    return redirect(url_for('admin.movies'))
 
 @bp.route('/delete-genre/<string:genre_id>', methods=["POST"])
 @admin_required
