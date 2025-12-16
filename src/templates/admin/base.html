@@ -240,7 +240,7 @@
         </button>
 
         <!-- nav bar -->
-        <a class="navbar-brand me-0 px-3 fs-4 text-white" href="#">Admin Dashboard</a>
+        <a class="navbar-brand me-0 px-3 fs-4 text-white" href="{{ url_for('admin.home') }}">Admin Dashboard</a>
     </header>
 
     <!-- Offcanvas Sidebar -->
@@ -253,10 +253,10 @@
         <div class="offcanvas-body d-flex flex-column p-0 overflow-y-auto">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2" href="/admin">Admin Dashboard</a>
+                    <a class="nav-link d-flex align-items-center gap-2" href="{{ url_for('admin.home') }}">Admin Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2" href="/admin/movies">Movies</a>
+                    <a class="nav-link d-flex align-items-center gap-2" href="{{ url_for('admin.movies') }}">Movies</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center gap-2" href="#">Genres</a>

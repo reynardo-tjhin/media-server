@@ -166,7 +166,7 @@
     </div>
 </form>
 
-<form method="post">
+<form method="post" id="deleteMovieForm">
     <div class="modal fade" id="deleteMovie" tabindex="-1" aria-labelledby="deleteMovie" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -181,6 +181,145 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
                     <button type="submit" class="btn btn-success">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form method="post" id="editMovieForm">
+    <div class="modal fade" id="editMovie" tabindex="-1" aria-labelledby="editMovie" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="addnewMovieLabel">Add a New Movie</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- CSRF token for safe post -->
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+                    {% with error = get_flashed_messages() %}
+                    {% if error[0] is defined %}
+                    <div class="border border-danger border-3 mb-3">
+                        <span class="ms-3">Error: {{ error[0] }}</span>
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+
+                    <div class="row mb-3">
+                        <label for="editMovieName" class="col-3 col-form-label">Movie Name</label>
+                        <div class="col-9">
+                            <input name="editMovieName" type="text" id="editMovieName" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="editMovieDescription" class="col-3 col-form-label">Description</label>
+                        <div class="col-9">
+                            <textarea name="editMovieDescription" maxlength="1000" id="editMovieDescription"
+                                placeholder="Enter Description (Max 1000 characters)" class="form-control" rows="5"
+                                required></textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="datepicker" class="col-3 col-form-label">Release Date</label>
+                        <div class="col-9">
+                            <input name="releaseDate" type="text" id="datepicker" placeholder="Select date"
+                                class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="editMediaLocation" class="col-3 col-form-label">Media Location</label>
+                        <div class="col-9">
+                            <input name="editMediaLocation" type="text" id="editMediaLocation"
+                                placeholder="e.g. ~/vids/Movie.mp4" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="editPosterLocation" class="col-3 col-form-label">Poster Location</label>
+                        <div class="col-9">
+                            <input name="editPosterLocation" type="text" id="editPosterLocation"
+                                placeholder="e.g. ~/posters/moviePoster.png" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <!-- Duration of the movie -->
+                    <div class="row mb-3 align-items-center">
+                        <label for="editDuration" class="col-3 col-form-label">Duration</label>
+                        <div class="col-2">
+                            <input name="editDuration" type="number" id="editDuration" min="0" max="1000"
+                                placeholder="e.g. 120" class="form-control" aria-describedby="durationHelpInline">
+                        </div>
+                        <div class="col-7">
+                            <span id="durationHelpInline" class="form-text">
+                                A number between 0 to 1000
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Different ratings of the movie: IMDb, Rotten Tomatoes and Metacritic -->
+                    <div class="row mb-3 align-items-center">
+                        <label for="editImdbRating" class="col-3 col-form-label">IMDb Rating</label>
+                        <div class="col-2">
+                            <input name="editImdbRating" type="text" id="editImdbRating" placeholder="e.g. 7.9"
+                                class="form-control" aria-describedby="imdbRatingHelpInline">
+                        </div>
+                        <div class="col-7">
+                            <span id="imdbRatingHelpInline" class="form-text">
+                                A single decimal input between 0 to 10
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row mb-3 align-items-center">
+                        <label for="editRottenTomatoesRating" class="col-3 col-form-label">Rotten Tomatoes
+                            Rating</label>
+                        <div class="col-2">
+                            <input name="editRottenTomatoesRating" type="number" id="editRottenTomatoesRating" min="0"
+                                max="100" placeholder="e.g. 79" class="form-control"
+                                aria-describedby="rottenTomatoesHelpInline">
+                        </div>
+                        <div class="col-7">
+                            <span id="rottenTomatoesHelpInline" class="form-text">
+                                A number between 0 to 100
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row mb-3 align-items-center">
+                        <label for="editMetacriticRating" class="col-3 col-form-label">Metacritic Rating</label>
+                        <div class="col-2">
+                            <input name="editMetacriticRating" type="number" id="editMetacriticRating" min="0" max="100"
+                                placeholder="e.g. 79" class="form-control" aria-describedby="metacriticHelpInline">
+                        </div>
+                        <div class="col-7">
+                            <span id="metacriticHelpInline" class="form-text">
+                                A number between 0 to 100
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Genres of the movie -->
+                    <div class="mb-3 col-form-label">Genre(s)</div>
+                    <div class="row row-cols-3 mb-3">
+                        {% for genre in genres %}
+                        <div class="col">
+                            <div class="input-group mb-3">
+                                <div class="input-group-text">
+                                    <input name="{{ genre.id }}" type="checkbox" id="edit{{ genre.name }}"
+                                        value="{{ genre.name }}" class="form-check-input mt-0"
+                                        aria-label="Checkbox for genre {{ genre.name }}">
+                                </div>
+                                <label for="{{ genre.id }}" class="form-control"
+                                    aria-label="Text label for checkbox of genre {{ genre.name }}">{{ genre.name
+                                    }}</label>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Update</button>
                 </div>
             </div>
         </div>
@@ -237,14 +376,23 @@
                 <td>{{ movie.media_location }}</td>
                 <td>{{ movie.duration }}</td>
                 <td>
-                    <button type="button" class="btn btn-outline-warning">
+                    <button type="button" class="btn btn-outline-warning edit-button" data-bs-toggle="modal"
+                        data-bs-target="#editMovie" data-movie-id="{{ movie.id }}" data-movie-name="{{ movie.name }}"
+                        data-movie-description="{{ movie.description }}"
+                        data-movie-release-date="{{ movie.release_date }}"
+                        data-movie-media-location="{{ movie.media_location }}"
+                        data-movie-poster-location="{{ movie.poster_location }}"
+                        data-movie-duration="{{ movie.duration }}" data-movie-imdb-rating="{{ movie.imdb_rating }}"
+                        data-movie-rotten-tomatoes-rating="{{ movie.rotten_tomatoes_rating }}"
+                        data-movie-metacritic-rating="{{ movie.metacritic_rating }}" data-movie-genres="{{ movie.genres }}">
                         <svg class="bi" width="16" height="16">
                             <use href="#edit"></use>
                         </svg>
                     </button>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteMovie">
+                    <button type="button" class="btn btn-outline-danger delete-button" data-bs-toggle="modal"
+                        data-bs-target="#deleteMovie" data-movie-id="{{ movie.id }}">
                         <svg class="bi" width="16" height="16">
                             <use href="#delete"></use>
                         </svg>
@@ -279,5 +427,63 @@
 </script>
 {% endif %}
 {% endwith %}
+
+<script>
+    // once everything is loaded
+    document.addEventListener('DOMContentLoaded', function () {
+        // get all the delete buttons
+        const deleteButtons = document.querySelectorAll(".delete-button");
+
+        // get the modal
+        const deleteModal = new bootstrap.Modal(document.getElementById("deleteMovie"));
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // extract data from button attribtues
+                let baseUrl = "{{ url_for('admin.delete_movie', movie_id='') }}"
+                baseUrl = baseUrl + button.dataset.movieId
+
+                // assign the url to the action of the button
+                document.getElementById('deleteMovieForm').action = baseUrl;
+
+                // show the delete modal
+                deleteModal.show();
+            });
+        });
+
+        // get all the edit buttons
+        const editButtons = document.querySelectorAll(".edit-button");
+        const editModal = new bootstrap.Modal(document.getElementById("editMovie"));
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+
+                // update the action of the form
+                let baseUrl = "{{ url_for('admin.edit_movie', movie_id='') }}";
+                baseUrl = baseUrl + button.dataset.movieId;
+                document.getElementById("editMovieForm").action = baseUrl;
+
+                // update the rest of the data
+                document.getElementById("editMovieName").value = button.dataset.movieName;
+                document.getElementById("editMovieDescription").value = button.dataset.movieDescription;
+                document.getElementById("editMediaLocation").value = button.dataset.movieMediaLocation;
+                document.getElementById("editPosterLocation").value = button.dataset.moviePosterLocation;
+                document.getElementById("editDuration").value = button.dataset.movieDuration;
+                document.getElementById("editImdbRating").value = button.dataset.movieImdbRating;
+                document.getElementById("editRottenTomatoesRating").value = button.dataset.movieRottenTomatoesRating;
+                document.getElementById("editMetacriticRating").value = button.dataset.movieMetacriticRating;
+                document.getElementById("datepicker").value = button.dataset.movieReleaseDate;
+
+                // update the genres
+                const movieGenres = button.dataset.movieGenres;
+                movieGenres.split(",").forEach(genre => {
+                    document.getElementById("edit" + genre.trimStart()).checked = true;
+                });
+
+                editModal.show();
+            });
+        });
+    });
+</script>
 
 {% endblock %}
