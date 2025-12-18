@@ -1,14 +1,14 @@
 import re
 
 from flask import (
-    Blueprint, flash, redirect, render_template, request, url_for
+    Blueprint, flash, redirect, render_template, request, url_for, jsonify
 )
 from werkzeug.exceptions import abort
 from uuid import uuid4
 
 from src.auth import admin_required
 from src.db import get_db
-from typing import Any, List
+from typing import Any
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -115,6 +115,7 @@ def add_movie():
             flash(error)
             return redirect(url_for('admin.movies'))
         
+        # add the movie to database
         db = get_db()
         movie_id = str(uuid4())
         db.execute(
@@ -123,6 +124,14 @@ def add_movie():
             (movie_id, movie_name, movie_description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location, duration,)
         )
         db.commit()
+        
+        # add the checked genre to genres
+        genres = db.execute("SELECT * FROM genre;").fetchall()
+        for genre in genres:
+            # genre was checked, add to database
+            if (genre['id'] in request.form.keys()):
+                db.execute('INSERT INTO movie_genre (movie_id, genre_id) VALUES(?, ?)', (movie_id, genre['id'],))
+                db.commit()
         
     return redirect(url_for('admin.movies'))
 
@@ -147,134 +156,96 @@ def delete_movie(movie_id: str):
 
 
 
+@bp.route('/update-movie/<string:movie_id>', methods=["POST"])
+@admin_required
+def update_movie(movie_id: str):
+    """
+    Update the movie data according to the movie id
+    """
+    if (request.method == "POST"):
+        # get the json data from the request
+        data = request.get_json()
+        
+        # get the error
+        error = _validate_movie_entries(data, movie_id=movie_id)
+        if (error != None):
+            return jsonify({
+                "status": "FAIL",
+                "message": error,
+            })
+        
+        # get the individual data from the request
+        movie_name = data['movieName']
+        movie_description = data['movieDescription']
+        imdb_rating = data['imdbRating']
+        rotten_tomatoes_rating = data['rottenTomatoesRating']
+        metacritic_rating = data['metacriticRating']
+        release_date = data['releaseDate']
+        media_location = data['mediaLocation']
+        poster_location = data['posterLocation']
+        duration = data['duration']
+        
+    
+    return jsonify({
+        "status": "SUCCESS",
+        "message": "ok",
+    })
+
+
 @bp.route('/edit-movie/<string:movie_id>', methods=["GET", "POST"])
 @admin_required
-def edit_movie():
+def edit_movie(movie_id: str):
     """
     Add a new movie or update the details of an existing movie.
     """
-    db = get_db()
-    temp = db.execute('SELECT id, name FROM genre').fetchall()
-    genres = [{'id': genre[0], 'name': genre[1], 'checked': ''} for genre in temp]
-
-    movie_genres = None
-    movie = None
-    if (request.args['action'] == 'update'):
-        movie = db.execute('SELECT * FROM movie WHERE id = ?', (request.args['movie_id'],)).fetchone()
-        movie_genres = db.execute('SELECT genre_id FROM movie_genre WHERE movie_id = ?;', (request.args['movie_id'],)).fetchall()
-        # if movie has certain genres, genre will be checked in the dictionary "genres"
-        movie_genres = [movie_genre[0] for movie_genre in movie_genres]
-        for genre in genres:
-            if (genre['id'] in movie_genres):
-                genre['checked'] = 'checked'
-
     if (request.method == "POST"):
-        movie_name = request.form["movieName"]
-        movie_description = request.form["movieDescription"]
-        imdb_rating = request.form["imdbRating"]
-        rotten_tomatoes_rating = request.form["rottenTomatoesRating"]
-        metacritic_rating = request.form["metacriticRating"]
-        release_date = request.form["releaseDate"]
-        media_location = request.form["mediaLocation"]
-        poster_location = request.form["posterLocation"]
-        error = None
-
-        # ensuring that required ones are not empty
-        if not movie_name:
-            error = "Movie Name is required."
-        elif not movie_description:
-            error = "Movie Description is required."
-        elif not release_date:
-            error = "Release Date is required."
-        elif not media_location:
-            error = "Media Location is required."
-        elif not poster_location:
-            error = "Poster Location is required."
-
-        # check if movie name exists
-        if (request.args['action'] != 'update'):
-            name = db.execute('SELECT name FROM movie WHERE name = ?', (movie_name,)).fetchone()
-            if (name is not None):
-                error = "Movie name already exists."
+        # get the post data
+        movie_name = request.form['movieName']
+        movie_description = request.form['movieDescription']
+        imdb_rating = request.form['imdbRating']
+        rotten_tomatoes_rating = request.form['rottenTomatoesRating']
+        metacritic_rating = request.form['metacriticRating']
+        release_date = request.form['releaseDate']
+        media_location = request.form['mediaLocation']
+        poster_location = request.form['posterLocation']
+        duration = request.form['duration']
         
-        # check if media location is the same
-        if (request.args['action'] != 'update'):
-            loc = db.execute('SELECT media_location FROM movie WHERE media_location = ?', (media_location,)).fetchone()
-            if (loc is not None):
-                error = "Media location already exists. New movie cannot be from the same existing media location."
-
-        # both metacritic rating and rotten tomatoes rating need to be from 0 to 100
-        pattern = r'^(100|[1-9]?[0-9])$'
-        if (rotten_tomatoes_rating):
-            if not bool(re.match(pattern, rotten_tomatoes_rating)):
-                error = "Rotten Tomatoes Rating should be from 0 to 100."
-        if (metacritic_rating):
-            if not bool(re.match(pattern, metacritic_rating)):
-                error = "Metacritic Rating should be from 0 to 100."
-
-        # imdb rating needs to be from 0.0 to 10.0
-        pattern = r'^(10\.0|[0-9]\.[0-9])$'
-        if (imdb_rating):
-            if not bool(re.match(pattern, imdb_rating)):
-                error = "IMDb Rating should be from 0.0 to 10.0 (strictly only 1 decimal place)."
-
-        # after multiple validations
-        if error is None:
-            # update the details of the current movie
-            if (request.args['action'] == 'update'):
-                # update the details of the current movie
-                movie_id = request.args['movie_id']
-                db.execute(
-                    'UPDATE movie SET name = ?, description = ?, imdb_rating = ?,'
-                    ' rotten_tomatoes_rating = ?, metacritic_rating = ?, release_date = ?,'
-                    ' media_location = ?, poster_location = ? WHERE id = ?', (movie_name, movie_description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location, movie_id,)
-                )
-                db.commit()
-                # update the genres
-                for genre in genres:
-                    # an existing genre needs to be deleted
-                    if (genre['id'] not in request.form.keys() and genre['checked'] == 'checked'):
-                        db.execute(
-                            'DELETE FROM movie_genre'
-                            ' WHERE movie_id = ? AND genre_id = ?', (movie_id, genre['id'],)
-                        )
-                        db.commit()
-                    # a new genre needs to be added
-                    elif (genre['id'] in request.form.keys() and genre['checked'] == ''):
-                        db.execute(
-                            'INSERT INTO movie_genre (movie_id, genre_id)'
-                            ' VALUES(?, ?);', (movie_id, genre['id'],)
-                        )
-                        db.commit()
-            
-            # add a new movie and its corresponding genres
-            else:
-                # add a new movie
-                movie_id = str(uuid4())
-                db.execute(
-                    'INSERT INTO movie (id, name, description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location)'
-                    ' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                    (movie_id, movie_name, movie_description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location,)
-                )
-                db.commit()
-                # add the movies' genres
-                for genre in genres:
-                    if (genre['id'] in request.form.keys()):
-                        db.execute(
-                            'INSERT INTO movie_genre (movie_id, genre_id)'
-                            ' VALUES(?, ?);', (movie_id, genre['id'],)
-                        )
-                        db.commit()
-            
+        print(request.form.keys())
+        
+        # validations
+        error = _validate_movie_entries(request.form, movie_id=movie_id)
+        if (error):
+            flash(error)
             return redirect(url_for('admin.movies'))
 
-        flash("Error: " + error)
-
-    return render_template("admin/edit_movie.jinja2", 
-                           movie=movie, 
-                           genres=genres, 
-                           action=request.args['action'],
-                           movie_genres=movie_genres,)
+        # no error
+        # db = get_db()
+        # db.execute(
+        #     'UPDATE movie SET name = ?, description = ?, imdb_rating = ?,'
+        #     ' rotten_tomatoes_rating = ?, metacritic_rating = ?, release_date = ?,'
+        #     ' media_location = ?, poster_location = ? , duration = duration WHERE id = ?', (movie_name, movie_description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location, duration, movie_id,)
+        # )
+        # db.commit()
+        
+        # update the genres
+        # genres = db.execute("SELECT * FROM genre;").fetchall()
+        # for genre in genres:
+        #     # an existing genre needs to be deleted
+        #     if (genre['id'] not in request.form.keys() and genre['checked'] == 'checked'):
+        #         db.execute(
+        #             'DELETE FROM movie_genre'
+        #             ' WHERE movie_id = ? AND genre_id = ?', (movie_id, genre['id'],)
+        #         )
+        #         db.commit()
+        #     # a new genre needs to be added
+        #     elif (genre['id'] in request.form.keys() and genre['checked'] == ''):
+        #         db.execute(
+        #             'INSERT INTO movie_genre (movie_id, genre_id)'
+        #             ' VALUES(?, ?);', (movie_id, genre['id'],)
+        #         )
+        #         db.commit()
+            
+    return redirect(url_for('admin.movies'))
 
 
 
@@ -385,6 +356,8 @@ def edit_genre():
                            genre=genre,
                            action=request.args['action'],)
 
+
+
 # ================================================
 # HELPER FUNCTIONS
 # ================================================
@@ -414,10 +387,15 @@ def get_genre(genre_id: str) -> Any:
     
     return genre
 
-def _validate_movie_entries(movie_data: dict[str, Any]) -> str:
+def _validate_movie_entries(movie_data: dict[str, Any], movie_id: str = None) -> str | None:
+    """
+    If no errors, return None.
+    If there is an error(s), return the first error found.
     
+    Returns the error string.
+    """
     # initialise the variable 'error' (to be returned)
-    error = ""
+    error = None
     
     # get the database
     db = get_db()
@@ -436,42 +414,65 @@ def _validate_movie_entries(movie_data: dict[str, Any]) -> str:
     # validation 1: the below data are all required
     if not movie_name:
         error = "Movie Name is required."
+        return error
+    
     elif not movie_description:
         error = "Movie Description is required."
+        return error
+    
     elif not release_date:
         error = "Release Date is required."
+        return error
+    
     elif not media_location:
         error = "Media Location is required."
+        return error
+
     elif not poster_location:
         error = "Poster Location is required."
+        return error
 
     # validation 2: no two movie names exists
     name = db.execute('SELECT name FROM movie WHERE name = ?', (movie_name,)).fetchone()
-    if (name is not None):
-        error = "Movie name already exists."
+    if (movie_id is not None):
+        prev_name = db.execute('SELECT name FROM movie WHERE id = ?', (movie_id,)).fetchone()
+        # the name is updated but the updated name already exists in database
+        if (prev_name[0] != movie_name and name is not None):
+            error = "Movie name already exists"
+            return error
+    else:
+        if (name is not None):
+            error = "Movie name already exists."
+            return error
     
     # validation 3: no two media locations is the same
     loc = db.execute('SELECT media_location FROM movie WHERE media_location = ?', (media_location,)).fetchone()
     if (loc is not None):
         error = "Media location already exists. New movie cannot be from the same existing media location."
+        return error
 
     # validation 3: both metacritic rating and rotten tomatoes rating need to be from 0 to 100
     pattern = r'^(100|[1-9]?[0-9])$'
     if (rotten_tomatoes_rating):
         if not bool(re.match(pattern, rotten_tomatoes_rating)):
             error = "Rotten Tomatoes Rating should be from 0 to 100."
+            return error
+    
     if (metacritic_rating):
         if not bool(re.match(pattern, metacritic_rating)):
             error = "Metacritic Rating should be from 0 to 100."
+            return error
 
     # validation 4: imdb rating needs to be from 0.0 to 10.0
     pattern = r'^(10\.0|[0-9]\.[0-9])$'
     if (imdb_rating):
         if not bool(re.match(pattern, imdb_rating)):
             error = "IMDb Rating should be from 0.0 to 10.0 (strictly only 1 decimal place)."
+            return error
 
     if (duration):
         if (not duration.isnumeric()):
             error = "Duration needs to be a number"
+            return error
 
     return error

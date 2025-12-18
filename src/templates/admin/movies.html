@@ -192,32 +192,31 @@
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="addnewMovieLabel">Add a New Movie</h1>
+                    <h1 class="modal-title fs-5" id="addnewMovieLabel">Update Movie</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
                     <!-- CSRF token for safe post -->
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" id="csrf_token" />
 
-                    {% with error = get_flashed_messages() %}
-                    {% if error[0] is defined %}
-                    <div class="border border-danger border-3 mb-3">
-                        <span class="ms-3">Error: {{ error[0] }}</span>
+                    <!-- movie id - make it hidden -->
+                    <input type="hidden" name="movieId" id="editMovieId" />
+
+                    <div id="updateMovieErrorContainer" class="border border-danger border-3 mb-3 d-none">
+                        <span id="updateMovieErrorSpan" class="ms-3"></span>
                     </div>
-                    {% endif %}
-                    {% endwith %}
 
                     <div class="row mb-3">
                         <label for="editMovieName" class="col-3 col-form-label">Movie Name</label>
                         <div class="col-9">
-                            <input name="editMovieName" type="text" id="editMovieName" class="form-control" required>
+                            <input name="movieName" type="text" id="editMovieName" class="form-control" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label for="editMovieDescription" class="col-3 col-form-label">Description</label>
                         <div class="col-9">
-                            <textarea name="editMovieDescription" maxlength="1000" id="editMovieDescription"
+                            <textarea name="movieDescription" maxlength="1000" id="editMovieDescription"
                                 placeholder="Enter Description (Max 1000 characters)" class="form-control" rows="5"
                                 required></textarea>
                         </div>
@@ -232,14 +231,14 @@
                     <div class="row mb-3">
                         <label for="editMediaLocation" class="col-3 col-form-label">Media Location</label>
                         <div class="col-9">
-                            <input name="editMediaLocation" type="text" id="editMediaLocation"
+                            <input name="mediaLocation" type="text" id="editMediaLocation"
                                 placeholder="e.g. ~/vids/Movie.mp4" class="form-control" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label for="editPosterLocation" class="col-3 col-form-label">Poster Location</label>
                         <div class="col-9">
-                            <input name="editPosterLocation" type="text" id="editPosterLocation"
+                            <input name="posterLocation" type="text" id="editPosterLocation"
                                 placeholder="e.g. ~/posters/moviePoster.png" class="form-control" required>
                         </div>
                     </div>
@@ -248,7 +247,7 @@
                     <div class="row mb-3 align-items-center">
                         <label for="editDuration" class="col-3 col-form-label">Duration</label>
                         <div class="col-2">
-                            <input name="editDuration" type="number" id="editDuration" min="0" max="1000"
+                            <input name="duration" type="number" id="editDuration" min="0" max="1000"
                                 placeholder="e.g. 120" class="form-control" aria-describedby="durationHelpInline">
                         </div>
                         <div class="col-7">
@@ -262,7 +261,7 @@
                     <div class="row mb-3 align-items-center">
                         <label for="editImdbRating" class="col-3 col-form-label">IMDb Rating</label>
                         <div class="col-2">
-                            <input name="editImdbRating" type="text" id="editImdbRating" placeholder="e.g. 7.9"
+                            <input name="imdbRating" type="text" id="editImdbRating" placeholder="e.g. 7.9"
                                 class="form-control" aria-describedby="imdbRatingHelpInline">
                         </div>
                         <div class="col-7">
@@ -275,7 +274,7 @@
                         <label for="editRottenTomatoesRating" class="col-3 col-form-label">Rotten Tomatoes
                             Rating</label>
                         <div class="col-2">
-                            <input name="editRottenTomatoesRating" type="number" id="editRottenTomatoesRating" min="0"
+                            <input name="rottenTomatoesRating" type="number" id="editRottenTomatoesRating" min="0"
                                 max="100" placeholder="e.g. 79" class="form-control"
                                 aria-describedby="rottenTomatoesHelpInline">
                         </div>
@@ -288,7 +287,7 @@
                     <div class="row mb-3 align-items-center">
                         <label for="editMetacriticRating" class="col-3 col-form-label">Metacritic Rating</label>
                         <div class="col-2">
-                            <input name="editMetacriticRating" type="number" id="editMetacriticRating" min="0" max="100"
+                            <input name="metacriticRating" type="number" id="editMetacriticRating" min="0" max="100"
                                 placeholder="e.g. 79" class="form-control" aria-describedby="metacriticHelpInline">
                         </div>
                         <div class="col-7">
@@ -309,7 +308,7 @@
                                         value="{{ genre.name }}" class="form-check-input mt-0"
                                         aria-label="Checkbox for genre {{ genre.name }}">
                                 </div>
-                                <label for="{{ genre.id }}" class="form-control"
+                                <label for="edit{{ genre.name }}" class="form-control"
                                     aria-label="Text label for checkbox of genre {{ genre.name }}">{{ genre.name
                                     }}</label>
                             </div>
@@ -319,7 +318,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Update</button>
+                    <button type="submit" class="btn btn-success" id="updateMovieButton">Update</button>
                 </div>
             </div>
         </div>
@@ -384,7 +383,8 @@
                         data-movie-poster-location="{{ movie.poster_location }}"
                         data-movie-duration="{{ movie.duration }}" data-movie-imdb-rating="{{ movie.imdb_rating }}"
                         data-movie-rotten-tomatoes-rating="{{ movie.rotten_tomatoes_rating }}"
-                        data-movie-metacritic-rating="{{ movie.metacritic_rating }}" data-movie-genres="{{ movie.genres }}">
+                        data-movie-metacritic-rating="{{ movie.metacritic_rating }}"
+                        data-movie-genres="{{ movie.genres }}">
                         <svg class="bi" width="16" height="16">
                             <use href="#edit"></use>
                         </svg>
@@ -459,11 +459,12 @@
             button.addEventListener('click', function () {
 
                 // update the action of the form
-                let baseUrl = "{{ url_for('admin.edit_movie', movie_id='') }}";
+                let baseUrl = "{{ url_for('admin.update_movie', movie_id='') }}";
                 baseUrl = baseUrl + button.dataset.movieId;
                 document.getElementById("editMovieForm").action = baseUrl;
 
                 // update the rest of the data
+                document.getElementById("editMovieId").value = button.dataset.movieId;
                 document.getElementById("editMovieName").value = button.dataset.movieName;
                 document.getElementById("editMovieDescription").value = button.dataset.movieDescription;
                 document.getElementById("editMediaLocation").value = button.dataset.movieMediaLocation;
@@ -483,6 +484,68 @@
                 editModal.show();
             });
         });
+    });
+
+    document.getElementById('editMovieForm').addEventListener('submit', async function (event) {
+        event.preventDefault(); // stop the normal form submission
+
+        // disable the button
+        const submitButton = document.getElementById("updateMovieButton");
+        submitButton.disabled = true;
+
+        const form = event.target;
+        const formData = new FormData(form);
+        const movieId = formData.get('movieId');
+
+        // convert form data object to json
+        var object = {};
+        formData.forEach(function(value, key) {
+            object[key] = value;
+        });
+        var json = JSON.stringify(object);
+
+        // try and fetch the from the API endpoint
+        try {
+            const url = "{{ url_for('admin.update_movie', movie_id='') }}" + movieId;
+            console.log(url);
+
+            // send the request
+            const csrfToken = document.getElementById("csrf_token").value;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: json,
+            });
+            console.log(response);
+
+            // parse the result
+            const result = await response.json();
+            console.log(result['status']);
+
+            if (result['status'] == "FAIL") {
+                document.getElementById("updateMovieErrorContainer").classList.remove("d-none");
+                document.getElementById("updateMovieErrorSpan").textContent = "ERROR: " + result['message'];
+            }
+
+        } catch (error) {
+            console.log("AJAX error:", error);
+        } finally {
+            console.log("got to finally");
+
+            // enable the submit button
+            submitButton.disabled = false;
+
+            // close the modal
+            const updateMovieModal = new bootstrap.Modal(document.getElementById("editMovie"));
+            updateMovieModal.hide();
+
+            console.log(updateMovieModal);
+
+            console.log("got here");
+        }
     });
 </script>
 
