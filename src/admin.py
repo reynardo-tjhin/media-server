@@ -185,6 +185,37 @@ def update_movie(movie_id: str):
         poster_location = data['posterLocation']
         duration = data['duration']
         
+        # no error
+        db = get_db()
+        db.execute(
+            'UPDATE movie SET name = ?, description = ?, imdb_rating = ?,'
+            ' rotten_tomatoes_rating = ?, metacritic_rating = ?, release_date = ?,'
+            ' media_location = ?, poster_location = ?, duration = ? WHERE id = ?', (movie_name, movie_description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location, duration, movie_id,)
+        )
+        db.commit()
+        
+        # update the genres
+        current_genres = db.execute("SELECT * FROM movie_genre WHERE movie_id = ?", (movie_id,)).fetchall()
+        current_genres = [ cur_genre['genre_id'] for cur_genre in current_genres ]
+        print(current_genres)
+        
+        genres = db.execute("SELECT * FROM genre;").fetchall()
+        for genre in genres:
+            # an existing genre needs to be deleted
+            if (genre['id'] not in data.keys() and genre['id'] in current_genres):
+                db.execute(
+                    'DELETE FROM movie_genre'
+                    ' WHERE movie_id = ? AND genre_id = ?', (movie_id, genre['id'],)
+                )
+                db.commit()
+            
+            # a new genre needs to be added
+            elif (genre['id'] in data.keys() and genre['id'] not in current_genres):
+                db.execute(
+                    'INSERT INTO movie_genre (movie_id, genre_id)'
+                    ' VALUES(?, ?);', (movie_id, genre['id'],)
+                )
+                db.commit()
     
     return jsonify({
         "status": "SUCCESS",
@@ -218,32 +249,7 @@ def edit_movie(movie_id: str):
             flash(error)
             return redirect(url_for('admin.movies'))
 
-        # no error
-        # db = get_db()
-        # db.execute(
-        #     'UPDATE movie SET name = ?, description = ?, imdb_rating = ?,'
-        #     ' rotten_tomatoes_rating = ?, metacritic_rating = ?, release_date = ?,'
-        #     ' media_location = ?, poster_location = ? , duration = duration WHERE id = ?', (movie_name, movie_description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location, duration, movie_id,)
-        # )
-        # db.commit()
         
-        # update the genres
-        # genres = db.execute("SELECT * FROM genre;").fetchall()
-        # for genre in genres:
-        #     # an existing genre needs to be deleted
-        #     if (genre['id'] not in request.form.keys() and genre['checked'] == 'checked'):
-        #         db.execute(
-        #             'DELETE FROM movie_genre'
-        #             ' WHERE movie_id = ? AND genre_id = ?', (movie_id, genre['id'],)
-        #         )
-        #         db.commit()
-        #     # a new genre needs to be added
-        #     elif (genre['id'] in request.form.keys() and genre['checked'] == ''):
-        #         db.execute(
-        #             'INSERT INTO movie_genre (movie_id, genre_id)'
-        #             ' VALUES(?, ?);', (movie_id, genre['id'],)
-        #         )
-        #         db.commit()
             
     return redirect(url_for('admin.movies'))
 
@@ -447,9 +453,16 @@ def _validate_movie_entries(movie_data: dict[str, Any], movie_id: str = None) ->
     
     # validation 3: no two media locations is the same
     loc = db.execute('SELECT media_location FROM movie WHERE media_location = ?', (media_location,)).fetchone()
-    if (loc is not None):
-        error = "Media location already exists. New movie cannot be from the same existing media location."
-        return error
+    if (movie_id is not None):
+        prev_loc = db.execute('SELECT media_location FROM movie WHERE id = ?', (movie_id,)).fetchone()
+        # media location is updated but the updated media location already exists in the database
+        if (prev_loc[0] != media_location and loc is not None):
+            error = "Media location already exists. Two movies cannot be from the same existing media location."
+            return error
+    else:
+        if (loc is not None):
+            error = "Media location already exists. New movie cannot be from the same existing media location."
+            return error
 
     # validation 3: both metacritic rating and rotten tomatoes rating need to be from 0 to 100
     pattern = r'^(100|[1-9]?[0-9])$'

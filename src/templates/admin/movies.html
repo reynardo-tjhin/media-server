@@ -225,7 +225,7 @@
                         <label for="datepicker" class="col-3 col-form-label">Release Date</label>
                         <div class="col-9">
                             <input name="releaseDate" type="text" id="datepicker" placeholder="Select date"
-                                class="form-control" required>
+                                class="form-control update-movie-release-date" required>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -429,14 +429,13 @@
 {% endwith %}
 
 <script>
-    // once everything is loaded
+    // run the function after all the previous scripts have been loaded
     document.addEventListener('DOMContentLoaded', function () {
-        // get all the delete buttons
-        const deleteButtons = document.querySelectorAll(".delete-button");
-
         // get the modal
         const deleteModal = new bootstrap.Modal(document.getElementById("deleteMovie"));
 
+        // get update the delete button's data
+        const deleteButtons = document.querySelectorAll(".delete-button");
         deleteButtons.forEach(button => {
             button.addEventListener('click', function () {
                 // extract data from button attribtues
@@ -451,10 +450,15 @@
             });
         });
 
-        // get all the edit buttons
-        const editButtons = document.querySelectorAll(".edit-button");
-        const editModal = new bootstrap.Modal(document.getElementById("editMovie"));
+        // clear any error lists when the edit modal is hidden
+        document.getElementById("editMovie").addEventListener('hide.bs.modal', event => {
+            document.getElementById("updateMovieErrorContainer").classList.add("d-none");
+            document.getElementById("updateMovieErrorSpan").textContent = "";
+        });
 
+        // update the modal's data
+        const editModal = new bootstrap.Modal(document.getElementById("editMovie"));
+        const editButtons = document.querySelectorAll(".edit-button");
         editButtons.forEach(button => {
             button.addEventListener('click', function () {
 
@@ -473,19 +477,25 @@
                 document.getElementById("editImdbRating").value = button.dataset.movieImdbRating;
                 document.getElementById("editRottenTomatoesRating").value = button.dataset.movieRottenTomatoesRating;
                 document.getElementById("editMetacriticRating").value = button.dataset.movieMetacriticRating;
-                document.getElementById("datepicker").value = button.dataset.movieReleaseDate;
 
+                // update the release date
+                let calendar = flatpickr(document.querySelectorAll(".update-movie-release-date")[0], {});
+                calendar.setDate(button.dataset.movieReleaseDate, true, 'Y-m-d');
+                
                 // update the genres
                 const movieGenres = button.dataset.movieGenres;
-                movieGenres.split(",").forEach(genre => {
-                    document.getElementById("edit" + genre.trimStart()).checked = true;
-                });
+                if (movieGenres != 'No genres') {
+                    movieGenres.split(",").forEach(genre => {
+                        document.getElementById("edit" + genre.trimStart()).checked = true;
+                    });
+                }
 
                 editModal.show();
             });
         });
     });
 
+    // perform an ajax request
     document.getElementById('editMovieForm').addEventListener('submit', async function (event) {
         event.preventDefault(); // stop the normal form submission
 
@@ -499,7 +509,7 @@
 
         // convert form data object to json
         var object = {};
-        formData.forEach(function(value, key) {
+        formData.forEach(function (value, key) {
             object[key] = value;
         });
         var json = JSON.stringify(object);
@@ -507,7 +517,6 @@
         // try and fetch the from the API endpoint
         try {
             const url = "{{ url_for('admin.update_movie', movie_id='') }}" + movieId;
-            console.log(url);
 
             // send the request
             const csrfToken = document.getElementById("csrf_token").value;
@@ -519,32 +528,32 @@
                 },
                 body: json,
             });
-            console.log(response);
-
-            // parse the result
-            const result = await response.json();
+            const result = await response.json(); // parse the result! important to use "await"!
+            
             console.log(result['status']);
-
             if (result['status'] == "FAIL") {
                 document.getElementById("updateMovieErrorContainer").classList.remove("d-none");
                 document.getElementById("updateMovieErrorSpan").textContent = "ERROR: " + result['message'];
+
+                // enable the submit button
+                submitButton.disabled = false;
+
+            } else if (result['status'] == "SUCCESS") {
+                // enable the submit button
+                submitButton.disabled = false;
+
+                console.log("update movie successfuly!");
+                
+                // reload the page after a short time pause
+                setTimeout(() => {
+                    location.reload();
+                }, 300); // 0.3 seconds delay to show success
+            } else {
+                console.error("Received an unexpected API response from " + url);
             }
 
         } catch (error) {
-            console.log("AJAX error:", error);
-        } finally {
-            console.log("got to finally");
-
-            // enable the submit button
-            submitButton.disabled = false;
-
-            // close the modal
-            const updateMovieModal = new bootstrap.Modal(document.getElementById("editMovie"));
-            updateMovieModal.hide();
-
-            console.log(updateMovieModal);
-
-            console.log("got here");
+            console.error("AJAX error:", error);
         }
     });
 </script>
