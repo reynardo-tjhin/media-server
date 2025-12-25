@@ -90,7 +90,7 @@ def movies():
 
 
 
-@bp.route('/add-movie', methods=["GET", "POST"])
+@bp.route('/add-movie', methods=["POST"])
 @admin_required
 def add_movie():
     """
@@ -98,22 +98,26 @@ def add_movie():
     """
     if (request.method == "POST"):
         
+        data = request.get_json()
+        
         # get the post data
-        movie_name = request.form['movieName']
-        movie_description = request.form['movieDescription']
-        imdb_rating = request.form['imdbRating']
-        rotten_tomatoes_rating = request.form['rottenTomatoesRating']
-        metacritic_rating = request.form['metacriticRating']
-        release_date = request.form['releaseDate']
-        media_location = request.form['mediaLocation']
-        poster_location = request.form['posterLocation']
-        duration = request.form['duration']
+        movie_name = data['movieName']
+        movie_description = data['movieDescription']
+        imdb_rating = data['imdbRating']
+        rotten_tomatoes_rating = data['rottenTomatoesRating']
+        metacritic_rating = data['metacriticRating']
+        release_date = data['releaseDate']
+        media_location = data['mediaLocation']
+        poster_location = data['posterLocation']
+        duration = data['duration']
         
         # validations
-        error = _validate_movie_entries(request.form)
+        error = _validate_movie_entries(data)
         if (error):
-            flash(error)
-            return redirect(url_for('admin.movies'))
+            return jsonify({
+                "status": "FAIL",
+                "message": error,
+            })
         
         # add the movie to database
         db = get_db()
@@ -133,7 +137,10 @@ def add_movie():
                 db.execute('INSERT INTO movie_genre (movie_id, genre_id) VALUES(?, ?)', (movie_id, genre['id'],))
                 db.commit()
         
-    return redirect(url_for('admin.movies'))
+    return jsonify({
+        "status": "SUCCESS",
+        "message": "Movie added successfully!",
+    })
 
 
 
