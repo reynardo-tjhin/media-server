@@ -144,15 +144,20 @@ def delete_movie(movie_id: str):
     A DELETE operation to delete the movie based on the id
     """
     # requires admin login
-    # returns a 404 if movie_id does not exist
-    get_movie(movie_id)
-
     # delete the movie from database
-    db = get_db()
-    db.execute('DELETE FROM movie WHERE id = ?', (movie_id,))
-    db.commit()
+    if is_movie_exist(movie_id):
+        db = get_db()
+        db.execute('DELETE FROM movie WHERE id = ?', (movie_id,))
+        db.commit()
+        return jsonify({
+            "status": "SUCCESS",
+            "message": "Success! Movie deleted!",
+        })
 
-    return redirect(url_for('admin.movies'))
+    return jsonify({
+        "status": "FAIL",
+        "message": "movie not found",
+    })
 
 
 
@@ -196,9 +201,7 @@ def update_movie(movie_id: str):
         
         # update the genres
         current_genres = db.execute("SELECT * FROM movie_genre WHERE movie_id = ?", (movie_id,)).fetchall()
-        current_genres = [ cur_genre['genre_id'] for cur_genre in current_genres ]
-        print(current_genres)
-        
+        current_genres = [ cur_genre['genre_id'] for cur_genre in current_genres ]        
         genres = db.execute("SELECT * FROM genre;").fetchall()
         for genre in genres:
             # an existing genre needs to be deleted
@@ -219,39 +222,8 @@ def update_movie(movie_id: str):
     
     return jsonify({
         "status": "SUCCESS",
-        "message": "ok",
+        "message": "Movie successfully updated!",
     })
-
-
-@bp.route('/edit-movie/<string:movie_id>', methods=["GET", "POST"])
-@admin_required
-def edit_movie(movie_id: str):
-    """
-    Add a new movie or update the details of an existing movie.
-    """
-    if (request.method == "POST"):
-        # get the post data
-        movie_name = request.form['movieName']
-        movie_description = request.form['movieDescription']
-        imdb_rating = request.form['imdbRating']
-        rotten_tomatoes_rating = request.form['rottenTomatoesRating']
-        metacritic_rating = request.form['metacriticRating']
-        release_date = request.form['releaseDate']
-        media_location = request.form['mediaLocation']
-        poster_location = request.form['posterLocation']
-        duration = request.form['duration']
-        
-        print(request.form.keys())
-        
-        # validations
-        error = _validate_movie_entries(request.form, movie_id=movie_id)
-        if (error):
-            flash(error)
-            return redirect(url_for('admin.movies'))
-
-        
-            
-    return redirect(url_for('admin.movies'))
 
 
 
@@ -367,18 +339,14 @@ def edit_genre():
 # ================================================
 # HELPER FUNCTIONS
 # ================================================
-def get_movie(movie_id: str) -> Any:
+def is_movie_exist(movie_id: str) -> bool:
     """
-    Check if movie_id exists. If not exists, return with 404.
+    Check if movie_id exists. If not exists, return false
     """
     movie = get_db().execute(
         'SELECT * FROM movie WHERE id = ?', (movie_id,)
     ).fetchone()
-
-    if movie is None:
-        abort(404, f"Movie ID {movie_id} does not exist.")
-
-    return movie
+    return not (movie is None)
 
 def get_genre(genre_id: str) -> Any:
     """
