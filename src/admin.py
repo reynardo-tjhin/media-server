@@ -43,7 +43,7 @@ def home():
     ]
 
     # get all the genres name
-    genres = db.execute('SELECT id, name FROM genre;').fetchall()
+    genres = db.execute('SELECT * FROM genre;').fetchall()
 
     # return by rendering the template
     return render_template("admin/admin_dashboard.html",
@@ -98,6 +98,7 @@ def add_movie():
     """
     if (request.method == "POST"):
         
+        # get the json data from client
         data = request.get_json()
         
         # get the post data
@@ -133,7 +134,7 @@ def add_movie():
         genres = db.execute("SELECT * FROM genre;").fetchall()
         for genre in genres:
             # genre was checked, add to database
-            if (genre['id'] in request.form.keys()):
+            if (genre['id'] in data.keys()):
                 db.execute('INSERT INTO movie_genre (movie_id, genre_id) VALUES(?, ?)', (movie_id, genre['id'],))
                 db.commit()
         
@@ -150,21 +151,23 @@ def delete_movie(movie_id: str):
     """
     A DELETE operation to delete the movie based on the id
     """
-    # requires admin login
-    # delete the movie from database
-    if is_movie_exist(movie_id):
-        db = get_db()
-        db.execute('DELETE FROM movie WHERE id = ?', (movie_id,))
-        db.commit()
-        return jsonify({
-            "status": "SUCCESS",
-            "message": "Success! Movie deleted!",
-        })
+    # optional (don't have to specify method is POST since the decorator already specifies only POST method)
+    if (request.method == "POST"):
+        # requires admin login
+        # delete the movie from database
+        if is_movie_exist(movie_id):
+            db = get_db()
+            db.execute('DELETE FROM movie WHERE id = ?', (movie_id,))
+            db.commit()
+            return jsonify({
+                "status": "SUCCESS",
+                "message": "Success! Movie deleted!",
+            })
 
-    return jsonify({
-        "status": "FAIL",
-        "message": "movie not found",
-    })
+        return jsonify({
+            "status": "FAIL",
+            "message": "movie not found",
+        })
 
 
 
@@ -227,119 +230,103 @@ def update_movie(movie_id: str):
                 )
                 db.commit()
     
-    return jsonify({
-        "status": "SUCCESS",
-        "message": "Movie successfully updated!",
-    })
+        return jsonify({
+            "status": "SUCCESS",
+            "message": "Movie successfully updated!",
+        })
+        
 
 
-
-@bp.route('/<string:genre_id>')
-@admin_required
-def genre(genre_id: str):
-    # define columns to show and its style
-    table_columns = [
-        {'key': 'id', 'label': 'ID', 'width': '50px'},
-        {'key': 'name', 'label': 'Name', 'width': '150px'},
-        {'key': 'description', 'label': 'Description', 'width': '300px'},
-        {'key': 'imdb_rating', 'label': 'IMDB', 'width': '80px'},
-        {'key': 'rotten_tomatoes_rating', 'label': 'RT', 'width': '80px'},
-        {'key': 'metacritic_rating', 'label': 'Metacritic', 'width': '80px'},
-        {'key': 'release_date', 'label': 'Release Date', 'width': '100px'},
-        {'key': 'media_location', 'label': 'Media Location', 'width': '200px'},
-        {'key': 'delete', 'label': 'Delete', 'width': '80px'},
-        {'key': 'update', 'label': 'Update', 'width': '80px'},
-    ]
-
-    # get the movies data that have the specific genre
-    db = get_db()
-    genre = db.execute('SELECT * from genre where id = ?', (genre_id,)).fetchone()
-    movies = db.execute(
-        'SELECT m.* '
-        'FROM movie AS m '
-        'JOIN movie_genre AS mg ON m.id = mg.movie_id '
-        'WHERE mg.genre_id = ?', (genre_id,)
-    ).fetchall()
-
-    # no movies shown
-    style = "display: none;"
-    if (len(movies) <= 0):
-        style = "display: block;"
-
-    return render_template("admin/genre.jinja2",
-                           genre=genre,
-                           movies=movies,
-                           table_columns=table_columns,
-                           style=style,)
-
+@bp.route('/add-genre', methods=["POST"])
+def add_genre():
+    """
+    Add a new genre
+    """
+    if (request.method == "POST"):
+        # get the json data
+        data = request.get_json()
+        
+        # check if error
+        error = _validate_genre_entries(data, genre_id=None)
+        if (error != None):
+            return jsonify({
+                "status": "FAIL",
+                "message": error,
+            })
+            
+        # add into the database
+        db = get_db()
+        genre_id = str(uuid4())
+        genre_name = data['genreTitle']
+        genre_description = data['genreDescription']
+        db.execute("INSERT INTO genre (id, name, description) VALUES (?, ?, ?);", (genre_id, genre_name, genre_description,))
+        db.commit()
+        
+        return jsonify({
+            "status": "SUCCESS",
+            "message": "A new genre successfully added",
+        })
 
 
 @bp.route('/delete-genre/<string:genre_id>', methods=["POST"])
 @admin_required
 def delete_genre(genre_id: str):
-    # returns a 404 if genre_id does not exist
-    get_genre(genre_id)
-
-    # delete the genre from database
-    db = get_db()
-    db.execute('DELETE FROM genre WHERE id = ?', (genre_id,))
-    db.commit()
-
-    return redirect(url_for('admin.movies'))
-
-
-
-@bp.route('/edit-genre', methods=["GET", "POST"])
-@admin_required
-def edit_genre():
-    genre = None
-    if (request.args['action'] == 'update'):
-        db = get_db()
-        genre = db.execute(
-            'SELECT * FROM genre WHERE id = ?', (request.args['genre_id'],)
-        ).fetchone()
-    
+    """
+    Delete the genre
+    """
+    # optional (don't have to specify method is POST since the decorator already specifies only POST method)
     if (request.method == "POST"):
-        genre_name = genre['name'] if genre else request.form['genreName']
-        genre_description = request.form['genreDescription']
-        error = None
+        # requires admin login
+        # delete the movie from database
+        if is_genre_exist(genre_id):
+            db = get_db()
+            db.execute('DELETE FROM genre WHERE id = ?', (genre_id,))
+            db.commit()
+            return jsonify({
+                "status": "SUCCESS",
+                "message": "Success! Genre deleted!",
+            })
 
-        # validation not empty
-        if (not genre_name):
-            error = "Genre Name is required."
-        if (not genre_description):
-            error = "Genre Description is required."
+        return jsonify({
+            "status": "FAIL",
+            "message": "genre not found",
+        })
+
+
+
+@bp.route('/update-genre/<string:genre_id>', methods=["POST"])
+@admin_required
+def update_genre(genre_id: str):
+    """
+    Update the genre name and/or description
+    """
+    if (request.method == "POST"):
         
-        # check if genre_name already exists in database
+        # get the json data
+        data = request.get_json()
+        
+        # check if error
+        error = _validate_genre_entries(data, genre_id=genre_id)
+        if (error != None):
+            return jsonify({
+                "status": "FAIL",
+                "message": error,
+            })
+        
+        # update the genre
+        # get the genre data
+        genre_name = data['genreTitle']
+        genre_body = data['genreDescription']
+        
+        # update the genre data in the database
         db = get_db()
-        if (genre_name and request.args['action'] == 'add'):
-            genre = db.execute(
-                'SELECT * FROM genre WHERE name = ?', (genre_name.capitalize(),)
-            ).fetchone()
-            if (genre):
-                error = "Genre Name already exists."
-                genre = None
+        db.execute("UPDATE genre SET name = ?, description = ? WHERE id = ?", (genre_name, genre_body, genre_id,))
+        db.commit()
         
-        # after validation, no errors
-        if (error is None):
-            if (request.args['action'] == 'update'):
-                db.execute(
-                    'UPDATE genre SET description = ? WHERE id = ?;', (genre_description, genre['id'],)
-                )
-                db.commit()
-            else:
-                genre_id = str(uuid4())
-                db.execute(
-                    'INSERT INTO genre (id, name, description) VALUES (?, ?, ?)', (genre_id, genre_name.capitalize(), genre_description)
-                )
-                db.commit()
-            return redirect(url_for('admin.movies'))
-        
-        flash(error)
-
-    return render_template("admin/edit_genre.jinja2",
-                           genre=genre,
-                           action=request.args['action'],)
+        return jsonify({
+            "status": "SUCCESS",
+            "message": "Genre successfully updated!",
+        })
 
 
 
@@ -355,18 +342,54 @@ def is_movie_exist(movie_id: str) -> bool:
     ).fetchone()
     return not (movie is None)
 
-def get_genre(genre_id: str) -> Any:
+def is_genre_exist(genre_id: str) -> bool:
     """
-    Check if genre_id exists. If not exists, return with 404.
+    Check if genre_id exists. If not exists, return false
     """
     genre = get_db().execute(
         'SELECT * FROM genre WHERE id = ?', (genre_id,)
     ).fetchone()
+    return not (genre is None)
 
-    if genre is None:
-        abort(404, f"Genre ID {genre_id} does not exist.")
+def _validate_genre_entries(genre_data: dict[str, Any], genre_id: str = None) -> str | None:
+    """
+    If no errors, return None.
+    If there is an error(s), the the first error found.
     
-    return genre
+    Returns None or the error string.
+    """
+    error = None
+    
+    # get the database
+    db = get_db()
+    
+    # get the data
+    genre_name = genre_data['genreTitle']
+    genre_description = genre_data['genreDescription']
+    
+    # validation 1: non empty data
+    if not genre_name:
+        error = "Genre name cannot be empty!"
+        return error
+    
+    if not genre_description:
+        error = "Genre description cannot be empty!"
+        return error
+    
+    # validation 2: the genre name: no duplicate genre names
+    name = db.execute("SELECT name FROM genre WHERE name = ?", (genre_name,)).fetchone()
+    if (genre_id != None):
+        cur_name = db.execute("SELECT name FROM genre WHERE id = ?", (genre_id,)).fetchone() # get the genre current name
+        if (cur_name[0] != genre_name and name is not None):
+            error = "Genre name already exists!"
+            return error
+    else: # when adding a new genre, validate if the genre name already exists
+        if (name is not None):
+            error = "Genre name already exists!"
+            return error
+    
+    return error
+    
 
 def _validate_movie_entries(movie_data: dict[str, Any], movie_id: str = None) -> str | None:
     """
@@ -397,19 +420,19 @@ def _validate_movie_entries(movie_data: dict[str, Any], movie_id: str = None) ->
         error = "Movie Name is required."
         return error
     
-    elif not movie_description:
+    if not movie_description:
         error = "Movie Description is required."
         return error
     
-    elif not release_date:
+    if not release_date:
         error = "Release Date is required."
         return error
     
-    elif not media_location:
+    if not media_location:
         error = "Media Location is required."
         return error
 
-    elif not poster_location:
+    if not poster_location:
         error = "Poster Location is required."
         return error
 
