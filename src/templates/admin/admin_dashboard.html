@@ -1,0 +1,485 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<!-- update genre Modal -->
+<form method="post" id="updateGenreForm">
+    <div class="modal fade" id="updateGenreModal" tabindex="-1" aria-labelledby="updateGenreModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="genre-header d-flex">
+
+                        <!-- the genre title -->
+                        <input name="genreTitle" type="text" id="genreTitle" disabled="true"
+                            style="border: none; outline: none; background: transparent; width: auto;"
+                            class="h5 p-0 m-0 form-control">
+
+                        <!-- edit button to edit the title of the genre -->
+                        <div class="genre-header-edit-btn ps-2">
+                            <button type="button" id="editGenreTitleButton"
+                                class="btn btn-outline-warning d-flex align-items-center justify-content-center"
+                                style="width: 30px; height: 30px;">
+                                <svg class="bi flex-shrink-0" width="16" height="16">
+                                    <use href="#update"></use>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-11">
+                            <!-- CSRF token for safe post -->
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" id="editGenreCSRFToken" />
+
+                            <!-- hidden input for genre id -->
+                            <input type="hidden" name="genreId" id="genreId">
+
+                            <!-- to show any errors -->
+                            <div id="editGenreErrorContainer" class="border border-danger border-3 mb-3 d-none">
+                                <span id="editGenreErrorSpan" class="ms-3"></span>
+                            </div>
+
+                            <!-- Input for changing the description of the genre -->
+                            <textarea name="genreDescription" id="genreBody" class="form-control" rows="10"
+                                disabled="true"
+                                style="border: none; outline: none; background: transparent; resize: none;"></textarea>
+                        </div>
+                        <div class="col-1 p-0">
+                            <button type="button" id="editGenreDescriptionButton"
+                                class="btn btn-outline-warning d-flex align-items-center justify-content-center"
+                                style="width: 30px; height: 30px;">
+                                <svg class="bi flex-shrink-0" width="16" height="16">
+                                    <use href="#update"></use>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success" id="updateGenreButton">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- add a new genre modal -->
+<form method="post" id="addGenreForm">
+    <div class="modal fade" id="addGenreModal" tabindex="-1" aria-labelledby="addGenre" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="addGenreLabel">Add Genre</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div id="addGenreModalBody" class="modal-body">
+                    <!-- CSRF token for safe post -->
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" id="addGenreCSRFToken" />
+
+                    <!-- movie id - make it hidden -->
+                    <input type="hidden" name="movieId" id="addGenreId" />
+
+                    <!-- to show any errors -->
+                    <div id="addGenreErrorContainer" class="border border-danger border-3 mb-3 d-none">
+                        <span id="addGenreErrorSpan" class="ms-3"></span>
+                    </div>
+
+                    <!-- genre title -->
+                    <div class="row mb-3">
+                        <label for="addGenreTitle" class="col-3 col-form-label">Genre Name</label>
+                        <div class="col-9">
+                            <input name="genreTitle" type="text" id="addGenreTitle" class="form-control"
+                                placeholder="Enter Genre Name" required>
+                        </div>
+                    </div>
+
+                    <!-- genre description -->
+                    <div class="row mb-3">
+                        <label for="addGenreDescription" class="col-3 col-form-label">Description</label>
+                        <div class="col-9">
+                            <textarea name="genreDescription" id="addGenreDescription"
+                                placeholder="Enter Genre Description" class="form-control" rows="5"
+                                style="resize: none;" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success" id="addGenreButton">Add a New Genre</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- delete a genre modal -->
+<form method="post" id="deleteGenreForm">
+    <div class="modal fade" id="deleteGenreModal" tabindex="-1" aria-labelledby="deleteGenre" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Genre Deletion Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- CSRF token -->
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" id="deleteGenreCSRFToken">
+
+                    <!-- hidden genre id -->
+                    <input type="hidden" name="delGenreId" id="delGenreId">
+
+                    <!-- show the error, if any -->
+                    <div id="deleteGenreErrorContainer" class="border border-danger border-3 mb-3 d-none">
+                        <span id="deleteGenreErrorSpan" class="ms-3"></span>
+                    </div>
+
+                    <!-- Confirmation question -->
+                    <p>Are you sure you want to delete this genre?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-success" id="deleteGenreButton">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Title -->
+<div class="p-4 mx-5">
+    <h1>General Dashboard</h1>
+</div>
+
+<!-- TODO: Improve the UI for basic information -->
+<!-- Show some basic information -->
+<div class="p-4 mx-5">
+    <p>Number of Movies: {{ movies_count }}</p>
+    <p>Number of User Accounts: {{ users_count }}</p>
+    <p>Number of Genres Added: {{ genres_count }}</p>
+</div>
+
+<!-- Show all the genres (just the name) -->
+<div class="p-4 mx-5">
+    <h2>List of Genres</h2>
+    <div class="container text-center">
+        <div class="row row-cols-6">
+            {% for genre in genres %}
+            <div class="col">
+                <div class="btn-group mr-2 mb-2" role="group" aria-label="Genre {{ genre.name }} Group">
+
+                    <!-- genre button to show more information about the genre -->
+                    <button type="button" class="btn btn-info genre-btn" data-bs-toggle="modal"
+                        data-bs-target="#updateGenreModal" style="width: 8rem;" data-genre-id="{{ genre.id }}"
+                        data-genre-name="{{ genre.name }}" data-genre-description="{{ genre.description }}">
+                        {{ genre.name }}
+                    </button>
+
+                    <!-- delete button -->
+                    <button type="button" class="btn btn-danger del-genre-btn" data-bs-toggle="modal"
+                        data-bs-target="#deleteGenreModal" data-genre-id="{{ genre.id }}">
+                        <svg class="bi" width="16" height="16">
+                            <use href="#delete"></use>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- add a new genre button -->
+            <div class="col">
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addGenreModal">+
+                    Add a
+                    New Genre</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Show some data of the first three rows of the movie -->
+<div class="p-4 mx-5">
+    <h2>List of Movies</h2>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">IMDb Rating</th>
+                <th scope="col">Release Date</th>
+                <th scope="col">Location of Movie File</th>
+                <th scope="col">Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movie in movies %}
+            <tr>
+                <th scope="row">{{ movie.id }}</th>
+                <td>{{ movie.name }}</td>
+                <td>{{ movie.description }}</td>
+                <td>{{ movie.imdb_rating }}</td>
+                <td>{{ movie.release_date }}</td>
+                <td>{{ movie.media_location }}</td>
+                <td>{{ movie.duration }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('admin.movies') }}">Show All</a>
+</div>
+
+{% endblock %}
+
+{% block after %}
+<script>
+    // re-enable the input element to edit the genre title when the button edit is clicked
+    document.getElementById("editGenreTitleButton").addEventListener('click', function () {
+        document.getElementById("genreTitle").disabled = false;
+        document.getElementById("genreTitle").style = "";
+    });
+
+    // re-enable the text area element to edit the genre description when the button edit is clicked
+    document.getElementById("editGenreDescriptionButton").addEventListener('click', function () {
+        document.getElementById("genreBody").disabled = false;
+        document.getElementById("genreBody").style = "resize: none;"
+    })
+
+    // reset the input element when the genre modal is hidden
+    document.getElementById("updateGenreModal").addEventListener('hide.bs.modal', event => {
+        // reset the input element
+        document.getElementById("genreTitle").disabled = true;
+        document.getElementById("genreTitle").style = "border: none; outline: none; background: transparent; width: auto;";
+
+        // reset the text area element
+        document.getElementById("genreBody").disabled = true;
+        document.getElementById("genreBody").style = "border: none; outline: none; background: transparent; resize: none;"
+    });
+
+    // reset elements when the adding a new genre modal is hidden
+    document.getElementById("addGenreModal").addEventListener('hide.bs.modal', event => {
+        // clear errors
+        document.getElementById("addGenreErrorContainer").classList.add("d-none");
+        document.getElementById("addGenreErrorSpan").textContent = "";
+
+        // clear inputs
+        document.getElementById("addGenreTitle").value = "";
+        document.getElementById("addGenreDescription").value = "";
+    });
+
+    // load the below after all the JavaScripts stuff has been loaded
+    document.addEventListener('DOMContentLoaded', function () {
+        // get the genre modal
+        const genreModal = new bootstrap.Modal(document.getElementById("updateGenreModal"));
+
+        // update the genre modal data
+        const genreButtons = document.querySelectorAll(".genre-btn");
+        genreButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                document.getElementById("genreTitle").value = button.dataset.genreName;
+                document.getElementById("genreBody").value = button.dataset.genreDescription;
+                document.getElementById("genreId").value = button.dataset.genreId;
+            });
+        });
+
+        // get the delete genre modal 
+        const deleteGenreModal = new bootstrap.Modal(document.getElementById("deleteGenreModal"));
+
+        // update the delete genre modal data
+        const genreDelButtons = document.querySelectorAll(".del-genre-btn");
+        genreDelButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                document.getElementById("delGenreId").value = button.dataset.genreId;
+            });
+        });
+    });
+
+    // ajax request for add genre submission
+    document.getElementById("addGenreForm").addEventListener('submit', async function (event) {
+        event.preventDefault(); // prevent the default submission
+
+        // disable submit button
+        const submitButton = document.getElementById("addGenreButton");
+        submitButton.disabled = true;
+
+        // get the form data
+        const form = event.target;
+        const formData = new FormData(form);
+        var obj = {};
+        formData.forEach(function (value, key) {
+            obj[key] = value;
+        });
+        var json = JSON.stringify(obj);
+
+        // perform an ajax request
+        try {
+            // get the required variables
+            const url = "{{ url_for('admin.add_genre') }}"
+            const csrfToken = document.getElementById('addGenreCSRFToken').value;
+
+            // request
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: json,
+            })
+            const result = await response.json();
+            if (result['status'] == "FAIL") {
+
+                document.getElementById("addGenreErrorContainer").classList.remove("d-none");
+                document.getElementById("addGenreErrorSpan").textContent = "ERROR: " + result['message'];
+
+                // re-enable the submit button
+                submitButton.disabled = false;
+
+            } else if (result['status'] == "SUCCESS") {
+
+                // show message
+                document.getElementById("addGenreErrorContainer").classList.remove("d-none");
+                document.getElementById("addGenreErrorContainer").classList.remove("border-danger");
+                document.getElementById("addGenreErrorContainer").classList.add("border-success");
+                document.getElementById("addGenreErrorSpan").textContent = result["message"];
+
+                // submit button remains disabled to prevent duplication
+                // reload the page after a short time pause
+                console.log("added new genre successfully!");
+                setTimeout(() => {
+                    location.reload();
+                }, 750); // 0.75 seconds delay to show success
+            } else {
+                console.error("Error in adding a new genre. Please refresh the page.")
+            }
+
+        } catch (error) {
+            console.error("AJAX Error: " + error);
+        }
+    });
+
+    // ajax request to update genre
+    document.getElementById("updateGenreForm").addEventListener('submit', async function (event) {
+        event.preventDefault(); // prevent the default action of submitting the form
+
+        const submitButton = document.getElementById("updateGenreButton");
+        submitButton.disabled = true;
+
+        // enable genre body so that the content is sent/posted to the server
+        document.getElementById("genreTitle").disabled = false;
+        document.getElementById("genreBody").disabled = false;
+
+        // get the form data
+        const form = event.target;
+        const formData = new FormData(form);
+        var obj = {};
+        formData.forEach(function (value, key) {
+            obj[key] = value;
+        });
+        var json = JSON.stringify(obj);
+
+        try {
+            // get the required variables
+            const url = "{{ url_for('admin.update_genre', genre_id='') }}" + document.getElementById("genreId").value;
+            const csrfToken = document.getElementById('editGenreCSRFToken').value;
+
+            // request
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: json,
+            })
+            const result = await response.json();
+            console.log(result);
+            if (result['status'] == "FAIL") {
+
+                document.getElementById("editGenreErrorContainer").classList.remove("d-none");
+                document.getElementById("editGenreErrorSpan").textContent = "ERROR: " + result['message'];
+
+                // re-enable the submit button
+                submitButton.disabled = false;
+
+            } else if (result['status'] == "SUCCESS") {
+
+                // show message
+                document.getElementById("editGenreErrorContainer").classList.remove("d-none");
+                document.getElementById("editGenreErrorContainer").classList.remove("border-danger");
+                document.getElementById("editGenreErrorContainer").classList.add("border-success");
+                document.getElementById("editGenreErrorSpan").textContent = result["message"];
+
+                // submit button remains disabled to prevent duplication
+                // reload the page after a short time pause
+                console.log("updated genre successfully!");
+                setTimeout(() => {
+                    location.reload();
+                }, 750); // 0.75 seconds delay to show success
+            } else {
+                console.error("Error in adding a new genre. Please refresh the page.")
+            }
+
+        } catch (error) {
+            console.error("AJAX error: " + error);
+        }
+    });
+
+    // ajax request to delete genre
+    document.getElementById("deleteGenreForm").addEventListener('submit', async function (event) {
+        event.preventDefault(); // prevent the default action of submitting the form
+
+        const submitButton = document.getElementById("deleteGenreButton");
+        submitButton.disabled = true;
+
+        try {
+            const url = "{{ url_for('admin.delete_genre', genre_id='') }}" + document.getElementById("delGenreId").value;
+
+            // send the request
+            const csrfToken = document.getElementById("deleteGenreCSRFToken").value;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                },
+            });
+            const result = await response.json(); // parse the result! important to use "await"!
+
+            if (result["status"] == "FAIL") {
+                document.getElementById("deleteGenreErrorContainer").classList.remove("d-none");
+                document.getElementById("deleteGenreErrorSpan").textContent = "ERROR: " + result["message"] + ". Please refresh the page.";
+
+            } else if (result['status'] == "SUCCESS") {
+                // show message
+                document.getElementById("deleteGenreErrorContainer").classList.remove("d-none");
+                document.getElementById("deleteGenreErrorContainer").classList.remove("border-danger");
+                document.getElementById("deleteGenreErrorContainer").classList.add("border-success");
+                document.getElementById("deleteGenreErrorSpan").textContent = result["message"];
+
+                // enable the submit button
+                submitButton.disabled = true;
+
+                console.log("delete genre successfully!");
+
+                // reload the page after a short time pause
+                setTimeout(() => {
+                    location.reload();
+                }, 750); // 0.75 seconds delay to show success
+            } else {
+                console.error("Received an unexpected API response from " + url);
+            }
+        } catch (error) {
+            console.error("AJAX Error: " + error);
+        }
+    });
+</script>
+{% endblock %}
