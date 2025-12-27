@@ -1,0 +1,19 @@
+/* start of toggle theme CSS */
+.bi {
+    vertical-align: -.125em;
+    fill: currentColor
+}
+
+.bd-mode-toggle {
+    z-index: 1500
+}
+
+.bd-mode-toggle .bi {
+    width: 1.2em;
+    height: 1.2em;
+}
+
+.bd-mode-toggle .dropdown-menu .active .bi {
+    display: block !important
+}
+/* end of toggle theme CSS */

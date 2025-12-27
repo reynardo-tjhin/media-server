@@ -1,9 +1,9 @@
 import functools
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, jsonify
 )
-from werkzeug.security import (check_password_hash)
+from werkzeug.security import check_password_hash
 
 from src.db import get_db
 
@@ -56,10 +56,58 @@ def login():
 
     return render_template('login.html')
 
+
+
 @bp.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('home.home'))
+
+
+
+@bp.route('/is-logged-in', methods=["GET"])
+def is_logged_in():
+    """
+    An API to check whether the user is logged in
+    """
+    if (session.get('user_id') is not None):
+        return jsonify({
+            "status": "SUCCESS",
+            "message": "True",
+        })
+    return jsonify({
+        "status": "SUCCESS",
+        "message": "False",
+    })
+
+
+
+@bp.route('/is-admin', methods=["GET"])
+def is_admin():
+    """
+    An API to check whether the user logged in is an admin
+    """
+    if (session.get('user_id') is None):
+        return jsonify({
+            "status": "SUCCESS",
+            "message": "Not logged in",
+        })
+    if (session.get("is_admin") is not None):
+        if (session.get("is_admin")):
+            return jsonify({
+                "status": "SUCCESS",
+                "message": "True",
+            })
+        return jsonify({
+            "status": "SUCCESS",
+            "message": "False",
+        })
+    return jsonify({
+        "status": "SUCCESS",
+        "message": "Error: server error",
+    })
+
+
 
 @bp.before_app_request
 def load_logged_in_user():
@@ -76,6 +124,9 @@ def load_logged_in_user():
             'SELECT * FROM user WHERE id = ?', (user_id,)
         ).fetchone()
 
+
+
+# TODO: if not admin, reroute to 405 not authorized
 def admin_required(view):
     """
     Checks if user is admin. If not admin, will require login
