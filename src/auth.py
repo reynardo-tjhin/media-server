@@ -11,49 +11,14 @@ bp = Blueprint('auth', __name__, url_prefix="/auth")
 
 @bp.route('/login', methods=["GET", "POST"])
 def login():
+    """
+    Send the templated. Another function will check for login details
+    """
     # already logged in
-    if (session.get("user_id") != None and session.get("is_admin") == True):
-        return redirect(url_for("admin.home"))
+    if (session.get("user_id") != None):
+        return redirect(url_for("home.home"))
 
-    # logging in
-    if (request.method == "POST"):
-        username = request.form["username"]
-        password = request.form["password"]
-        error = None
-
-        # get user
-        db = get_db()
-        user = db.execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
-        ).fetchone()
-
-        # check password
-        # the first paramater for check_password_hash: pwhash
-        # which is the already hashed password
-        # the method will hash the current password and compare against the hashed
-        if not check_password_hash(user['password'], password):
-            error = "Password is incorrect."
-
-        if (error is None and user['is_admin'] == "True"):
-
-            # session is a dict that stores data across requests.
-            # when validation succeeds, boolean is stored in a new sesion.
-            # the data is stored in a cookie that is sent to the browser,
-            # and the browser then sends it back with subsequent requests.
-            # Flask securely signs the that it can't be tampered with.
-            session.clear()
-            session['user_id'] = user['id']
-            session['is_admin'] = True
-            return redirect(url_for("admin.home"))
-        
-        elif (error is None and user['is_admin'] == "False"):
-            session.clear()
-            session['user_id'] = user['id']
-            session['is_admin'] = False
-            return redirect(url_for('home.home'))
-        
-        flash(error)
-
+    # otherwise
     return render_template('login.html')
 
 
@@ -62,6 +27,48 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for('home.home'))
+
+
+
+@bp.route('/check-sigin', methods=["POST"])
+def check_signin_details() -> str | None:
+    """
+    Check sign in details. Return error message or None.
+    """
+    error = None
+    if (request.method == "POST"):
+        # get the data
+        data = request.get_json()
+        username = data['username']
+        password = data['password']
+        
+        # check against the database
+        db = get_db()
+        user = db.execute("SELECT * FROM user WHERE username = ?", (username,)).fetchone()
+        if (user is None):
+            error = "Username does not exist"
+            return jsonify({
+                "status": "FAIL",
+                "message": error,
+            })
+
+        if (not check_password_hash(user['password'], password)):
+            error = "Password is incorrect"
+            return jsonify({
+                "status": "FAIL",
+                "message": error,
+            })
+
+        print("got here")
+
+        session.clear()
+        session['user_id'] = user['id']
+        session['is_admin'] = bool(user['is_admin'])
+        print(session)
+        return jsonify({
+            "status": "SUCCESS",
+            "message": "successfully signed in",
+        })
 
 
 

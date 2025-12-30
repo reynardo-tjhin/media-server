@@ -4,21 +4,85 @@
 
 {% block head %}
 {{ super() }}
+<style>
+    html,
+    body {
+        height: 100%;
+    }
+
+    .form-signin {
+        max-width: 330px;
+        padding: 1rem;
+    }
+
+    .form-signin .form-floating:focus-within {
+        z-index: 2;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<main class="form-signin w-100 m-auto">
-    <form>
-        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-        <div class="form-floating"> <input type="email" class="form-control" id="floatingInput"
-                placeholder="name@example.com"> <label for="floatingInput">Email address</label> </div>
-        <div class="form-floating"> <input type="password" class="form-control" id="floatingPassword"
-                placeholder="Password"> <label for="floatingPassword">Password</label> </div>
-        <div class="form-check text-start my-3"> <input class="form-check-input" type="checkbox" value="remember-me"
-                id="checkDefault"> <label class="form-check-label" for="checkDefault">
-                Remember me
-            </label> </div> <button class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
-        <p class="mt-5 mb-3 text-body-secondary">© 2017–2025</p>
-    </form>
-</main>
+<form class="form-signin w-100 m-auto pt-3" id="signInForm">
+    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+
+    <!-- CSRF token for safe post -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" id="signInCSRFToken" />
+
+    <!-- error message if exists -->
+
+
+    <div class="form-floating">
+        <input name="username" type="text" class="form-control" id="floatingInput" placeholder="Username">
+        <label for="floatingInput">Username</label>
+    </div>
+    <div class="form-floating">
+        <input name="password" type="password" class="form-control" id="floatingPassword" placeholder="Password">
+        <label for="floatingPassword">Password</label>
+    </div>
+    <button class="btn btn-primary w-100 py-2 my-3" type="submit">Sign in</button>
+    <p class="mt-5 mb-3 text-body-secondary">© 2017–2025</p>
+</form>
+{% endblock %}
+
+{% block after %}
+<script>
+    document.getElementById("signInForm").addEventListener('submit', async function (event) {
+        event.preventDefault(); // prevent from normal submission
+
+        const form = event.target;
+        const formData = new FormData(form);
+        var obj = {};
+        formData.forEach(function (value, key) {
+            obj[key] = value;
+        });
+        const json = JSON.stringify(obj);
+
+        try {
+            const url = "{{ url_for('auth.check_signin_details') }}";
+            const csrfToken = document.getElementById("signInCSRFToken").value;
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: json,
+            });
+            const result = await response.json();
+
+            console.log(result['status']);
+
+            if (result['status'] == "FAIL") {
+
+            } else if (result['status'] == 'SUCCESS') {
+                window.location.href = "{{ url_for('home.home') }}";
+            } else {
+                console.error("Error from server");
+            }
+            
+        } catch (error) {
+            console.error("AJAX Error: " + error);
+        };
+    });
+</script>
 {% endblock %}
