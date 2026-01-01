@@ -1,1 +1,111 @@
 {% extends 'base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+    html,
+    body {
+        height: 100%;
+    }
+
+    .form-signin {
+        max-width: 400px;
+        padding: 1rem;
+    }
+
+    .form-signin .form-floating:focus-within {
+        z-index: 2;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<form class="form-signin w-100 m-auto pt-3" id="signUpForm">
+    <h1 class="h3 mb-3 fw-normal">Please enter your details</h1>
+
+    <!-- CSRF token for safe post -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" id="signUpCSRFToken" />
+
+    <!-- error message if exists -->
+    <div id="signUpErrorContainer" class="border border-danger border-3 mb-3 d-none">
+        <span id="signUpErrorSpan" class="ms-3"></span>
+    </div>
+
+    <!-- sign in details -->
+    <div class="form-floating">
+        <input name="username" type="text" class="form-control" id="floatingInput" placeholder="Username" autocomplete="username">
+        <label for="floatingInput">Username</label>
+    </div>
+    <div class="form-floating">
+        <input name="password1" type="password" class="form-control" id="floatingPassword1" placeholder="Password" autocomplete="new-password">
+        <label for="floatingPassword">Password</label>
+    </div>
+    <div class="form-floating">
+        <input name="password2" type="password" class="form-control" id="floatingPassword2" placeholder="Confirm Password" autocomplete="new-password">
+        <label for="floatingPassword">Confirm Password</label>
+    </div>
+    <button id="signUpButton" class="btn btn-primary w-100 py-2 my-3" type="submit">Sign up</button>
+</form>
+{% endblock %}
+
+{% block after %}
+<script>
+    document.getElementById("signUpForm").addEventListener('submit', async function(event) {
+        event.preventDefault(); // prevent form normal form submission
+
+        const submitButton = document.getElementById("signUpButton");
+
+        const form = event.target;
+        const formData = new FormData(form);
+        var obj = {};
+        formData.forEach(function(value, key) {
+            obj[key] = value;
+        });
+        var json = JSON.stringify(obj);
+
+        try {
+            const url = "{{ url_for('auth.check_signup_details') }}";
+            const csrfToken = document.getElementById("signUpCSRFToken").value;
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: json,
+            });
+            const result = await response.json();
+
+            if (result['status'] == 'FAIL') {
+                // show error
+                document.getElementById("signUpErrorContainer").classList.remove("d-none");
+                document.getElementById("signUpErrorSpan").textContent = "ERROR: " + result["message"];
+                
+                // re-enable sign in button
+                submitButton.disabled = false;
+
+            } else if (result['status'] == 'SUCCESS') {
+                // show success message
+                document.getElementById("signUpErrorContainer").classList.remove("d-none");
+                document.getElementById("signUpErrorContainer").classList.remove("border-danger");
+                document.getElementById("signUpErrorContainer").classList.add("border-success");
+                document.getElementById("signUpErrorSpan").textContent = result["message"];
+                
+                // pause a bit
+                setTimeout(() => {
+                    // redirect to the homepage
+                    window.location.href = "{{ url_for('home.home') }}";
+                }, 750); // 0.75 seconds delay to show success
+
+            } else {
+                console.error("Error from server");
+            }
+
+        } catch (error) {
+            console.error("AJAX Error: " + error);
+        }
+    });
+</script>
+{% endblock %}

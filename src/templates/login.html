@@ -11,7 +11,7 @@
     }
 
     .form-signin {
-        max-width: 330px;
+        max-width: 400px;
         padding: 1rem;
     }
 
@@ -81,17 +81,27 @@
                 // show error
                 document.getElementById("signInErrorContainer").classList.remove("d-none");
                 document.getElementById("signInErrorSpan").textContent = "ERROR: " + result["message"];
-                
+
                 // re-enable sign in button
                 document.getElementById("signInButton").disabled = false;
 
             } else if (result['status'] == 'SUCCESS') {
-                // redirect to the homepage
-                window.location.href = "{{ url_for('home.home') }}";
+                // show success message
+                document.getElementById("signInErrorContainer").classList.remove("d-none");
+                document.getElementById("signInErrorContainer").classList.remove("border-danger");
+                document.getElementById("signInErrorContainer").classList.add("border-success");
+                document.getElementById("signInErrorSpan").textContent = result["message"];
+
+                // pause a bit
+                setTimeout(() => {
+                    // redirect to the homepage
+                    window.location.href = "{{ url_for('home.home') }}";
+                }, 750); // 0.75 seconds delay to show success
+
             } else {
                 console.error("Error from server");
             }
-            
+
         } catch (error) {
             console.error("AJAX Error: " + error);
         };
