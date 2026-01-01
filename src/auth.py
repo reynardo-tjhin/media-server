@@ -44,7 +44,7 @@ def check_signin_details() -> str | None:
         
         # check against the database
         db = get_db()
-        user = db.execute("SELECT * FROM user WHERE username = ?", (username,)).fetchone()
+        user = db.execute("SELECT * FROM user WHERE username = ?;", (username,)).fetchone()
         if (user is None):
             error = "Username does not exist"
             return jsonify({
@@ -69,6 +69,25 @@ def check_signin_details() -> str | None:
             "status": "SUCCESS",
             "message": "successfully signed in",
         })
+
+
+
+@bp.route('/username', methods=["GET"])
+def get_username():
+    """
+    An API to get the username
+    """
+    if (session.get('user_id') is not None):
+        db = get_db()
+        user = db.execute("SELECT username FROM user WHERE id = ?;", (session.get('user_id'),)).fetchone()
+        return jsonify({
+            "status": "SUCCESS",
+            "message": user[0],
+        })
+    return jsonify({
+        "status": "FAIL",
+        "message": "not signed in",
+    })
 
 
 

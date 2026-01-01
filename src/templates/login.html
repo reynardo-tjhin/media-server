@@ -29,8 +29,11 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" id="signInCSRFToken" />
 
     <!-- error message if exists -->
+    <div id="signInErrorContainer" class="border border-danger border-3 mb-3 d-none">
+        <span id="signInErrorSpan" class="ms-3"></span>
+    </div>
 
-
+    <!-- sign in details -->
     <div class="form-floating">
         <input name="username" type="text" class="form-control" id="floatingInput" placeholder="Username">
         <label for="floatingInput">Username</label>
@@ -39,8 +42,7 @@
         <input name="password" type="password" class="form-control" id="floatingPassword" placeholder="Password">
         <label for="floatingPassword">Password</label>
     </div>
-    <button class="btn btn-primary w-100 py-2 my-3" type="submit">Sign in</button>
-    <p class="mt-5 mb-3 text-body-secondary">© 2017–2025</p>
+    <button id="signInButton" class="btn btn-primary w-100 py-2 my-3" type="submit">Sign in</button>
 </form>
 {% endblock %}
 
@@ -49,6 +51,10 @@
     document.getElementById("signInForm").addEventListener('submit', async function (event) {
         event.preventDefault(); // prevent from normal submission
 
+        // disable submit button to prevent double submission
+        document.getElementById("signInButton").disabled = true;
+
+        // get the sign in details
         const form = event.target;
         const formData = new FormData(form);
         var obj = {};
@@ -57,6 +63,7 @@
         });
         const json = JSON.stringify(obj);
 
+        // perform an async request
         try {
             const url = "{{ url_for('auth.check_signin_details') }}";
             const csrfToken = document.getElementById("signInCSRFToken").value;
@@ -70,11 +77,16 @@
             });
             const result = await response.json();
 
-            console.log(result['status']);
-
             if (result['status'] == "FAIL") {
+                // show error
+                document.getElementById("signInErrorContainer").classList.remove("d-none");
+                document.getElementById("signInErrorSpan").textContent = "ERROR: " + result["message"];
+                
+                // re-enable sign in button
+                document.getElementById("signInButton").disabled = false;
 
             } else if (result['status'] == 'SUCCESS') {
+                // redirect to the homepage
                 window.location.href = "{{ url_for('home.home') }}";
             } else {
                 console.error("Error from server");
