@@ -7,7 +7,12 @@
 {% endblock %}
 
 {% block content %}
+
 <h1>Welcome to Tjhin's Media Server</h1>
+
+<!-- Implement a carousel -->
+<img src="{{ url_for('media.get_poster', filename='Conclave.webp') }}">
+
 
 <div class="login" id="login">
     <a href="{{ url_for('auth.login') }}">Log In</a>

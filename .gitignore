@@ -197,3 +197,8 @@ notes*
 *secrets*
 *vid*
 *pos*
+*movie*
+
+# for small testing
+test.py
+schema_staging.sql

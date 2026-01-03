@@ -1,3 +1,15 @@
+/* take up all the available space */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+/* end */
+
 /* start of toggle theme CSS */
 .bi {
     vertical-align: -.125em;
