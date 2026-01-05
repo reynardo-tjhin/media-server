@@ -149,6 +149,6 @@ def movie(movie_id: str):
     if (not movie):
         abort(404, f"Movie ID {movie_id} does not exist.")
     
-    return render_template("movies/movie.jinja2",
+    return render_template("movies/movie.html",
                            movie=movie,
                            text="movie found!")

@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}Watch Movies!{% endblock %}
+
+{% block head %}
+{{ super() }}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='movies/home.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- movie gallery -->
+<div class="movie-gallery container text-center text-white">
+    <!-- title -->
+    <h1 class="gallery-title">Downloaded Movies</h1>
+
+    <!-- controls -->
+    <div class="border my-4 mx-0 rounded-4 bg-info bg-opacity-25">
+        <!-- filter buttons -->
+        <form method="get" class="form">
+
+            <!-- Mobile toggle buttons -->
+            <div class="d-xl-none">
+                <button class="btn btn-primary w-100 rounded-4" data-bs-toggle="collapse" type="button"
+                    data-bs-target="#filterControls" aria-expanded="false" aria-controls="filterControls">
+                    <i class="fas fa-filter"></i> Filter Controls <i class="fas fa-chevron-down ms-2"></i>
+                </button>
+            </div>
+
+            <!-- Filter controls container - collapsible on mobile -->
+            <div id="filterControls" class="collapse d-xl-block">
+                <div class="d-flex flex-wrap flex-xl-nowrap justify-content-evenly gap-2 p-2">
+                    <!-- genres -->
+                    <div class="dropdown my-3">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false" style="width: 200px;">All Genres</button>
+                        <div class="dropdown-menu dropdown-menu-dark max-h-64"
+                            style="width: 140%; max-width: 500px; overflow-x: auto;">
+                            <div class="row row-cols-1 row-cols-2 mx-2">
+                                {% for genre in genres %}
+                                <div class="col form-check">
+                                    <input name="genre" value="{{ genre.name }}" class="form-check-input"
+                                        type="checkbox" id="check{{ genre.name }}" onchange="this.form.submit()" {{
+                                        genre.checked }}>
+                                    <label class="form-check-label" for="check{{ genre.name }}">{{ genre.name }}</label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- release year -->
+                    <div class="dropdown my-3">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false" style="width: 200px;">
+                            {{ year_selected }}
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-dark"
+                            style="width: 300px; max-height: 300px; overflow-y: auto;">
+
+                            <!-- default -->
+                            <input type="radio" class="visually-hidden" name="release_year" value="All Years"
+                                id="release_year_all_years" onchange="this.form.submit();" {% if
+                                year_selected=="All Years" %}checked{% endif %} aria-describedby="year-dropdown-label">
+                            <label class="dropdown-item" for="release_year_all_years" {% if year_selected=="All Years"
+                                %}active{% endif %}>All Years</label>
+
+                            <!-- a range of years -->
+                            {% for year in range(max_year|int, min_year|int - 1, -1) %}
+                            <input type="radio" class="visually-hidden" name="release_year" value="{{ year }}"
+                                id="release_year_{{ year }}" onchange="this.form.submit();" {% if
+                                year_selected==year|string %}checked{% endif %} aria-describedby="year-dropdown-label">
+                            <label class="dropdown-item" for="release_year_{{ year }}" {% if year_selected==year|string
+                                %}active{% endif %}>{{ year }}</label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- rating -->
+                    <div class="dropdown my-3">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false" style="width: 200px;">
+                            {{ imdb_rating_text }}
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-dark max-h-64" style="width: 300px;">
+
+                            <!-- default -->
+                            <input type="radio" class="visually-hidden" name="imdb_rating" value="Show All"
+                                id="imdb_rating_show_all" onchange="this.form.submit();" {% if
+                                imdb_rating_text=="Show All" %}checked{% endif %}
+                                aria-describedby="imdb-rating-dropdown-label">
+                            <label class="dropdown-item" for="imdb_rating_show_all" {% if imdb_rating_text=="Show All"
+                                %}active{% endif %}>Show All</label>
+
+                            <!-- 8+ (excellent) -->
+                            <input type="radio" class="visually-hidden" name="imdb_rating" value="8+ (Excellent)"
+                                id="imdb_rating_excellent" onchange="this.form.submit();" {% if
+                                imdb_rating_text=="8+ (Excellent)" %}checked{% endif %}
+                                aria-describedby="imdb-rating-dropdown-label">
+                            <label class="dropdown-item" for="imdb_rating_excellent" {% if
+                                imdb_rating_text=="8+ (Excellent)" %}active{% endif %}>8+ (Excellent)</label>
+
+                            <!-- 7+ (good) -->
+                            <input type="radio" class="visually-hidden" name="imdb_rating" value="7+ (Good)"
+                                id="imdb_rating_good" onchange="this.form.submit();" {% if imdb_rating_text=="7+ (Good)"
+                                %}checked{% endif %} aria-describedby="imdb-rating-dropdown-label">
+                            <label class="dropdown-item" for="imdb_rating_good" {% if imdb_rating_text=="7+ (Good)"
+                                %}active{% endif %}>7+ (Good)</label>
+
+                            <!-- 6+ (fair) -->
+                            <input type="radio" class="visually-hidden" name="imdb_rating" value="6+ (Fair)"
+                                id="imdb_rating_fair" onchange="this.form.submit();" {% if imdb_rating_text=="6+ (Fair)"
+                                %}checked{% endif %} aria-describedby="imdb-rating-dropdown-label">
+                            <label class="dropdown-item" for="imdb_rating_fair" {% if imdb_rating_text=="6+ (Fair)"
+                                %}active{% endif %}>6+ (Fair)</label>
+
+                            <!-- 5+ (average) -->
+                            <input type="radio" class="visually-hidden" name="imdb_rating" value="5+ (Average)"
+                                id="imdb_rating_average" onchange="this.form.submit();" {% if
+                                imdb_rating_text=="5+ (Average)" %}checked{% endif %}
+                                aria-describedby="imdb-rating-dropdown-label">
+                            <label class="dropdown-item" for="imdb_rating_average" {% if
+                                imdb_rating_text=="5+ (Average)" %}active{% endif %}>5+ (Average)</label>
+                        </div>
+                    </div>
+
+                    <!-- sort by -->
+                    <div class="dropdown my-3">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false" style="width: 200px;">
+                            {{ sort_by_text }}
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-dark max-h-64" style="width: 300px;">
+
+                            <!-- default -->
+                            <input type="radio" class="visually-hidden" name="sort_by" value="Sort By"
+                                id="sort_by_default" onchange="this.form.submit();" {% if sort_by_text=="Sort By"
+                                %}checked{% endif %} aria-describedby="sort-by-dropdown-label">
+                            <label class="dropdown-item" for="sort_by_default" {% if sort_by_text=="Sprt By" %}active{%
+                                endif %}>Sort By</label>
+
+                            <!-- rating (high to low) -->
+                            <input type="radio" class="visually-hidden" name="sort_by" value="Rating (High to Low)"
+                                id="sort_by_rating_high_to_low" onchange="this.form.submit();" {% if
+                                sort_by_text=="Rating (High to Low)" %}checked{% endif %}
+                                aria-describedby="sort-by-dropdown-label">
+                            <label class="dropdown-item" for="sort_by_rating_high_to_low" {% if
+                                sort_by_text=="5+ (Average)" %}active{% endif %}>Sort By IMDb Rating (High to
+                                Low)</label>
+
+                            <!-- rating (low to high) -->
+                            <input type="radio" class="visually-hidden" name="sort_by" value="Rating (Low to High)"
+                                id="sort_by_rating_low_to_high" onchange="this.form.submit();" {% if
+                                sort_by_text=="Rating (Low to High)" %}checked{% endif %}
+                                aria-describedby="sort-by-dropdown-label">
+                            <label class="dropdown-item" for="sort_by_rating_low_to_high" {% if
+                                sort_by_text=="Rating (Low to High)" %}active{% endif %}>Sort By IMDb Rating (Low to
+                                High)</label>
+
+                            <!-- release year (newest) -->
+                            <input type="radio" class="visually-hidden" name="sort_by" value="Release Year (Newest)"
+                                id="sort_by_release_year_newest" onchange="this.form.submit();" {% if
+                                sort_by_text=="Release Year (Newest)" %}checked{% endif %}
+                                aria-describedby="sort-by-dropdown-label">
+                            <label class="dropdown-item" for="sort_by_release_year_newest" {% if
+                                sort_by_text=="Release Year (Newest)" %}active{% endif %}>Sort By Release Year
+                                (Newest)</label>
+
+                            <!-- release year (oldest) -->
+                            <input type="radio" class="visually-hidden" name="sort_by" value="Release Year (Oldest)"
+                                id="sort_by_release_year_oldest" onchange="this.form.submit();" {% if
+                                sort_by_text=="Release Year (Oldest)" %}checked{% endif %}
+                                aria-describedby="sort-by-dropdown-label">
+                            <label class="dropdown-item" for="sort_by_release_year_oldest" {% if
+                                sort_by_text=="Release Year (Oldest)" %}active{% endif %}>Sort By Release Year
+                                (Oldest)</label>
+                        </div>
+                    </div>
+
+                    <!-- clear button -->
+                    <div class="my-3">
+                        <a href="{{ url_for('movies.home') }}" class="btn btn-danger">
+                            Clear Filters <span>&times;</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- if any genre is clicked -->
+        {% if genres_selected %}
+        <div class="d-flex mb-3 mx-4 align-items-start">
+            {% for genre_selected in genres_selected %}
+            <button type="button" class="btn btn-primary me-3">
+                {{ genre_selected }}
+                <span class="text-white fs-5" onclick="removeGenre('{{ genre_selected }}');">&times;</span>
+            </button>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- movie gallery -->
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 ">
+        {% for movie in movies %}
+        <div class="col pb-2 movie-card">
+            <a href="{{ url_for('movies.movie', movie_id=movie.id) }}">
+                <img class="movie-poster" src="/media/poster/{{ movie.name }}.webp" alt="{{ movie.name }}"
+                    loading="lazy">
+                <div class="year">
+                    <span>{{ movie.release_year }}</span>
+                </div>
+                <div class="ratings">
+                    <!-- IMDb rating -->
+                    <div class="rating">
+                        <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" aria-label="IMDb" role="img"
+                            viewBox="0 0 512 512">
+                            <rect width="512" height="512" rx="15%" fill="#f5c518" />
+                            <path
+                                d="M104 328V184H64v144zM189 184l-9 67-5-36-5-31h-50v144h34v-95l14 95h25l13-97v97h34V184zM256 328V184h62c15 0 26 11 26 25v94c0 14-11 25-26 25zm47-118l-9-1v94c5 0 9-1 10-3 2-2 2-8 2-18v-56-12l-3-4zM419 220h3c14 0 26 11 26 25v58c0 14-12 25-26 25h-3c-8 0-16-4-21-11l-2 9h-36V184h38v46c5-6 13-10 21-10zm-8 70v-34l-1-11c-1-2-4-3-6-3s-5 1-6 3v57c1 2 4 3 6 3s6-1 6-3l1-12z" />
+                        </svg>
+                        <span>{{ movie.imdb_rating }}</span>
+                    </div>
+
+                    <!-- Rotten Tomatoes Rating -->
+                    <div class="rating">
+                        <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <circle cx="50" cy="45" r="35" fill="#fa320a" />
+                            <ellipse cx="50" cy="42" rx="25" ry="28" fill="#ff6b47" />
+                            <ellipse cx="50" cy="45" rx="15" ry="20" fill="#ffffff" opacity="0.3" />
+                            <rect x="45" y="15" width="10" height="8" rx="2" fill="#228b22" />
+                            <ellipse cx="52" cy="12" rx="6" ry="3" fill="#228b22" />
+                        </svg>
+                        <span>{{ movie.rotten_tomatoes_rating }}%</span>
+                    </div>
+
+                    <!-- Metacritic Rating -->
+                    <div class="rating">
+                        <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <rect width="100" height="100" rx="8" fill="#66cc33" />
+                            <text x="50" y="65" font-family="Arial, sans-serif" font-size="45" font-weight="bold"
+                                text-anchor="middle" fill="#ffffff">73</text>
+                        </svg>
+                        <span>{{ movie.metacritic_rating }}%</span>
+                    </div>
+                </div>
+                <div class="movie-title-overlay">
+                    <h3 class="movie-name">{{ movie.name }}</h3>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block after %}
+<script>
+    function removeGenre(element) {
+        // change the value of the genre to false
+        const elementID = '#check' + element;
+        document.querySelector(elementID).checked = false;
+        // submit the form with the changed value
+        document.querySelector(".form").submit();
+    }
+</script>
+{% endblock %}
