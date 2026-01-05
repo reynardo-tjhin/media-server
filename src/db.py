@@ -1,7 +1,6 @@
 import sqlite3
 import click
 
-from datetime import datetime
 from flask import Flask, current_app, g
 
 def get_db():
@@ -33,8 +32,12 @@ def close_db(e=None):
 
 def init_db():
     db = get_db()
-
-    with current_app.open_resource('schema.sql') as f:
+    
+    # schema.sql is the structure of the database
+    # it is meant to not have any data in it
+    # in development, schema.sql can have dummy data which will eventually
+    # be removed in the production schema.sql
+    with current_app.open_resource('schema_dev.sql') as f:
         db.executescript(f.read().decode('utf8'))
 
 @click.command('init-db')

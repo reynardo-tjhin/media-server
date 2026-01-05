@@ -125,7 +125,7 @@ def home():
     if (year_selected == '%'):
         year_selected = 'All Years'
 
-    return render_template("movies/home.jinja2",
+    return render_template("movies/home.html",
                            movies=movies,
                            movie_name=movie_name,
                            genres=genres_final,
@@ -149,6 +149,6 @@ def movie(movie_id: str):
     if (not movie):
         abort(404, f"Movie ID {movie_id} does not exist.")
     
-    return render_template("movies/movie.jinja2",
+    return render_template("movies/movie.html",
                            movie=movie,
                            text="movie found!")

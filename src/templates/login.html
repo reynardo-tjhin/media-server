@@ -1,88 +1,110 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Welcome Back</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
-</head>
-<body>
-    <div class="bg-animation" id="bgAnimation"></div>
-    
-    <div class="login-container">
-        <div class="logo">
-            <div class="logo-icon">Tjhin's Server</div>
-        </div>
-        
-        <div class="welcome-text">
-            <h2>Welcome Back</h2>
-            <p>Sign in to your account to continue</p>
-        </div>
+{% extends "base.html" %}
 
-        <form id="loginForm" method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+{% block title %}Login{% endblock %}
 
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="username" id="username" name="username" placeholder="Enter your username" required>
-            </div>
+{% block head %}
+{{ super() }}
+<style>
+    html,
+    body {
+        height: 100%;
+    }
 
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-            </div>
+    .form-signin {
+        max-width: 400px;
+        padding: 1rem;
+    }
 
-            <button type="submit" class="login-btn">Sign In</button>
-        </form>
+    .form-signin .form-floating:focus-within {
+        z-index: 2;
+    }
+</style>
+{% endblock %}
 
-        <div class="signup-link">
-            Don't have an account? <a href="#" onclick="showSignup()">Sign up here</a>
-        </div>
+{% block content %}
+<form class="form-signin w-100 m-auto pt-3" id="signInForm">
+    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+
+    <!-- CSRF token for safe post -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" id="signInCSRFToken" />
+
+    <!-- error message if exists -->
+    <div id="signInErrorContainer" class="border border-danger border-3 mb-3 d-none">
+        <span id="signInErrorSpan" class="ms-3"></span>
     </div>
 
-    <script>
-        // Create floating particles animation
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + 'vw';
-            particle.style.width = particle.style.height = Math.random() * 10 + 5 + 'px';
-            particle.style.animationDuration = Math.random() * 3 + 5 + 's';
-            particle.style.animationDelay = Math.random() * 2 + 's';
-            
-            document.getElementById('bgAnimation').appendChild(particle);
-            
-            setTimeout(() => {
-                particle.remove();
-            }, 8000);
-        }
+    <!-- sign in details -->
+    <div class="form-floating">
+        <input name="username" type="text" class="form-control" id="floatingInput" placeholder="Username">
+        <label for="floatingInput">Username</label>
+    </div>
+    <div class="form-floating">
+        <input name="password" type="password" class="form-control" id="floatingPassword" placeholder="Password">
+        <label for="floatingPassword">Password</label>
+    </div>
+    <button id="signInButton" class="btn btn-primary w-100 py-2 my-3" type="submit">Sign in</button>
+</form>
+{% endblock %}
 
-        // Create particles periodically
-        setInterval(createParticle, 300);
+{% block after %}
+<script>
+    document.getElementById("signInForm").addEventListener('submit', async function (event) {
+        event.preventDefault(); // prevent from normal submission
 
-        // Input focus animations
-        const inputs = document.querySelectorAll('input');
-        inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentNode.style.transform = 'scale(1.02)';
-            });
-            
-            input.addEventListener('blur', function() {
-                this.parentNode.style.transform = 'scale(1)';
-            });
+        // disable submit button to prevent double submission
+        document.getElementById("signInButton").disabled = true;
+
+        // get the sign in details
+        const form = event.target;
+        const formData = new FormData(form);
+        var obj = {};
+        formData.forEach(function (value, key) {
+            obj[key] = value;
         });
+        const json = JSON.stringify(obj);
 
-        function showForgotPassword() {
-            alert('Forgot password functionality would be implemented here.');
-        }
+        // perform an async request
+        try {
+            const url = "{{ url_for('auth.check_signin_details') }}";
+            const csrfToken = document.getElementById("signInCSRFToken").value;
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: json,
+            });
+            const result = await response.json();
 
-        function showSignup() {
-            alert('Sign up page would be loaded here.');
-        }
+            if (result['status'] == "FAIL") {
+                // show error
+                document.getElementById("signInErrorContainer").classList.remove("d-none");
+                document.getElementById("signInErrorSpan").textContent = "ERROR: " + result["message"];
 
-        function socialLogin(provider) {
-            alert(`${provider} login would be implemented here.`);
-        }
-    </script>
-</body>
-</html>
+                // re-enable sign in button
+                document.getElementById("signInButton").disabled = false;
+
+            } else if (result['status'] == 'SUCCESS') {
+                // show success message
+                document.getElementById("signInErrorContainer").classList.remove("d-none");
+                document.getElementById("signInErrorContainer").classList.remove("border-danger");
+                document.getElementById("signInErrorContainer").classList.add("border-success");
+                document.getElementById("signInErrorSpan").textContent = result["message"];
+
+                // pause a bit
+                setTimeout(() => {
+                    // redirect to the homepage
+                    window.location.href = "{{ url_for('home.home') }}";
+                }, 750); // 0.75 seconds delay to show success
+
+            } else {
+                console.error("Error from server");
+            }
+
+        } catch (error) {
+            console.error("AJAX Error: " + error);
+        };
+    });
+</script>
+{% endblock %}

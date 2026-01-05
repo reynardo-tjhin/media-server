@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}403 - Not Allowed{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="m-auto">
+    <svg class="bi my-1 w-100" width="192" height="192" aria-hidden="true">
+        <use href="#warning"></use>
+    </svg>
+    <h4 class="text-center h4">403 UNAUTHORIZED</h1>
+</div>
+{% endblock %}

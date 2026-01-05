@@ -1,31 +1,33 @@
 import os
+import configparser
 
-from flask import Flask
+from pathlib import Path
+from flask import Flask, render_template
 from flask_wtf.csrf import CSRFProtect
-from . import home, db, admin, auth, movies
 
+from . import home, db, admin, auth, movies, media
+from .config import config
+
+# initialise csrf object for secure post method
 csrf = CSRFProtect()
 
-def create_app(test_config=None):
+def create_app():
     """
     Create and configure an instance of the Flask application.
     """
+    # detemine the config based on environment variable
+    config_name = os.getenv('FLASK_ENV', 'development')
+    
     # create the app object
-    app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        # a default secret that should be overwritten by instance config
-        SECRET_KEY="dev",
-        # store the database in the instance folder
-        DATABASE=os.path.join(app.instance_path, "src.sqlite"),
-    )
+    app = Flask(__name__)
 
-    if (test_config is None):
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile("config.py", silent=True)
-    else:
-        # load the test conig if passed in
-        app.config.update(test_config)
-
+    # load the configuration
+    cfg = config[config_name]
+    app.config.from_object(cfg)
+    
+    # update the database instance path
+    app.config.update(DATABASE=os.path.join(app.instance_path, 'src.sqlite'))
+    
     # ensure the instance folder exists
     try:
         os.makedirs(app.instance_path)
@@ -34,10 +36,10 @@ def create_app(test_config=None):
     
     # register blueprints
     app.register_blueprint(home.bp)
-    # app.register_blueprint(movies.bp)
     app.register_blueprint(admin.bp, url_prefix="/admin")
     app.register_blueprint(auth.bp, url_prefix="/auth")
     app.register_blueprint(movies.bp, url_prefix="/movies")
+    app.register_blueprint(media.bp, url_prefix="/media")
 
     # register database
     db.init_app(app=app)
@@ -50,5 +52,14 @@ def create_app(test_config=None):
     # app.route, while giving the blog blueprint a url_prefix, but for
     # the tutorial, the blog will be the main index
     # app.add_url_rule("/", endpoint="index")
+    
+    # handle errors
+    @app.errorhandler(404)
+    def page_not_found(error):
+        return render_template("status_404.html"), 404
+    
+    @app.errorhandler(403)
+    def page_not_authorized(error):
+        return render_template("status_403.html"), 403
 
     return app
