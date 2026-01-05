@@ -125,7 +125,7 @@ def home():
     if (year_selected == '%'):
         year_selected = 'All Years'
 
-    return render_template("movies/home.jinja2",
+    return render_template("movies/home.html",
                            movies=movies,
                            movie_name=movie_name,
                            genres=genres_final,

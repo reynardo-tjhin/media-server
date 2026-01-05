@@ -82,7 +82,7 @@
         <div class="row mb-4">
             <!-- the poster of the movie -->
             <div class="col-lg-4 mb-4 mb-lg-0">
-                <img src="{{ url_for('static', filename='posters/' + movie.name + '.webp') }}" 
+                <img src="/media/poster/{{ movie.name }}.webp" 
                      alt="{{ movie.name }} Poster" 
                      class="movie-poster img-fluid">
             </div>
@@ -137,7 +137,7 @@
             <div class="col-12">
                 <div class="video-container">
                     <video id="moviePlayer" controls>
-                        <source src="{{ movie.media_location }}" type="video/mp4">
+                        <source src="/media/movie/{{ movie.name }}.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
                 </div>

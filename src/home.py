@@ -17,7 +17,6 @@ def home():
                            active_movie=movies[0],
                            movies=movies[1:],)
 
-
 @bp.route('/403')
 def unauthorized():
     return render_template('status_403.html')
