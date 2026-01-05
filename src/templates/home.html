@@ -4,26 +4,78 @@
 
 {% block head %}
 {{ super() }}
+<style>
+    img {
+        filter: brightness(0.5);
+    }
+</style>
 {% endblock %}
 
 {% block content %}
 
-<h1>Welcome to Tjhin's Media Server</h1>
-
-<!-- Implement a carousel -->
-<img src="{{ url_for('media.get_poster', filename='Conclave.webp') }}">
-
-
-<div class="login" id="login">
-    <a href="{{ url_for('auth.login') }}">Log In</a>
+<!-- title and movies subheading -->
+<div class="text-center my-5">
+    <h1 class="display-4 fw-bold mb-4">Tjhin's Media Server</h1>
+    <h2 class="h4 fw-normal mb-3">Watch locally downloaded movies</h2>
+    <a href="{{ url_for('movies.home') }}" class="btn btn-primary">Browse Movies</a>
 </div>
 
-<div class="login" id="logout">
-    <a href="{{ url_for('auth.logout') }}">Log Out</a>
-</div>
+<!-- Implement a carousel for movies downloaded locally -->
+<div id="movieCarousel" class="carousel slide">
 
-<div class="movie">
-    <a href="{{ url_for('movies.home') }}">Movies</a>
+    <!-- carousel bottom indicators -->
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#movieCarousel" data-bs-slide-to="0" class="active" aria-current="true"
+            aria-label="Slide 1"></button>
+        {% for movie in movies %}
+        <button type="button" data-bs-target="#movieCarousel" data-bs-slide-to="{{ loop.index }}"
+            aria-label="Slide {{ loop.index + 1 }}"></button>
+        {% endfor %}
+    </div>
+
+    <!-- carousel images -->
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="row">
+                <img src="/media/banner/{{ active_movie.name }}.webp" class="d-block img-fluid">
+                <!-- <div class="position-absolute text-white">
+                    <h5 class="px-3 pt-3 h5 text-white">{{ active_movie.name }}</h5>
+                    <p class="px-3 fs-6 lh-sm text-white text-break">{{ active_movie.description }}</p>
+                </div> -->
+                <div class="position-absolute bottom-0 start-0 p-3 p-md-4 text-white w-100"
+                    style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
+                    <h3 class="fw-bold fs-5 fs-md-3">{{ active_movie.name }}</h3>
+                    <p class="mb-0 small d-none d-md-block">{{ active_movie.description }}</p>
+                </div>
+            </div>
+        </div>
+        {% for movie in movies %}
+        <div class="carousel-item">
+            <div class="row">
+                <img src="/media/banner/{{ movie.name }}.webp" class="d-block img-fluid">
+                <!-- <div class="position-absolute text-white">
+                    <h5 class="px-3 pt-3 h5 text-white">{{ movie.name }}</h5>
+                    <p class="px-3 fs-6 lh-sm text-white text-break">{{ movie.description }}</p>
+                </div> -->
+                <div class="position-absolute bottom-0 start-0 p-3 p-md-4 text-white w-100"
+                    style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
+                    <h3 class="fw-bold fs-5 fs-md-3">{{ movie.name }}</h3>
+                    <p class="mb-0 small d-none d-md-block">{{ movie.description }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- carousel next and prev buttons -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#movieCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#movieCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
 </div>
 
 {% endblock %}

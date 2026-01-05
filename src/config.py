@@ -24,6 +24,7 @@ class Config:
     MEDIA_BASE_PATH = os.getenv('MEDIA_BASE_PATH')
     MOVIES_PATH = os.path.join(MEDIA_BASE_PATH, cfg['media']['movies_location'])
     POSTERS_PATH = os.path.join(MEDIA_BASE_PATH, cfg['media']['posters_location'])
+    BANNERS_PATH = os.path.join(MEDIA_BASE_PATH, cfg['media']['banners_location'])
     
 class DevelopmentConfig(Config):
     """Development configuration"""
