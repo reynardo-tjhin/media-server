@@ -6,6 +6,13 @@
   - Frontend: HTML, CSS & JavaScript + Bootstrap
   - Database: SQLite3
 
+Things to clean up:
+
+- status_403/404, etc. ok
+- return status
+- APIs change to POST/PUT/DELETE?
+- clean up home.html to only have one search and a filter button?
+
 ## Deployment Steps
 
 ## Features
