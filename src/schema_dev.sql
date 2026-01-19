@@ -14,6 +14,7 @@ CREATE TABLE "movie" (
 	"release_date"	TEXT NOT NULL,
 	"media_location"	TEXT NOT NULL UNIQUE,
 	"poster_location"	TEXT NOT NULL UNIQUE,
+	"banner_location"	TEXT NOT NULL UNIQUE,
 	"duration"	INTEGER,
 	PRIMARY KEY("id")
 );
@@ -273,6 +274,7 @@ INSERT INTO movie VALUES(
 	'2014-11-07', -- release date
 	'.\vids\Big Hero 6.mp4', -- movie location
 	'posters/Big Hero 6.webp', -- poster location
+	'posters/Big Hero 6.webp', -- banner location
 	102 -- duration
 );
 
@@ -287,6 +289,7 @@ INSERT INTO movie VALUES(
 	'2024-10-25', -- release date
 	'.\vids\Conclave.mp4', -- movie location
 	'posters/Conclave.webp', -- poster location
+	'posters/Conclave.webp', -- banner location
 	120 -- duration
 );
 
@@ -301,6 +304,7 @@ INSERT INTO movie VALUES(
 	'2024-03-08', -- release date
 	'.\vids\Kung Fu Panda 4.mp4', -- movie location
 	'posters/Kung Fu Panda 4.webp', -- poster location
+	'posters/Kung Fu Panda 4.webp', -- banner location
 	94 -- duration
 );
 
@@ -315,6 +319,7 @@ INSERT INTO movie VALUES(
 	'2024-09-27', -- release date
 	'.\vids\The Wild Robot.mp4', -- movie location
 	'posters/The Wild Robot.webp', -- poster location
+	'posters/The Wild Robot.webp', -- banner location
 	102 -- duration
 );
 

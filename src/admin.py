@@ -109,6 +109,7 @@ def add_movie():
         release_date = data['releaseDate']
         media_location = data['mediaLocation']
         poster_location = data['posterLocation']
+        banner_location = data['bannerLocation']
         duration = data['duration']
         
         # validations
@@ -123,9 +124,9 @@ def add_movie():
         db = get_db()
         movie_id = str(uuid4())
         db.execute(
-            'INSERT INTO movie (id, name, description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location, duration)'
-            ' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            (movie_id, movie_name, movie_description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location, duration,)
+            'INSERT INTO movie (id, name, description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location, banner_location, duration)'
+            ' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            (movie_id, movie_name, movie_description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location, banner_location, duration,)
         )
         db.commit()
         
@@ -197,6 +198,7 @@ def update_movie(movie_id: str):
         release_date = data['releaseDate']
         media_location = data['mediaLocation']
         poster_location = data['posterLocation']
+        banner_location = data['bannerLocation']
         duration = data['duration']
         
         # no error
@@ -204,7 +206,7 @@ def update_movie(movie_id: str):
         db.execute(
             'UPDATE movie SET name = ?, description = ?, imdb_rating = ?,'
             ' rotten_tomatoes_rating = ?, metacritic_rating = ?, release_date = ?,'
-            ' media_location = ?, poster_location = ?, duration = ? WHERE id = ?', (movie_name, movie_description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location, duration, movie_id,)
+            ' media_location = ?, poster_location = ?, banner_location = ?, duration = ? WHERE id = ?', (movie_name, movie_description, imdb_rating, rotten_tomatoes_rating, metacritic_rating, release_date, media_location, poster_location, banner_location, duration, movie_id,)
         )
         db.commit()
         
@@ -412,6 +414,7 @@ def _validate_movie_entries(movie_data: dict[str, Any], movie_id: str = None) ->
     release_date = movie_data['releaseDate']
     media_location = movie_data['mediaLocation']
     poster_location = movie_data['posterLocation']
+    banner_location = movie_data['bannerLocation']
     duration = movie_data['duration']
     
     # validation 1: the below data are all required
@@ -433,6 +436,10 @@ def _validate_movie_entries(movie_data: dict[str, Any], movie_id: str = None) ->
 
     if not poster_location:
         error = "Poster Location is required."
+        return error
+    
+    if not banner_location:
+        error = "Banner Location is required."
         return error
 
     # validation 2: no two movie names exists
@@ -461,7 +468,7 @@ def _validate_movie_entries(movie_data: dict[str, Any], movie_id: str = None) ->
             error = "Media location already exists. New movie cannot be from the same existing media location."
             return error
 
-    # validation 3: both metacritic rating and rotten tomatoes rating need to be from 0 to 100
+    # validation 4: both metacritic rating and rotten tomatoes rating need to be from 0 to 100
     pattern = r'^(100|[1-9]?[0-9])$'
     if (rotten_tomatoes_rating):
         if not bool(re.match(pattern, rotten_tomatoes_rating)):
@@ -473,7 +480,7 @@ def _validate_movie_entries(movie_data: dict[str, Any], movie_id: str = None) ->
             error = "Metacritic Rating should be from 0 to 100."
             return error
 
-    # validation 4: imdb rating needs to be from 0.0 to 10.0
+    # validation 5: imdb rating needs to be from 0.0 to 10.0
     pattern = r'^(10\.0|[0-9]\.[0-9])$'
     if (imdb_rating):
         if not bool(re.match(pattern, imdb_rating)):

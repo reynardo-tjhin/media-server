@@ -205,7 +205,7 @@
         {% for movie in movies %}
         <div class="col pb-2 movie-card">
             <a href="{{ url_for('movies.movie', movie_id=movie.id) }}">
-                <img class="movie-poster" src="/media/poster/{{ movie.name }}.webp" alt="{{ movie.name }}"
+                <img class="movie-poster" src="/media/poster/{{ movie.poster_location }}" alt="{{ movie.name }}"
                     loading="lazy">
                 <div class="year">
                     <span>{{ movie.release_year }}</span>
