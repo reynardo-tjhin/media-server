@@ -22,8 +22,9 @@ document.addEventListener('DOMContentLoaded', function () {
     deleteButtons.forEach(button => {
         button.addEventListener('click', function () {
             // extract data from button attribtues
-            let baseUrl = "{{ url_for('admin.delete_movie', movie_id='') }}"
-            baseUrl = baseUrl + button.dataset.movieId
+            let baseUrl = '/admin/delete-movie/' + button.dataset.movieId
+            // let baseUrl = "{{ url_for('admin.delete_movie', movie_id='') }}"
+            // baseUrl = baseUrl + button.dataset.movieId
 
             // assign the url to the action of the button
             document.getElementById('deleteMovieForm').action = baseUrl;
@@ -50,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById("movieDescription").value = "";
         document.getElementById("mediaLocation").value = "";
         document.getElementById("posterLocation").value = "";
+        document.getElementById("bannerLocation").value = "";
         document.getElementById("duration").value = "";
         document.getElementById("imdbRating").value = "";
         document.getElementById("rottenTomatoesRating").value = "";
@@ -72,8 +74,9 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', function () {
 
             // update the action of the form
-            let baseUrl = "{{ url_for('admin.update_movie', movie_id='') }}";
-            baseUrl = baseUrl + button.dataset.movieId;
+            let baseUrl = '/admin/update-movie/' + button.dataset.movieId;
+            // let baseUrl = "{{ url_for('admin.update_movie', movie_id='') }}";
+            // baseUrl = baseUrl + button.dataset.movieId;
             document.getElementById("updateMovieForm").action = baseUrl;
 
             // update the rest of the data
@@ -82,6 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById("updateMovieDescription").value = button.dataset.movieDescription;
             document.getElementById("updateMediaLocation").value = button.dataset.movieMediaLocation;
             document.getElementById("updatePosterLocation").value = button.dataset.moviePosterLocation;
+            document.getElementById("updateBannerLocation").value = button.dataset.movieBannerLocation;
             document.getElementById("updateDuration").value = button.dataset.movieDuration;
             document.getElementById("updateImdbRating").value = button.dataset.movieImdbRating;
             document.getElementById("updateRottenTomatoesRating").value = button.dataset.movieRottenTomatoesRating;
@@ -122,7 +126,7 @@ document.getElementById("addNewMovieForm").addEventListener('submit', async func
     var json = JSON.stringify(obj);
 
     try {
-        const url = "{{ url_for('admin.add_movie') }}";
+        const url = '/admin/add-movie';
 
         // send the request
         const csrfToken = document.getElementById("addNewMovieCSRFToken").value;
@@ -242,7 +246,8 @@ document.getElementById('updateMovieForm').addEventListener('submit', async func
 
     // try and fetch the from the API endpoint
     try {
-        const url = "{{ url_for('admin.update_movie', movie_id='') }}" + movieId;
+        const url = '/admin/update-movie/' + movieId;
+        // const url = "{{ url_for('admin.update_movie', movie_id='') }}" + movieId;
 
         // send the request
         const csrfToken = document.getElementById("updateMovieCSRFToken").value;
