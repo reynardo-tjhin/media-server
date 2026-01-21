@@ -6,14 +6,27 @@
   - Frontend: HTML, CSS & JavaScript + Bootstrap
   - Database: SQLite3
 
-Things to clean up:
-
-- status_403/404, etc. ok
-- return status
-- APIs change to POST/PUT/DELETE?
-- clean up home.html to only have one search and a filter button?
-
 ## Deployment Steps
+
+Shows the steps on how I deploy in my Ubuntu server
+
+1. Install uv - [Installation Guide](https://docs.astral.sh/uv/getting-started/installation/)
+2. Do a git clone (`git clone`, might change to github actions in the future)
+3. Install the requirements:
+    - if `uv` is installed, run `uv sync`
+    - otherwise, run `python -m pip install -r requirements.txt`
+4. After installing the dependencies,
+    - Create .env file
+    - Create `instance` folder
+    - Inside `__init__.py`, change 'development' to 'production'
+    - Update `app = Flask(__name__, instance_path=instance_path)`
+    - DEBUG and TESTING set to False in config.py
+    - Since this is production, we need to create instance path in a different location
+    - change the db.py -> to schema_staging.sql (where there are no dummy data)
+    - change the name of the file from schema_dev.sql to schema_staging.sql
+    - initialise the database
+    - install waitress (as per tutorial)
+    - uv install waitress
 
 ## Features
 
